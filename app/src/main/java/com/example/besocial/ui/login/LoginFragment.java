@@ -1,6 +1,7 @@
 package com.example.besocial.ui.login;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -38,7 +39,7 @@ public class LoginFragment extends Fragment {
     private CheckBox checkBox;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
-
+    private ProgressDialog progressDialog;
     private static  LoginFragment loginFragment;
     public static LoginFragment getInstance(){return loginFragment;}
 
@@ -62,6 +63,8 @@ public class LoginFragment extends Fragment {
         register = view.findViewById(R.id.register);
         login = view.findViewById(R.id.login);
         login.setEnabled(true);
+        progressDialog=new ProgressDialog(getActivity());
+        progressDialog.setTitle("Loading... Please wait");
         setListeners();
         checkBox = (CheckBox) view.findViewById(R.id.remember_emailPassword_checkBox);
         firebaseAuth= FirebaseAuth.getInstance();
@@ -139,6 +142,7 @@ public class LoginFragment extends Fragment {
         else if (passwordString.isEmpty())
             Toast.makeText(getActivity(), "Password field is empty", Toast.LENGTH_SHORT).show();
         else {
+            progressDialog.show();
             firebaseAuth.signInWithEmailAndPassword(usernameString, passwordString)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
