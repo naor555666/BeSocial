@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">BeSocial</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="menu_chat">Chat</string>
+    <string name="logout">Logout</string>
+    <string name="are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_login">Login</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="action_register">Register</string>
+    <string name="remember_my_email_and_password">Remember my email and password</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="registration">Registration</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="confirm_email">Confirm email</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="clear_fields">Clear Fields</string>
+    <string name="create_account">Create Account</string>
+    <string name="together_we_can_make_it_better">TOGETHER - WE CAN MAKE IT BETTER!</string>
+</resources>
