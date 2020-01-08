@@ -62,14 +62,14 @@
             android:layout_marginRight="30sp"
             android:background="@drawable/button"
             android:enabled="true"
-            android:text="@string/action_register"
-            android:textColor="#C8C8FC" />
+            style="@style/button"
+            android:text="@string/action_register" />
 
         <Button
             android:id="@+id/login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#C8C8FC"
+            style="@style/button"
             android:layout_marginRight="20dp"
             android:background="@drawable/button"
             android:enabled="true"

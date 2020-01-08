@@ -151,6 +151,7 @@ public class LoginFragment extends Fragment {
                                 sendUserToMainActivity();
                                 Toast.makeText(getActivity(), "Logged in successfuly", Toast.LENGTH_SHORT).show();
                             } else {
+                                progressDialog.dismiss();
                                 login.setEnabled(true);
                                 String errorMessage = task.getException().getMessage();
                                 Toast.makeText(getActivity(), "Could not log in: " + errorMessage, Toast.LENGTH_LONG).show();

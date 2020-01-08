@@ -24,7 +24,6 @@ import com.example.besocial.R;
 import com.example.besocial.ui.login.LoginActivity;
 import com.example.besocial.ui.login.LoginFragment;
 import com.google.firebase.auth.FirebaseAuth;
-
 public class RegisterFragment extends Fragment {
     private static final RegisterFragment registerFragment = new RegisterFragment();
 
@@ -38,6 +37,7 @@ public class RegisterFragment extends Fragment {
 
     private EditText firstName, lastName, email, confirmEmail, password, confirmPassword;
     private Button clearFields, createAccount;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
