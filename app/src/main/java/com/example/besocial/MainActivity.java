@@ -1,19 +1,16 @@
 package com.example.besocial;
 
-import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.besocial.ui.LogoutDialog;
 import com.example.besocial.ui.login.LoginActivity;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.internal.NavigationMenuItemView;
-import com.google.android.material.snackbar.Snackbar;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -37,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private View logout;
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,24 +44,16 @@ public class MainActivity extends AppCompatActivity {
         fireBaseAuth = FirebaseAuth.getInstance();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
-                R.id.nav_tools, R.id.nav_share, R.id.nav_send, R.id.nav_chat)
+                R.id.nav_home, R.id.nav_my_profile, R.id.nav_notifications, R.id.nav_chat, R.id.nav_social_center, R.id.nav_bonus_area, R.id.nav_settings)
                 .setDrawerLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
@@ -111,17 +101,35 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
-    public void logoutHandler(View v) {
-        new LogoutDialog("Logging out").show(getSupportFragmentManager(), null);
 
-    }
-
+    /**
+     * handles app bar menu items selection
+     *
+     * @param item -user's selection
+     * @return boolean
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+//     handles logout
         switch (item.getItemId()) {
             case R.id.logout:
                 new LogoutDialog("Logging out").show(getSupportFragmentManager(), null);
                 return true;
+
+//if about was pressed while the current page is not about- navigate to about page, else do nothing
+            case R.id.about:
+                Context context;
+                try {
+                    if (!navController.getCurrentDestination().getLabel().equals("AboutFragment"))
+                        navController.navigate(R.id.nav_about);
+                }
+                catch (NullPointerException e){
+                    Log.d("NullPointerException","label was not found");
+                }
+
+                return true;
+
             default:
                 return super.onContextItemSelected(item);
         }
