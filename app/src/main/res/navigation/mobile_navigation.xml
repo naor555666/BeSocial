@@ -7,44 +7,43 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.besocial.ui.home.HomeFragment"
+        android:name="com.example.besocial.ui.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
-
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.besocial.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
-
+        android:id="@+id/nav_my_profile"
+        android:name="com.example.besocial.ui.ProfileFragment"
+        android:label="MyProfile"
+        tools:layout="@layout/fragment_profile" />
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.besocial.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
-
-    <fragment
-        android:id="@+id/nav_tools"
-        android:name="com.example.besocial.ui.tools.ToolsFragment"
-        android:label="@string/menu_tools"
-        tools:layout="@layout/fragment_tools" />
-
-    <fragment
-        android:id="@+id/nav_share"
-        android:name="com.example.besocial.ui.share.ShareFragment"
-        android:label="@string/menu_share"
-        tools:layout="@layout/fragment_share" />
-
-    <fragment
-        android:id="@+id/nav_send"
-        android:name="com.example.besocial.ui.send.SendFragment"
-        android:label="@string/menu_send"
-        tools:layout="@layout/fragment_send" />
+        android:id="@+id/nav_notifications"
+        android:name="com.example.besocial.ui.NotificationsFragment"
+        android:label="fragment_notifications"
+        tools:layout="@layout/fragment_notifications" />
     <fragment
         android:id="@+id/nav_chat"
-        android:name="com.example.besocial.ui.chat.ChatFragment"
-        android:label="@string/menu_chat"
-        tools:layout="@layout/fragment_chat" />
+        android:name="com.example.besocial.ui.ChatListFragment"
+        android:label="fragment_chat_list"
+        tools:layout="@layout/fragment_chat_list" />
+    <fragment
+        android:id="@+id/nav_social_center"
+        android:name="com.example.besocial.ui.SocialCenterFragment"
+        android:label="fragment_social_center"
+        tools:layout="@layout/fragment_social_center" />
+    <fragment
+        android:id="@+id/nav_bonus_area"
+        android:name="com.example.besocial.ui.BonuesAreaFragment"
+        android:label="fragment_bonues_area"
+        tools:layout="@layout/fragment_bonues_area" />
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.besocial.ui.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/nav_about"
+        android:name="com.example.besocial.ui.AboutFragment"
+        android:label="AboutFragment" />
 
 
 </navigation>
