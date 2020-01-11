@@ -26,10 +26,14 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import android.view.Menu;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    private TextView nav_header_user_email, nav_header_user_full_name;
     private FirebaseAuth fireBaseAuth;
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
@@ -57,15 +61,28 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        //get reference to the header of the navigation view and its components
+        View header = navigationView.getHeaderView(0);
+        nav_header_user_email = (TextView) header.findViewById(R.id.nav_header_user_email);
+        nav_header_user_full_name = (TextView) header.findViewById(R.id.nav_header_user_full_name);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = fireBaseAuth.getCurrentUser();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        //DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
         if (currentUser == null) {
             sendUserToLogin();
         }
+        //
+        else {
+            nav_header_user_email.setText(currentUser.getEmail());
+
+            //nav_header_user_full_name.setText();
+        }
+        //
     }
 
     public void sendUserToLogin() {
@@ -123,9 +140,8 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     if (!navController.getCurrentDestination().getLabel().equals("AboutFragment"))
                         navController.navigate(R.id.nav_about);
-                }
-                catch (NullPointerException e){
-                    Log.d("NullPointerException","label was not found");
+                } catch (NullPointerException e) {
+                    Log.d("NullPointerException", "label was not found");
                 }
 
                 return true;

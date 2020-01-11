@@ -9,7 +9,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
 import android.view.LayoutInflater;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 
 import com.example.besocial.MainActivity;
 import com.example.besocial.R;
-import com.example.besocial.ui.RegisterFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -58,19 +56,25 @@ public class LoginFragment extends Fragment {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         loginFragment= this;
         editor = sharedPref.edit();
+
         email = (EditText) view.findViewById(R.id.username);
         password = (EditText) view.findViewById(R.id.password);
         register = view.findViewById(R.id.register);
         login = view.findViewById(R.id.login);
         login.setEnabled(true);
+
         progressDialog=new ProgressDialog(getActivity());
         progressDialog.setTitle("Loading... Please wait");
+
         setListeners();
         checkBox = (CheckBox) view.findViewById(R.id.remember_emailPassword_checkBox);
         firebaseAuth= FirebaseAuth.getInstance();
+
         boolean isCheckBoxChecked = false;
         isCheckBoxChecked = sharedPref.getBoolean("remember_emailPassword_checkBox", false);
         checkBox.setChecked(isCheckBoxChecked);
+
+
         if (isCheckBoxChecked) {
             String emailS = sharedPref.getString("email", null);
             String passwordS = sharedPref.getString("password", null);
@@ -89,13 +93,7 @@ public class LoginFragment extends Fragment {
 
 
 
-    private void sendUserToMainActivity() {
-        Intent intent = new Intent(getActivity(), MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        getActivity().finish();
 
-    }
 
     @Override
     public void onStop() {
@@ -164,6 +162,13 @@ public class LoginFragment extends Fragment {
 
 
            //getActivity().finish();
+    }
+    private void sendUserToMainActivity() {
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        getActivity().finish();
+
     }
 
     public void setRegisterValue(boolean registerValue) {
