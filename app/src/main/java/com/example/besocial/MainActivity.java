@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = fireBaseAuth.getCurrentUser();
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         //DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
         if (currentUser == null) {
             sendUserToLogin();
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         //
         else {
             nav_header_user_email.setText(currentUser.getEmail());
-
+            databaseReference.child("Users").child(currentUser.getEmail());
             //nav_header_user_full_name.setText();
         }
         //
