@@ -4,6 +4,7 @@ package com.example.besocial.ui;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,6 +28,8 @@ import com.example.besocial.ui.login.LoginActivity;
 import com.example.besocial.ui.login.LoginFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+
+import static android.graphics.Color.red;
 
 public class RegisterFragment extends Fragment {
     private static final RegisterFragment registerFragment = new RegisterFragment();
@@ -93,25 +96,72 @@ public class RegisterFragment extends Fragment {
         String confirmEmailString = confirmEmail.getText().toString();
         String passwordString = password.getText().toString();
         String confirmPasswordString = confirmPassword.getText().toString();
-
+/*
         if (firstNameString.equals("")) {
             Toast.makeText(getActivity(), "First name is empty", Toast.LENGTH_SHORT).show();
+            firstName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
         } else if (lastNameString.equals("")) {
             Toast.makeText(getActivity(), "Last name is empty", Toast.LENGTH_SHORT).show();
+            lastName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
         } else if (emailString.equals("")) {
             Toast.makeText(getActivity(), "Email is empty", Toast.LENGTH_SHORT).show();
+            email.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
         } else if (confirmEmailString.equals("")) {
             Toast.makeText(getActivity(), "Email confirmation is empty", Toast.LENGTH_SHORT).show();
+            confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
         } else if (passwordString.equals("")) {
             Toast.makeText(getActivity(), "Password is empty", Toast.LENGTH_SHORT).show();
+            password.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
         } else if (confirmPasswordString.equals("")) {
             Toast.makeText(getActivity(), "Password confirmation is empty", Toast.LENGTH_SHORT).show();
+            confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
         } else if (!emailString.equals(confirmEmailString)) {
             Toast.makeText(getActivity(), "Email confirmation is incompatible", Toast.LENGTH_SHORT).show();
+            confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
         } else if (!passwordString.equals(confirmPasswordString)) {
             Toast.makeText(getActivity(), "Password confirmation is incompatible", Toast.LENGTH_SHORT).show();
+            confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
         } else
             isFieldsValid = true;
+
+
+ */
+        isFieldsValid=true;
+        if (firstNameString.equals("")) {
+            firstName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
+            isFieldsValid=false;
+        }
+        if (lastNameString.equals("")) {
+            lastName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
+            isFieldsValid=false;
+        }
+        if (emailString.equals("")) {
+            email.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
+            isFieldsValid=false;
+        }
+        if (confirmEmailString.equals("")) {
+            confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
+            isFieldsValid=false;
+        }
+        if (passwordString.length()<8) {
+            password.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
+            isFieldsValid=false;
+        }
+        if (confirmPasswordString.length()<8) {
+            confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
+            isFieldsValid=false;
+        }
+        if (!emailString.equals(confirmEmailString)) {
+            confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
+            isFieldsValid=false;
+        }
+        if (!passwordString.equals(confirmPasswordString)) {
+            confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
+            isFieldsValid=false;
+        }
+        if(isFieldsValid==false)
+            Toast.makeText(getActivity(), "There are incorrect fields", Toast.LENGTH_SHORT).show();
+
 
         return isFieldsValid;
     }
@@ -137,26 +187,36 @@ public class RegisterFragment extends Fragment {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if(chosenEditText==firstName.getId()){
+            if (chosenEditText == firstName.getId()) {
+                if(firstName.getText().length()>0){
+                    firstName.setBackground(getResources().getDrawable(R.drawable.input_field));
+                }
 
-            }
-            else if(chosenEditText==lastName.getId()){
+            } else if (chosenEditText == lastName.getId()) {
+                if(lastName.getText().length()>0){
+                    lastName.setBackground(getResources().getDrawable(R.drawable.input_field));
+                }
 
-            }
-            else if(chosenEditText==email.getId()){
+            } else if (chosenEditText == email.getId()) {
+                if(email.getText().length()>0){
+                    email.setBackground(getResources().getDrawable(R.drawable.input_field));
+                }
 
-            }
-            else if(chosenEditText==confirmEmail.getId()){
+            } else if (chosenEditText == confirmEmail.getId()) {
+                if((confirmEmail.getText().toString().equals(email.getText().toString()))&&(confirmEmail.getText().length()>0) ) {
+                    confirmEmail.setBackground(getResources().getDrawable(R.drawable.input_field));
+                }
+            } else if (chosenEditText == password.getId()) {
 
+                //if (password.getBackground().equals(getResources().getDrawable(R.drawable.incorrect_input_register))) {
+                if(password.getText().length()>7){
+                    password.setBackground(getResources().getDrawable(R.drawable.input_field));
+                }
+            } else if (chosenEditText == confirmPassword.getId()) {
+                if((confirmPassword.getText().length()>7 )&&(confirmPassword.getText().toString().equals(password.getText().toString())) ){
+                    confirmPassword.setBackground(getResources().getDrawable(R.drawable.input_field));
+                }
             }
-            else if(chosenEditText==password.getId()){
-                if(password.getText().length()<8)
-                    Toast.makeText(getActivity(), "Password must have 8 characters or more", Toast.LENGTH_SHORT).show();
-            }
-            else if(chosenEditText==confirmPassword.getId()){
-
-            }
-
         }
 
         @Override
