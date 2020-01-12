@@ -11,6 +11,8 @@
         android:layout_height="match_parent"
         android:text="@string/menu_my_profile"
         android:textAlignment="center"
+        android:textColor="#E20F0F0F"
+
         android:textSize="30sp"/>
 
 </FrameLayout>

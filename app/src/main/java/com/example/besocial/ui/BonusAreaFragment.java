@@ -15,10 +15,10 @@ import com.example.besocial.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BonuesAreaFragment extends Fragment {
+public class BonusAreaFragment extends Fragment {
 
 
-    public BonuesAreaFragment() {
+    public BonusAreaFragment() {
         // Required empty public constructor
     }
 
@@ -27,7 +27,7 @@ public class BonuesAreaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bonues_area, container, false);
+        return inflater.inflate(R.layout.fragment_bonus_area, container, false);
     }
 
 }
