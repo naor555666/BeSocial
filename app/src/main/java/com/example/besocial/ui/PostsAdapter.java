@@ -54,7 +54,13 @@ public PostsAdapter(ArrayList<Post> posts){
         holder.postUserName.setText(posts.get(position).getPostUserName());
         holder.postDate.setText(posts.get(position).getPostDate());
         holder.postDescription.setText(posts.get(position).getPostDescription());
-        holder.postImage.setImageDrawable(posts.get(position).getPostImage());
+        if(posts.get(position).getPostImage()!=null) {
+            holder.postImage.setImageDrawable(posts.get(position).getPostImage());
+        }else {
+           holder.postImage.setVisibility(View.GONE);
+        }
+
+
     }
 
     @Override

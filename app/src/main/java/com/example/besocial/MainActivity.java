@@ -39,14 +39,15 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "life cycle";
     private TextView nav_header_user_email, nav_header_user_full_name;
     private FirebaseAuth fireBaseAuth;
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private View logout;
     private NavController navController;
-    private ArrayList<Post> posts;
-    private RecyclerView postsRecyclerView;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +76,18 @@ public class MainActivity extends AppCompatActivity {
         View header = navigationView.getHeaderView(0);
         nav_header_user_email = (TextView) header.findViewById(R.id.nav_header_user_email);
         nav_header_user_full_name = (TextView) header.findViewById(R.id.nav_header_user_full_name);
+        displayPosts();
+
+    }
+
+    private void displayPosts() {
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "inside on Start");
         FirebaseUser currentUser = fireBaseAuth.getCurrentUser();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         //DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
@@ -89,24 +97,23 @@ public class MainActivity extends AppCompatActivity {
         //
         else {
             nav_header_user_email.setText(currentUser.getEmail());
-            posts = new ArrayList<Post>();
-            posts.add(new Post(getDrawable(R.drawable.naor_profiel_picture),
-                    "Naor Ohana", "d", "d", getDrawable(R.drawable.naor_profiel_picture)));
-            posts.add(new Post(getDrawable(R.drawable.naor_profiel_picture),
-                    "Naor Ohana","d","d",null));
-            posts.add(new Post(getDrawable(R.drawable.naor_profiel_picture),
-                    "d","d","d",null));
-            postsRecyclerView = findViewById(R.id.posts_recycler_view);
-            postsRecyclerView.setHasFixedSize(true);
-            postsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            RecyclerView.Adapter postsAdapter = new PostsAdapter(posts);
-            postsRecyclerView.setAdapter(postsAdapter);
+
+
         }
         //   databaseReference.child("Users").child(currentUser.getEmail());
         //nav_header_user_full_name.setText();
 
         //
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "inside on Resume");
+
+
+    }
+
 
     public void sendUserToLogin() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -172,5 +179,30 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d(TAG, "inside on RestoreInstanceState");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "inside on Stop");
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "inside on Destroy");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "inside on Pause");
     }
 }

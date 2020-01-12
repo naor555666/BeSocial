@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
-    android:background="#5ECFC0BD"
     android:orientation="vertical"
     android:padding="15dp">
 
@@ -12,14 +11,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:orientation="horizontal">
 
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/post_user_profile_image"
             android:layout_width="60dp"
-            android:layout_height="60dp">
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher">
 
         </de.hdodenhof.circleimageview.CircleImageView>
 
@@ -63,7 +63,10 @@
         android:id="@+id/post_imageview"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="20dp"
-        app:srcCompat="?attr/colorBackgroundFloating" />
+        android:layout_margin="3dp"
+        android:visibility="visible"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop">
+    </ImageView>
 
 </LinearLayout>
