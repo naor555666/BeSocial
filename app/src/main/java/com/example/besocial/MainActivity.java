@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         //
         else {
             nav_header_user_email.setText(currentUser.getEmail());
-            databaseReference.child("Users").child(currentUser.getEmail());
+         //   databaseReference.child("Users").child(currentUser.getEmail());
             //nav_header_user_full_name.setText();
         }
         //
