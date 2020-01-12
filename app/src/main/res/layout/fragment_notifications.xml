@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:text="@string/Notifications"
         android:textAlignment="center"
+        android:textColor="#E20F0F0F"
         android:textSize="30sp"/>
 
 </FrameLayout>

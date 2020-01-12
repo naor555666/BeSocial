@@ -3,12 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BonusAreaFragment">
+    tools:context=".ui.BonusAreaFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:textAlignment="center"
+        android:textSize="30sp"
+        android:textColor="#E20F0F0F"
+        android:text="@string/menu_bonus_area" />
 
 </FrameLayout>
