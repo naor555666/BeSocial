@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.besocial.data.Post;
 import com.example.besocial.ui.LogoutDialog;
+import com.example.besocial.ui.PostsAdapter;
 import com.example.besocial.ui.login.LoginActivity;
 
 import android.util.Log;
@@ -23,6 +25,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,6 +36,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import android.view.Menu;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     private TextView nav_header_user_email, nav_header_user_full_name;
     private FirebaseAuth fireBaseAuth;
@@ -39,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     private View logout;
     private NavController navController;
+    private ArrayList<Post> posts;
+    private RecyclerView postsRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         fireBaseAuth = FirebaseAuth.getInstance();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -79,9 +89,22 @@ public class MainActivity extends AppCompatActivity {
         //
         else {
             nav_header_user_email.setText(currentUser.getEmail());
-         //   databaseReference.child("Users").child(currentUser.getEmail());
-            //nav_header_user_full_name.setText();
+            posts = new ArrayList<Post>();
+            posts.add(new Post(getDrawable(R.drawable.naor_profiel_picture),
+                    "Naor Ohana", "d", "d", getDrawable(R.drawable.naor_profiel_picture)));
+            posts.add(new Post(getDrawable(R.drawable.naor_profiel_picture),
+                    "Naor Ohana","d","d",null));
+            posts.add(new Post(getDrawable(R.drawable.naor_profiel_picture),
+                    "d","d","d",null));
+            postsRecyclerView = findViewById(R.id.posts_recycler_view);
+            postsRecyclerView.setHasFixedSize(true);
+            postsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            RecyclerView.Adapter postsAdapter = new PostsAdapter(posts);
+            postsRecyclerView.setAdapter(postsAdapter);
         }
+        //   databaseReference.child("Users").child(currentUser.getEmail());
+        //nav_header_user_full_name.setText();
+
         //
     }
 
