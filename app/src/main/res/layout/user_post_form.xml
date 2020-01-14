@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
+    android:background="#FFFFFF"
     android:orientation="vertical"
     android:padding="15dp">
 
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/post_identity_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -24,9 +25,11 @@
         </de.hdodenhof.circleimageview.CircleImageView>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/post_username_and_date"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
+            android:layout_toEndOf="@id/post_user_profile_image"
             android:orientation="vertical">
 
             <TextView
@@ -45,8 +48,23 @@
                 android:text="post date"
                 android:textSize="20sp" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"></LinearLayout>
+
         </LinearLayout>
-    </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/button"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layoutDirection="rtl"
+            android:layout_alignParentEnd="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_thumb_up" />
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/post_description"
@@ -64,9 +82,8 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_margin="3dp"
-        android:visibility="visible"
         android:adjustViewBounds="true"
-        android:scaleType="centerCrop">
-    </ImageView>
+        android:scaleType="centerCrop"
+        android:visibility="visible"></ImageView>
 
 </LinearLayout>

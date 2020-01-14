@@ -1,7 +1,10 @@
 package com.example.besocial;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import com.example.besocial.data.Post;
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     private View logout;
     private NavController navController;
-
+    private BroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
 
 
     @Override
@@ -76,13 +79,12 @@ public class MainActivity extends AppCompatActivity {
         View header = navigationView.getHeaderView(0);
         nav_header_user_email = (TextView) header.findViewById(R.id.nav_header_user_email);
         nav_header_user_full_name = (TextView) header.findViewById(R.id.nav_header_user_full_name);
-        displayPosts();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(myBroadcastReceiver, intentFilter);
 
     }
 
-    private void displayPosts() {
-
-    }
 
     @Override
     protected void onStart() {
@@ -198,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "inside on Destroy");
+        unregisterReceiver(myBroadcastReceiver);
     }
 
     @Override
