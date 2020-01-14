@@ -36,11 +36,11 @@ public class HomeFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         postsRecyclerView.setLayoutManager(layoutManager);
         posts = new ArrayList<Post>();
-        posts.add(new Post(getResources().getDrawable(R.drawable.naor_profiel_picture),
-                "Naor Ohana", "12.1.20", "Hi everyone !", getResources().getDrawable(R.drawable.naor_profiel_picture)));
+        posts.add(new Post(getResources().getDrawable(R.drawable.naor_profile_picture),
+                "Naor Ohana", "12.1.20", "Hi everyone !", getResources().getDrawable(R.drawable.naor_profile_picture)));
         posts.add(new Post(getResources().getDrawable(R.drawable.besociallogo),
                 "BeSocial", "12.1.20", "Hello !", null));
-        posts.add(new Post(getResources().getDrawable(R.drawable.orprofile),
+        posts.add(new Post(getResources().getDrawable(R.drawable.or_profile),
                 "Or Magogi", "12.1.20", "I am here too", null));
         RecyclerView.Adapter postsAdapter = new PostsAdapter(posts);
         postsRecyclerView.setAdapter(postsAdapter);
