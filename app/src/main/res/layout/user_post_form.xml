@@ -59,8 +59,9 @@
             android:id="@+id/button"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layoutDirection="rtl"
             android:layout_alignParentEnd="true"
+            android:background="#FFFFFF"
+            android:layoutDirection="rtl"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_thumb_up" />
 

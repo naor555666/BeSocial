@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private View logout;
-    private NavController navController;
+    private static NavController navController;
     private BroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
 
 
@@ -207,5 +207,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "inside on Pause");
+    }
+
+    public static NavController getNavController() {
+        return navController;
     }
 }
