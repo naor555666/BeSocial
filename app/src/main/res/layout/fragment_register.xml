@@ -56,7 +56,7 @@
         android:textSize="25sp" />
 
     <EditText
-        android:id="@+id/username"
+        android:id="@+id/usernameRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
@@ -86,7 +86,7 @@
         android:textSize="25sp" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/passwordRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"

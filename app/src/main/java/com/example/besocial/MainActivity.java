@@ -1,10 +1,15 @@
 package com.example.besocial;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
+import com.example.besocial.data.Post;
 import com.example.besocial.ui.LogoutDialog;
+import com.example.besocial.ui.PostsAdapter;
 import com.example.besocial.ui.login.LoginActivity;
 
 import android.util.Log;
@@ -23,18 +28,29 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import android.view.Menu;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "life cycle";
+    private TextView nav_header_user_email, nav_header_user_full_name;
     private FirebaseAuth fireBaseAuth;
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private View logout;
     private NavController navController;
+    private BroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         fireBaseAuth = FirebaseAuth.getInstance();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -57,16 +75,47 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        //get reference to the header of the navigation view and its components
+        View header = navigationView.getHeaderView(0);
+        nav_header_user_email = (TextView) header.findViewById(R.id.nav_header_user_email);
+        nav_header_user_full_name = (TextView) header.findViewById(R.id.nav_header_user_full_name);
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(myBroadcastReceiver, intentFilter);
+
     }
+
 
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "inside on Start");
         FirebaseUser currentUser = fireBaseAuth.getCurrentUser();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        //DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
         if (currentUser == null) {
             sendUserToLogin();
         }
+        //
+        else {
+            nav_header_user_email.setText(currentUser.getEmail());
+
+
+        }
+        //   databaseReference.child("Users").child(currentUser.getEmail());
+        //nav_header_user_full_name.setText();
+
+        //
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "inside on Resume");
+
+
+    }
+
 
     public void sendUserToLogin() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -123,9 +172,8 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     if (!navController.getCurrentDestination().getLabel().equals("AboutFragment"))
                         navController.navigate(R.id.nav_about);
-                }
-                catch (NullPointerException e){
-                    Log.d("NullPointerException","label was not found");
+                } catch (NullPointerException e) {
+                    Log.d("NullPointerException", "label was not found");
                 }
 
                 return true;
@@ -133,5 +181,31 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d(TAG, "inside on RestoreInstanceState");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "inside on Stop");
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "inside on Destroy");
+        unregisterReceiver(myBroadcastReceiver);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "inside on Pause");
     }
 }

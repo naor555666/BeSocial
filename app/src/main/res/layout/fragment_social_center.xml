@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:text="@string/menu_social_center"
         android:textAlignment="center"
-        android:textSize="30sp"/>
+        android:textColor="#E20F0F0F"
+        android:textSize="30sp" />
 
 </FrameLayout>

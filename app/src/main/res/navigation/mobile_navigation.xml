@@ -32,9 +32,9 @@
         tools:layout="@layout/fragment_social_center" />
     <fragment
         android:id="@+id/nav_bonus_area"
-        android:name="com.example.besocial.ui.BonuesAreaFragment"
-        android:label="fragment_bonues_area"
-        tools:layout="@layout/fragment_bonues_area" />
+        android:name="com.example.besocial.ui.BonusAreaFragment"
+        android:label="nav_bonus_area"
+        tools:layout="@layout/fragment_bonus_area" />
     <fragment
         android:id="@+id/nav_settings"
         android:name="com.example.besocial.ui.SettingsFragment"
@@ -43,7 +43,8 @@
     <fragment
         android:id="@+id/nav_about"
         android:name="com.example.besocial.ui.AboutFragment"
-        android:label="AboutFragment" />
+        android:label="AboutFragment"
+        tools:layout="@layout/fragment_about"/>
 
 
 </navigation>
