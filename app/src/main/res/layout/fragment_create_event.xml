@@ -7,6 +7,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     android:padding="20dp"
+    android:layoutDirection="ltr"
     tools:context=".ui.CreateEventFragment">
 
 
@@ -17,7 +18,6 @@
         android:layout_weight="0.5"
         android:background="#28999595"
         android:contentDescription="add event photo"
-        android:src="?attr/selectableItemBackground"
         tools:src="@android:drawable/ic_input_add" />
 
     <EditText
