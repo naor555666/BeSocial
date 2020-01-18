@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,12 +7,16 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     android:padding="20dp"
+    android:layoutDirection="ltr"
     tools:context=".ui.EventFragment">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="160dp"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         tools:src="@tools:sample/backgrounds/scenic" />
@@ -32,24 +36,24 @@
         android:layout_marginTop="20dp">
 
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:layout_alignParentEnd="true"
-            android:text="Hosted by: Firstname Lastname "
-            android:textColor="#0A0A0A"
-            android:textSize="18sp" />
-
         <ImageButton
             android:id="@+id/event_chat_ic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
             android:background="#FFFFFF"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_menu_chat" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:inputType="textMultiLine"
+            android:text="Hosted by: Firstname Lastname "
+            android:textColor="#0A0A0A"
+            android:textSize="18sp" />
     </RelativeLayout>
 
 
@@ -61,7 +65,7 @@
             android:id="@+id/event_date_ic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
             android:background="#FFFFFF"
             android:src="@drawable/ic_access_time_black_24dp" />
         <TextView
@@ -83,23 +87,23 @@
         android:layout_marginTop="20dp"
         >
 
-        <TextView
-            android:id="@+id/event_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:text="Located at: location"
-            android:layout_alignParentEnd="true"
-            android:textColor="#0A0A0A"
-            android:textSize="18sp" />
-
         <ImageView
             android:id="@+id/event_location_ic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
             android:background="#FFFFFF"
             android:src="@drawable/ic_location_on_red_24dp" />
+
+        <TextView
+            android:id="@+id/event_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:inputType="textMultiLine"
+            android:text="Located at: location"
+            android:textColor="#0A0A0A"
+            android:textSize="18sp" />
 
     </RelativeLayout>
 
@@ -135,5 +139,6 @@
         android:background="@drawable/round_button"
         android:backgroundTint="#0AF017"
         android:text="Attend" />
-
 </LinearLayout>
+
+</ScrollView>
