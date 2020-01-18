@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -44,5 +45,6 @@ public class HomeFragment extends Fragment {
                 "Or Magogi", "12.1.20", "I am here too", null));
         RecyclerView.Adapter postsAdapter = new PostsAdapter(posts);
         postsRecyclerView.setAdapter(postsAdapter);
+
     }
 }
