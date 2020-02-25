@@ -106,9 +106,9 @@ public class RegisterFragment extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
-                                            //String userID = task.getResult().getUser().getUid();
-                                            String userEmail=task.getResult().getUser().getEmail();
-                                            saveUserDetails(userEmail);
+                                            String userID = task.getResult().getUser().getUid();
+                                            //String userEmail=task.getResult().getUser().getEmail();
+                                            saveUserDetails(userID);
                                         } else {
                                             String errorMessage = task.getException().getMessage();
                                             Toast.makeText(getActivity(), "Could not register: " + errorMessage, Toast.LENGTH_LONG).show();
@@ -126,11 +126,12 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-    private void saveUserDetails(String userEmail) {
-        userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userEmail);
+    private void saveUserDetails(String userID) {
+        userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userID);
         HashMap userMap = new HashMap();
         userMap.put("userFirstName", firstName.getText().toString());
         userMap.put("userLastName", lastName.getText().toString());
+        userMap.put("userEmail", email.getText().toString());
         userRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
@@ -146,7 +147,7 @@ public class RegisterFragment extends Fragment {
     }
 
     private boolean checkFields() {
-        Toast.makeText(getActivity(), "chekc fielda", Toast.LENGTH_SHORT);
+        Toast.makeText(getActivity(), "chekc fields", Toast.LENGTH_SHORT);
 
         Boolean isFieldsValid = false;
         String firstNameString = firstName.getText().toString();
