@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import com.example.besocial.ui.LogoutDialog;
 import com.example.besocial.ui.PostsAdapter;
 import com.example.besocial.ui.login.LoginActivity;
 
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +33,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,22 +54,28 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private static User loggedUser;
+
     private static boolean isMusicPlaying = false;
     private static final String TAG = "life cycle";
+
     private TextView nav_header_user_email, nav_header_user_full_name;
-    private FirebaseAuth fireBaseAuth;
+
+
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private static NavController navController;
     private BroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
-    private static FirebaseUser currentUser;
 
+    private static FirebaseUser currentUser;
+    private FirebaseAuth fireBaseAuth;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Log.d(TAG,"Main activity On create");
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
         loggedUser = new User();
@@ -96,6 +105,25 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(myBroadcastReceiver, intentFilter);
 
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        editor=sharedPref.edit();
+        MainActivity.isMusicPlaying=sharedPref.getBoolean("isMusicPlaying",false);
+        System.out.println("on create: music playing: "+isMusicPlaying);
+        AppCompatImageView playButton = findViewById(R.id.play_music);
+
+        if(MyMusicPlayerForegroundService.getInstance()!=null) {
+
+            if (MainActivity.isMusicPlaying == false) {
+                playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
+            } else {
+                playButton.setImageResource(R.drawable.ic_pause_green_24dp);
+            }
+        }
+        else{
+            isMusicPlaying=false;
+            playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
+        }
+
     }
 
 
@@ -103,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "inside on Start");
-        //FirebaseUser currentUser = fireBaseAuth.getCurrentUser();
+
 
         if (MainActivity.currentUser == null) {
             sendUserToLogin();
@@ -232,9 +260,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Log.d(TAG, "inside on RestoreInstanceState");
+
     }
 
     @Override
@@ -249,6 +283,9 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "inside on Destroy");
         unregisterReceiver(myBroadcastReceiver);
+
+        editor.putBoolean("isMusicPlaying",MainActivity.isMusicPlaying);
+        editor.commit();
     }
 
     @Override
@@ -268,4 +305,5 @@ public class MainActivity extends AppCompatActivity {
     public static void setIsMusicPlaying(boolean isMusicPlaying) {
         MainActivity.isMusicPlaying = isMusicPlaying;
     }
+
 }

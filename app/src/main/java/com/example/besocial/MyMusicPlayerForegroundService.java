@@ -17,6 +17,7 @@ public class MyMusicPlayerForegroundService extends Service {
     MediaPlayer mediaPlayer;
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
     public static final int NOTIFICATION_ID1 = 1;
+    private static MyMusicPlayerForegroundService instance;
     private NotificationManager mNotiMgr;
     private Notification.Builder mNotifyBuilder;
 
@@ -30,6 +31,8 @@ public class MyMusicPlayerForegroundService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d("foreground service", "on create");
+        instance=this;
+
         mediaPlayer = MediaPlayer.create(this, R.raw.heroes);
         mediaPlayer.setLooping(true); // Set looping
         mediaPlayer.setVolume(100, 100);
@@ -66,6 +69,7 @@ public class MyMusicPlayerForegroundService extends Service {
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
         final boolean isPlaying = intent.getBooleanExtra("isPlaying", false);
+        // on/off music and show suitable notification
         if (!isPlaying) {
             mediaPlayer.start();
             startForeground(NOTIFICATION_ID1, updateNotification("Playing HOMM3 in the Background"));
@@ -87,8 +91,23 @@ public class MyMusicPlayerForegroundService extends Service {
     @Override
     public boolean stopService(Intent name) {
         mediaPlayer.stop();
+        mediaPlayer.reset();
         mediaPlayer.release();
+        mediaPlayer=null;
         return super.stopService(name);
 
+    }
+
+    public static MyMusicPlayerForegroundService getInstance() {
+        return instance;
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        mediaPlayer.stop();
+        mediaPlayer.reset();
+        mediaPlayer.release();
+        mediaPlayer=null;
     }
 }
