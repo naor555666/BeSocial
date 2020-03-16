@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG,"Main activity On create");
         fireBaseAuth = FirebaseAuth.getInstance();
-        currentUser = fireBaseAuth.getCurrentUser();
+        currentUser = fireBaseAuth.getCurrentUser();   //  get user token (if he is logged in)
         loggedUser = new User();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "inside on Start");
 
 
-        if (MainActivity.currentUser == null) {
+        if (MainActivity.currentUser == null) {    // if the user is not logged in
             sendUserToLogin();
         }
         //
@@ -287,6 +287,7 @@ public class MainActivity extends AppCompatActivity {
         editor.putBoolean("isMusicPlaying",MainActivity.isMusicPlaying);
         editor.commit();
     }
+
 
     @Override
     protected void onPause() {

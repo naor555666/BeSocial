@@ -107,7 +107,6 @@ public class RegisterFragment extends Fragment {
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
                                             String userID = task.getResult().getUser().getUid();
-                                            //String userEmail=task.getResult().getUser().getEmail();
                                             saveUserDetails(userID);
                                         } else {
                                             String errorMessage = task.getException().getMessage();
@@ -156,36 +155,7 @@ public class RegisterFragment extends Fragment {
         String confirmEmailString = confirmEmail.getText().toString();
         String passwordString = password.getText().toString();
         String confirmPasswordString = confirmPassword.getText().toString();
-/*
-        if (firstNameString.equals("")) {
-            Toast.makeText(getActivity(), "First name is empty", Toast.LENGTH_SHORT).show();
-            firstName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (lastNameString.equals("")) {
-            Toast.makeText(getActivity(), "Last name is empty", Toast.LENGTH_SHORT).show();
-            lastName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (emailString.equals("")) {
-            Toast.makeText(getActivity(), "Email is empty", Toast.LENGTH_SHORT).show();
-            email.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (confirmEmailString.equals("")) {
-            Toast.makeText(getActivity(), "Email confirmation is empty", Toast.LENGTH_SHORT).show();
-            confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (passwordString.equals("")) {
-            Toast.makeText(getActivity(), "Password is empty", Toast.LENGTH_SHORT).show();
-            password.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (confirmPasswordString.equals("")) {
-            Toast.makeText(getActivity(), "Password confirmation is empty", Toast.LENGTH_SHORT).show();
-            confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (!emailString.equals(confirmEmailString)) {
-            Toast.makeText(getActivity(), "Email confirmation is incompatible", Toast.LENGTH_SHORT).show();
-            confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (!passwordString.equals(confirmPasswordString)) {
-            Toast.makeText(getActivity(), "Password confirmation is incompatible", Toast.LENGTH_SHORT).show();
-            confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else
-            isFieldsValid = true;
 
-
- */
         isFieldsValid=true;
         if (firstNameString.equals("")) {
             firstName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
