@@ -1,5 +1,7 @@
 package com.example.besocial.data;
 
+import android.widget.ImageView;
+
 import java.util.ArrayList;
 
 public class User {
@@ -10,6 +12,7 @@ public class User {
     private int bonusPoints;
     private String socialLevel;
     private ArrayList<User> followList;
+
 
 
     public String getUserFirstName() {

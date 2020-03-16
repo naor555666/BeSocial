@@ -10,6 +10,7 @@ import android.os.Bundle;
 
 import com.example.besocial.data.Post;
 import com.example.besocial.data.User;
+import com.example.besocial.ui.HomeFragment;
 import com.example.besocial.ui.LogoutDialog;
 import com.example.besocial.ui.PostsAdapter;
 import com.example.besocial.ui.login.LoginActivity;
@@ -82,7 +83,16 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //
+        HomeFragment.getPosts().add(new Post(getResources().getDrawable(R.drawable.naor_profile_picture),
+                "Naor Ohana", "12.1.20", "Hi everyone !", getResources().getDrawable(R.drawable.naor_profile_picture)));
+        HomeFragment.getPosts().add(new Post(getResources().getDrawable(R.drawable.besociallogo),
+                "BeSocial", "12.1.20", "Hello !", null));
+        HomeFragment.getPosts().add(new Post(getResources().getDrawable(R.drawable.or_profile),
+                "Or Magogi", "12.1.20", "I am here too", null));
 
+
+        //
 
 
         drawer = findViewById(R.id.drawer_layout);
@@ -304,6 +314,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static void setIsMusicPlaying(boolean isMusicPlaying) {
         MainActivity.isMusicPlaying = isMusicPlaying;
+    }
+
+    public static User getLoggedUser(){
+        return loggedUser;
     }
 
 }
