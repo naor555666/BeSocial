@@ -50,7 +50,6 @@
     <string name="about">About</string>
     <string name="username">username</string>
     <string name="events_list_title">Events list title</string>
-    <string name="my_photos">my_photos</string>
     <string-array name="list_of_categories">
         <item>General</item>
         <item>Sports</item>

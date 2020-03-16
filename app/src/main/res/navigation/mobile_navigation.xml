@@ -29,7 +29,11 @@
         android:id="@+id/nav_social_center"
         android:name="com.example.besocial.ui.SocialCenterFragment"
         android:label="fragment_social_center"
-        tools:layout="@layout/fragment_social_center" />
+        tools:layout="@layout/fragment_social_center" >
+        <action
+            android:id="@+id/action_nav_social_center_to_createEventFragment"
+            app:destination="@id/createEventFragment" />
+    </fragment>
     <fragment
         android:id="@+id/nav_bonus_area"
         android:name="com.example.besocial.ui.BonusAreaFragment"
@@ -45,6 +49,16 @@
         android:name="com.example.besocial.ui.AboutFragment"
         android:label="AboutFragment"
         tools:layout="@layout/fragment_about"/>
+    <fragment
+        android:id="@+id/createEventFragment"
+        android:name="com.example.besocial.ui.CreateEventFragment"
+        android:label="fragment_create_event"
+        tools:layout="@layout/fragment_create_event" />
+    <fragment
+        android:id="@+id/eventFragment"
+        android:name="com.example.besocial.ui.EventFragment"
+        android:label="fragment_event"
+        tools:layout="@layout/fragment_event" />
 
 
 </navigation>

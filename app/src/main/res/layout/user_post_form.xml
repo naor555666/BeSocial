@@ -46,6 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="post date"
+                android:textDirection="ltr"
                 android:textSize="20sp" />
 
             <LinearLayout
@@ -57,9 +58,10 @@
 
         <ImageButton
             android:id="@+id/button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_alignParentEnd="true"
+            android:background="#FFFFFF"
             android:layoutDirection="rtl"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_thumb_up" />
