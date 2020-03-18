@@ -9,16 +9,16 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="20dp"
             android:text="@string/menu_my_profile"
             android:textAlignment="center"
             android:textColor="#E20F0F0F"
-            android:layout_marginBottom="20dp"
             android:textSize="30sp" />
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -30,6 +30,7 @@
         </de.hdodenhof.circleimageview.CircleImageView>
 
         <TextView
+            android:id="@+id/profile_page_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
@@ -70,12 +71,12 @@
             android:textSize="20dp" />
 
         <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/editText6"
+                android:id="@+id/profile_full_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
@@ -86,14 +87,13 @@
                 android:inputType="textPersonName" />
 
             <TextView
-                android:id="@+id/textView12"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:text="Full name:" />
-    </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -101,7 +101,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/editText62"
+                android:id="@+id/profile_birthday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
@@ -112,8 +112,7 @@
                 android:inputType="textPersonName" />
 
             <TextView
-                android:id="@+id/textView142"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -127,7 +126,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/editText65"
+                android:id="@+id/profile_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
@@ -138,8 +137,7 @@
                 android:inputType="textPersonName" />
 
             <TextView
-                android:id="@+id/textView13"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -153,7 +151,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/editText26"
+                android:id="@+id/profile_social_level"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
@@ -164,21 +162,21 @@
                 android:inputType="textPersonName" />
 
             <TextView
-                android:id="@+id/textView162"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:text="Social level:" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/editText216"
+                android:id="@+id/profile_social_points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
@@ -189,8 +187,7 @@
                 android:inputType="textPersonName" />
 
             <TextView
-                android:id="@+id/textView1262"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -204,7 +201,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="40dp"
             android:layout_weight="1"
             android:src="@drawable/ic_edit_profile_24dp" />
 
