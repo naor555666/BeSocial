@@ -58,4 +58,7 @@
         <item>TPain</item>
         <item>Environment</item>
     </string-array>
+    <string name="title_activity_maps">Map</string>
+    <string name="social_level">Social level:</string>
+    <string name="social_points">Social points:</string>
 </resources>
