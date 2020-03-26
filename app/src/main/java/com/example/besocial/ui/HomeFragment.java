@@ -25,7 +25,7 @@ public class HomeFragment extends Fragment{
     private static ArrayList<Post> posts= new ArrayList<Post>();
     private RecyclerView postsRecyclerView;
     private ImageButton createNewPost,refreshPosts;
-    
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
