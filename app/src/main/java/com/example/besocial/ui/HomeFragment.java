@@ -49,7 +49,7 @@ public class HomeFragment extends Fragment{
             public void onClick(View v) {
                 getFragmentManager().beginTransaction().
                         replace(R.id.nav_host_fragment,  CreateNewPostFragment.getInstance()).//add on top of the static fragment
-                        addToBackStack("BBB").//cause the back button scrolling through the loaded fragments
+                        addToBackStack("").//cause the back button scrolling through the loaded fragments
                         commit();
                 getFragmentManager().executePendingTransactions();
 

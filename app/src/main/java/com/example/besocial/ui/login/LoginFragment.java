@@ -120,7 +120,7 @@ public class LoginFragment extends Fragment {
                     //Toast.makeText(this, "register", Toast.LENGTH_SHORT).show();
                     getFragmentManager().beginTransaction().
                             replace(R.id.loginContainer,  RegisterFragment.getInstance()).//add on top of the static fragment
-                            addToBackStack("BBB").//cause the back button scrolling through the loaded fragments
+                            addToBackStack("B").//cause the back button scrolling through the loaded fragments
                             commit();
                     getFragmentManager().executePendingTransactions();
                     break;
