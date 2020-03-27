@@ -57,6 +57,7 @@
         <item>Social</item>
         <item>TPain</item>
         <item>Environment</item>
+        <item>Help Me!</item>
     </string-array>
     <string name="title_activity_maps">Map</string>
     <string name="social_level">Social level:</string>

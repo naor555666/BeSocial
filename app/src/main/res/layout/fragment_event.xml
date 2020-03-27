@@ -81,7 +81,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/event_location_layout"
+        android:id="@+id/eventCreate__location_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
