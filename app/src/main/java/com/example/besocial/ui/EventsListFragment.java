@@ -42,9 +42,6 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = MainActivity.getNavController();
-        addEventFab = view.findViewById(R.id.floatingCreateEvent);
-        categorySpinner = view.findViewById(R.id.events_list_category);
-        areaSpinner= view.findViewById(R.id.events_list_area);
         addEventFab.setOnClickListener(this);
     }
 

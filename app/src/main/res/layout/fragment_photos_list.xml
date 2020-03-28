@@ -11,12 +11,12 @@
         android:id="@+id/text_my_photos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
         android:background="#FCF8F8"
         android:text="@string/my_photos"
         android:textAlignment="center"
         android:textColor="#E20F0F0F"
-        android:textSize="30sp"
-        android:layout_marginBottom="30dp"/>
+        android:textSize="30sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/my_photos_recycler_view"
