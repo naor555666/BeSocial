@@ -49,5 +49,17 @@
     <string name="about_besocial">About BeSocial</string>
     <string name="about">About</string>
     <string name="username">username</string>
-    <string name="my_photos">My Photos</string>
+    <string name="events_list_title">Events list title</string>
+    <string-array name="list_of_categories">
+        <item>General</item>
+        <item>Sports</item>
+        <item>Games</item>
+        <item>Social</item>
+        <item>TPain</item>
+        <item>Environment</item>
+        <item>Help Me!</item>
+    </string-array>
+    <string name="title_activity_maps">Map</string>
+    <string name="social_level">Social level:</string>
+    <string name="social_points">Social points:</string>
 </resources>

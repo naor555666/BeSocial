@@ -4,18 +4,24 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import com.example.besocial.data.Post;
+import com.example.besocial.data.User;
+import com.example.besocial.ui.HomeFragment;
 import com.example.besocial.ui.LogoutDialog;
 import com.example.besocial.ui.PostsAdapter;
 import com.example.besocial.ui.login.LoginActivity;
 
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -28,38 +34,66 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import android.view.Menu;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    private static User loggedUser;
+
+    private static boolean isMusicPlaying = false;
     private static final String TAG = "life cycle";
+
     private TextView nav_header_user_email, nav_header_user_full_name;
-    private FirebaseAuth fireBaseAuth;
+
+
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
-    private View logout;
     private static NavController navController;
     private BroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
 
-
+    private static FirebaseUser currentUser;
+    private FirebaseAuth fireBaseAuth;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(TAG,"Main activity On create");
         fireBaseAuth = FirebaseAuth.getInstance();
+        currentUser = fireBaseAuth.getCurrentUser();   //  get user token (if he is logged in)
+        loggedUser = new User();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //
+        HomeFragment.getPosts().add(new Post(getResources().getDrawable(R.drawable.naor_profile_picture),
+                "Naor Ohana", "12.1.20", "Hi everyone !", getResources().getDrawable(R.drawable.naor_profile_picture)));
+        HomeFragment.getPosts().add(new Post(getResources().getDrawable(R.drawable.besociallogo),
+                "BeSocial", "12.1.20", "Hello !", null));
+        HomeFragment.getPosts().add(new Post(getResources().getDrawable(R.drawable.or_profile),
+                "Or Magogi", "12.1.20", "I am here too", null));
+
+
+        //
+
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -81,6 +115,25 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(myBroadcastReceiver, intentFilter);
 
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        editor=sharedPref.edit();
+        MainActivity.isMusicPlaying=sharedPref.getBoolean("isMusicPlaying",false);
+        System.out.println("on create: music playing: "+isMusicPlaying);
+        AppCompatImageView playButton = findViewById(R.id.play_music);
+
+        if(MyMusicPlayerForegroundService.getInstance()!=null) {
+
+            if (MainActivity.isMusicPlaying == false) {
+                playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
+            } else {
+                playButton.setImageResource(R.drawable.ic_pause_green_24dp);
+            }
+        }
+        else{
+            isMusicPlaying=false;
+            playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
+        }
+
     }
 
 
@@ -88,30 +141,38 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "inside on Start");
-        FirebaseUser currentUser = fireBaseAuth.getCurrentUser();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        //DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
-        if (currentUser == null) {
+
+
+        if (MainActivity.currentUser == null) {    // if the user is not logged in
             sendUserToLogin();
         }
         //
         else {
-            nav_header_user_email.setText(currentUser.getEmail());
+            DatabaseReference currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
+            currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    MainActivity.loggedUser.setUserEmail((String)dataSnapshot.child("userEmail").getValue());
+                    MainActivity.loggedUser.setUserFirstName((String)dataSnapshot.child("userFirstName").getValue());
+                    MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userLastName").getValue());
+                    nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
+                    nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());
+                }
 
-
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Failed to read value
+                    Log.d(TAG, "Failed to read value.", databaseError.toException());
+                }
+            });
+            // nav_header_user_email.setText(currentUser.getEmail());
         }
-        //   databaseReference.child("Users").child(currentUser.getEmail());
-        //nav_header_user_full_name.setText();
-
-        //
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "inside on Resume");
-
-
     }
 
 
@@ -181,10 +242,43 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void clickHandler(View view) {
+/*        if (view.getId() == R.id.send) {
+            String input = title.getText().toString();
+            Toast.makeText(getApplicationContext(), filterText(input, ""), Toast.LENGTH_LONG).show();
+        }*/
+        if (view.getId() == R.id.play_music) {
+            Intent intent = new Intent(this, MyMusicPlayerForegroundService.class);
+            if (MainActivity.isIsMusicPlaying()) {
+                intent.putExtra("isPlaying", true);
+                setIsMusicPlaying(false);
+                ((AppCompatImageView) view).setImageResource(R.drawable.ic_play_arrow_green_24dp);
+            } else {
+                intent.putExtra("isPlaying", false);
+                setIsMusicPlaying(true);
+                ((AppCompatImageView) view).setImageResource(R.drawable.ic_pause_green_24dp);
+
+            }
+            startService(intent);
+        } else if (view.getId() == R.id.stop_music) {
+            setIsMusicPlaying(false);
+            AppCompatImageView playButton = findViewById(R.id.play_music);
+            playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
+            Intent intent = new Intent(this, MyMusicPlayerForegroundService.class);
+            stopService(intent);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Log.d(TAG, "inside on RestoreInstanceState");
+
     }
 
     @Override
@@ -199,7 +293,11 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "inside on Destroy");
         unregisterReceiver(myBroadcastReceiver);
+
+        editor.putBoolean("isMusicPlaying",MainActivity.isMusicPlaying);
+        editor.commit();
     }
+
 
     @Override
     protected void onPause() {
@@ -210,4 +308,17 @@ public class MainActivity extends AppCompatActivity {
     public static NavController getNavController() {
         return navController;
     }
+
+    public static boolean isIsMusicPlaying() {
+        return isMusicPlaying;
+    }
+
+    public static void setIsMusicPlaying(boolean isMusicPlaying) {
+        MainActivity.isMusicPlaying = isMusicPlaying;
+    }
+
+    public static User getLoggedUser(){
+        return loggedUser;
+    }
+
 }

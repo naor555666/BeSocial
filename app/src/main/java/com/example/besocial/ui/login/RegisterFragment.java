@@ -106,9 +106,8 @@ public class RegisterFragment extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
-                                            //String userID = task.getResult().getUser().getUid();
-                                            String userEmail=task.getResult().getUser().getEmail();
-                                            saveUserDetails(userEmail);
+                                            String userID = task.getResult().getUser().getUid();
+                                            saveUserDetails(userID);
                                         } else {
                                             String errorMessage = task.getException().getMessage();
                                             Toast.makeText(getActivity(), "Could not register: " + errorMessage, Toast.LENGTH_LONG).show();
@@ -126,11 +125,12 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-    private void saveUserDetails(String userEmail) {
-        userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userEmail);
+    private void saveUserDetails(String userID) {
+        userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userID);
         HashMap userMap = new HashMap();
         userMap.put("userFirstName", firstName.getText().toString());
         userMap.put("userLastName", lastName.getText().toString());
+        userMap.put("userEmail", email.getText().toString());
         userRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
@@ -146,7 +146,7 @@ public class RegisterFragment extends Fragment {
     }
 
     private boolean checkFields() {
-        Toast.makeText(getActivity(), "chekc fielda", Toast.LENGTH_SHORT);
+        Toast.makeText(getActivity(), "chekc fields", Toast.LENGTH_SHORT);
 
         Boolean isFieldsValid = false;
         String firstNameString = firstName.getText().toString();
@@ -155,36 +155,7 @@ public class RegisterFragment extends Fragment {
         String confirmEmailString = confirmEmail.getText().toString();
         String passwordString = password.getText().toString();
         String confirmPasswordString = confirmPassword.getText().toString();
-/*
-        if (firstNameString.equals("")) {
-            Toast.makeText(getActivity(), "First name is empty", Toast.LENGTH_SHORT).show();
-            firstName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (lastNameString.equals("")) {
-            Toast.makeText(getActivity(), "Last name is empty", Toast.LENGTH_SHORT).show();
-            lastName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (emailString.equals("")) {
-            Toast.makeText(getActivity(), "Email is empty", Toast.LENGTH_SHORT).show();
-            email.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (confirmEmailString.equals("")) {
-            Toast.makeText(getActivity(), "Email confirmation is empty", Toast.LENGTH_SHORT).show();
-            confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (passwordString.equals("")) {
-            Toast.makeText(getActivity(), "Password is empty", Toast.LENGTH_SHORT).show();
-            password.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (confirmPasswordString.equals("")) {
-            Toast.makeText(getActivity(), "Password confirmation is empty", Toast.LENGTH_SHORT).show();
-            confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (!emailString.equals(confirmEmailString)) {
-            Toast.makeText(getActivity(), "Email confirmation is incompatible", Toast.LENGTH_SHORT).show();
-            confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (!passwordString.equals(confirmPasswordString)) {
-            Toast.makeText(getActivity(), "Password confirmation is incompatible", Toast.LENGTH_SHORT).show();
-            confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else
-            isFieldsValid = true;
 
-
- */
         isFieldsValid=true;
         if (firstNameString.equals("")) {
             firstName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
