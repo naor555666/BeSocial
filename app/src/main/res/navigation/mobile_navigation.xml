@@ -33,6 +33,13 @@
         <action
             android:id="@+id/action_nav_social_center_to_createEventFragment"
             app:destination="@id/createEventFragment" />
+        <action
+            android:id="@+id/action_nav_social_center_to_eventsListFragment"
+            app:destination="@id/eventsListFragment" />
+        <argument
+            android:name="social_events_list"
+            app:argType="string"
+            android:defaultValue="Social events list" />
     </fragment>
     <fragment
         android:id="@+id/nav_bonus_area"
@@ -59,6 +66,15 @@
         android:name="com.example.besocial.ui.EventFragment"
         android:label="fragment_event"
         tools:layout="@layout/fragment_event" />
+    <fragment
+        android:id="@+id/eventsListFragment"
+        android:name="com.example.besocial.ui.EventsListFragment"
+        android:label="fragment_events_list"
+        tools:layout="@layout/fragment_events_list" >
+        <action
+            android:id="@+id/action_eventsListFragment_to_createEventFragment"
+            app:destination="@id/createEventFragment" />
+    </fragment>
 
 
 </navigation>

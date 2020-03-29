@@ -128,9 +128,16 @@ public class RegisterFragment extends Fragment {
     private void saveUserDetails(String userID) {
         userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userID);
         HashMap userMap = new HashMap();
+        userMap.put("userId", userID);
         userMap.put("userFirstName", firstName.getText().toString());
         userMap.put("userLastName", lastName.getText().toString());
         userMap.put("userEmail", email.getText().toString());
+        userMap.put("userAddress","");
+        userMap.put("userCity","");
+        userMap.put("userBirthday",null);
+        userMap.put("userSocialLevel","shy socializer");
+        userMap.put("userSocialPoints",0);
+        userMap.put("userSocialStoreCredits",0);
         userRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {

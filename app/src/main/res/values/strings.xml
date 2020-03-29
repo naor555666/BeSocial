@@ -50,6 +50,7 @@
     <string name="about">About</string>
     <string name="username">username</string>
     <string name="events_list_title">Events list title</string>
+    <string name="about_BeSocial">BeSocial application is a new social media application. Our main goal was to inspire and encourage you to be more active in society, help each other, make new connections, volunteer more and just to have fun. We would like to inform you that this app was made in great efforts, so we hope you appriciate, keep the rules and behave well. This application will only be used for peace purposes. Thank you for the understanding and have a pleasant use.</string>
     <string-array name="list_of_categories">
         <item>General</item>
         <item>Sports</item>
@@ -62,4 +63,5 @@
     <string name="title_activity_maps">Map</string>
     <string name="social_level">Social level:</string>
     <string name="social_points">Social points:</string>
+    <string name="my_photos">my photos</string>
 </resources>
