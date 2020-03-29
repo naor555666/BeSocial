@@ -71,7 +71,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_date_range_black_24dp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/eventCreate_StartDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
                 android:inputType="date"
                 android:textSize="17sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/eventCreate_EndDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_access_time_black_24dp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/eventCreate_StartTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -124,8 +124,8 @@
                 android:inputType="time"
                 android:textSize="17sp" />
 
-            <EditText
-                android:id="@+id/EeventCreate_EndTime"
+            <TextView
+                android:id="@+id/eventCreate_EndTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
