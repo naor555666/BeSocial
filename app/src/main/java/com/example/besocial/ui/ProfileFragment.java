@@ -43,7 +43,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment {
     private CircleImageView profileProfilePicture;
     private TextView profilePageUsername;
-    private EditText profileFullName,profileEmail,profileCity,profileAddress,profileBirthday;
+    private EditText profileFullName,profileEmail,profileCity,profileAddress,profileBirthday,profileSocialLevel,profileSocialPoints;
     private User loggedUser;
     private Button profileSaveDetails;
     private final static int galleryPick=1;
@@ -71,6 +71,8 @@ public class ProfileFragment extends Fragment {
         profilePageUsername=view.findViewById(R.id.profile_page_username);
         profileFullName=view.findViewById(R.id.profile_full_name);
         profileAddress=view.findViewById(R.id.profile_adress);
+        profileSocialLevel=view.findViewById(R.id.profile_social_level);
+        profileSocialPoints=view.findViewById(R.id.profile_social_points);
         profileCity=view.findViewById(R.id.profile_city);
         profileEmail=view.findViewById(R.id.profile_email);
         profileBirthday=view.findViewById(R.id.profile_birthday);
@@ -83,6 +85,9 @@ public class ProfileFragment extends Fragment {
         profileFullName.setText(loggedUser.getUserFirstName()+"  "+loggedUser.getUserLastName());
         profileAddress.setText(loggedUser.getUserAddress());
         profileCity.setText(loggedUser.getUserCity());
+        profileSocialLevel.setText(loggedUser.getSocialLevel());
+        //profileSocialPoints.setText(loggedUser.getSocialPoints());
+
 
 
         profileEditProfileDetails.setOnClickListener(new View.OnClickListener() {
