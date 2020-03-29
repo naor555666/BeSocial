@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.loggedUser.setUserFirstName((String)dataSnapshot.child("userFirstName").getValue());
                     MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userLastName").getValue());
                     MainActivity.loggedUser.setSocialLevel((String)dataSnapshot.child("userSocialLevel").getValue());
+                    //MainActivity.loggedUser.setSocialPoints(((Integer) dataSnapshot.child("userSocialPoints").getValue()).intValue());
                     //MainActivity.loggedUser.setSocialPoints((Integer) dataSnapshot.child("userSocialPoints").getValue());
 
                     nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());

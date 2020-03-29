@@ -136,8 +136,8 @@ public class RegisterFragment extends Fragment {
         userMap.put("userCity","");
         userMap.put("userBirthday",null);
         userMap.put("userSocialLevel","shy socializer");
-        userMap.put("userSocialPoints",0);
-        userMap.put("userSocialStoreCredits",0);
+        //userMap.put("userSocialPoints",0);
+        //userMap.put("userSocialStoreCredits",0);
         userRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {

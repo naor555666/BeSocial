@@ -28,7 +28,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -49,7 +51,8 @@ public class ProfileFragment extends Fragment {
     private final static int galleryPick=1;
     private ImageButton profileChangeProfilePicture,profileEditProfileDetails;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference userRef;
+    private static DatabaseReference userRef;
+    private StorageReference userPicturesRef;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -80,6 +83,7 @@ public class ProfileFragment extends Fragment {
         profileEditProfileDetails=view.findViewById(R.id.profile_edit_profile_details);
         firebaseDatabase = FirebaseDatabase.getInstance();
         loggedUser=MainActivity.getLoggedUser();
+        userPicturesRef= FirebaseStorage.getInstance().getReference().child(MainActivity.getCurrentUser().getUid());
         profilePageUsername.setText(loggedUser.getUserFirstName()+"  "+loggedUser.getUserLastName());
         profileEmail.setText(loggedUser.getUserEmail());
         profileFullName.setText(loggedUser.getUserFirstName()+"  "+loggedUser.getUserLastName());
@@ -133,6 +137,8 @@ public class ProfileFragment extends Fragment {
                             profileEditProfileDetails.setVisibility(View.VISIBLE);
                         }
                     });
+
+
                 }
                 else{
                     Toast.makeText(getActivity(), "Fields are not filled correctly", Toast.LENGTH_LONG).show();
@@ -160,6 +166,22 @@ public class ProfileFragment extends Fragment {
 
         if(requestCode==galleryPick && resultCode== Activity.RESULT_OK && data!=null){
             Uri imageUri=data.getData();
+            userPicturesRef.child("profilePicture"+".jpg");
+            /*
+            userPicturesRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    if(task.isSuccessful()){
+                        final String downloadUrl=task.getResult().getUploadSessionUri().toString();
+                        userRef.child("profileImage").setValue(downloadUrl);
+                        Toast.makeText(getActivity(), "Profile picture changed", Toast.LENGTH_LONG).show();
+                    }
+
+                }
+            });
+            
+             */
            // CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1,1).start(getActivity());
             profileProfilePicture.setImageURI(imageUri);
         }
