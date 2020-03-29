@@ -35,17 +35,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Calendar;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class CreateEventFragment extends Fragment implements View.OnClickListener {
+    public final static String EVENT_TIME_ERROR_MESSAGE = "Event cannot be finished before it started,times have changed automatically";
     private ImageView locationIcon;
     private static TextView locationName;
     private static LatLng eventLocation;
     private static Spinner categorySpinner;
     private static TextView startTime, endTime, startDate, endDate;
-    private static String chosenDate,chosenTime;
+    private static String chosenDate, chosenTime;
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private Boolean isHelpEvent = false;
 
@@ -70,6 +73,16 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         endTime = view.findViewById(R.id.eventCreate_EndTime);
         startDate = view.findViewById(R.id.eventCreate_StartDate);
         endDate = view.findViewById(R.id.eventCreate_EndDate);
+
+        // Use the current date as the default date in the picker
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+
+        String strDefaultDate = "" + day + "/" + (month + 1) + "/" + year;
+        startDate.setText(strDefaultDate);
+
         //initializing the spinner list of categories
         categorySpinner = view.findViewById(R.id.eventCreate_categorySpinner);
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.list_of_categories, R.layout.support_simple_spinner_dropdown_item);
@@ -101,32 +114,36 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     public void setListeners() {
         locationName.setOnClickListener(this);
 
-        DateHandler dp=new DateHandler();
+        DateHandler dp = new DateHandler();
         startDate.setOnClickListener(dp);
         endDate.setOnClickListener(dp);
 
-        TimeHandler th=new TimeHandler();
+        TimeHandler th = new TimeHandler();
         startTime.setOnClickListener(th);
         endTime.setOnClickListener(th);
     }
-    private class TimeHandler implements View.OnClickListener{
+
+    private class TimeHandler implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            showTimePickerDialog((TextView)v);
+            showTimePickerDialog((TextView) v);
         }
+
         private void showTimePickerDialog(TextView tv) {
-            TimePickerFragment newFragment = new TimePickerFragment(tv);
-            newFragment.show(getFragmentManager(),null);
+            TimePickerFragment newFragment = new TimePickerFragment(tv, startTime, endTime, startDate, endDate);
+            newFragment.show(getFragmentManager(), null);
         }
     }
-    private class DateHandler implements View.OnClickListener{
+
+    private class DateHandler implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            showDatePickerDialog((TextView)v);
+            showDatePickerDialog((TextView) v);
         }
+
         private void showDatePickerDialog(TextView tv) {
-            DatePickerFragment newFragment = new DatePickerFragment(tv,endDate);
-            newFragment.show(getFragmentManager(),null);
+            DatePickerFragment newFragment = new DatePickerFragment(tv, startDate, endDate);
+            newFragment.show(getFragmentManager(), null);
         }
     }
 
@@ -141,5 +158,21 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
     public static void setChosenTime(String chosenTime) {
         CreateEventFragment.chosenTime = chosenTime;
+    }
+
+    public static TextView getStartTime() {
+        return startTime;
+    }
+
+    public static TextView getEndTime() {
+        return endTime;
+    }
+
+    public static void setStartTime(TextView startTime) {
+        CreateEventFragment.startTime = startTime;
+    }
+
+    public static void setEndTime(TextView endTime) {
+        CreateEventFragment.endTime = endTime;
     }
 }

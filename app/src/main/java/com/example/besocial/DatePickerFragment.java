@@ -6,8 +6,11 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
+
+import com.example.besocial.ui.CreateEventFragment;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -18,11 +21,12 @@ import java.util.Date;
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
-    private TextView tv, endDate;
+    private TextView tv, startDate, endDate;
     private static Date minDate = Calendar.getInstance().getTime();
 
-    public DatePickerFragment(TextView tv, TextView endDate) {
+    public DatePickerFragment(TextView tv, TextView startDate, TextView endDate) {
         this.tv = tv;
+        this.startDate = startDate;
         this.endDate = endDate;
     }
 
@@ -33,6 +37,7 @@ public class DatePickerFragment extends DialogFragment
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
+
 
         // Create a new instance of DatePickerDialog and return it
         DatePickerDialog dpd = new DatePickerDialog(getActivity(), this, year, month, day);
@@ -46,12 +51,12 @@ public class DatePickerFragment extends DialogFragment
     public void onDateSet(DatePicker view, int year, int month, int day) {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         String strChosenDate = "" + day + "/" + (month + 1) + "/" + year;
-
-        //take care of dates input
+        String strEndDate = endDate.getText().toString();
+        String strStartDate= startDate.getText().toString();
+        //take care of dates input and correctness
         if (tv.getId() == R.id.eventCreate_StartDate) {
             try {
                 minDate = df.parse(strChosenDate);
-                String strEndDate = endDate.getText().toString();
                 Date realEndDate = df.parse(strEndDate);
                 if (minDate.after(realEndDate))
                     this.endDate.setText(strChosenDate);
@@ -60,5 +65,10 @@ public class DatePickerFragment extends DialogFragment
             }
         }
         tv.setText(strChosenDate);
+        strEndDate = endDate.getText().toString();
+        strStartDate= startDate.getText().toString();
+        if(strStartDate.equals(strEndDate))
+            if (TimePickerFragment.handleTimingsValidation(CreateEventFragment.getStartTime(), CreateEventFragment.getEndTime(), "", tv))
+                Toast.makeText(getContext(), CreateEventFragment.EVENT_TIME_ERROR_MESSAGE, Toast.LENGTH_LONG).show();
     }
 }
