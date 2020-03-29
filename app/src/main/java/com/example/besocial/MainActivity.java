@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     private static NavController navController;
     private BroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
-
+    private static DatabaseReference currentUserDatabaseRef;
     private static FirebaseUser currentUser;
     private FirebaseAuth fireBaseAuth;
     private SharedPreferences sharedPref;
@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG,"Main activity On create");
         fireBaseAuth = FirebaseAuth.getInstance();
-        currentUser = fireBaseAuth.getCurrentUser();   //  get user token (if he is logged in)
+        currentUser = fireBaseAuth.getCurrentUser();
+        //  get user token (if he is logged in)
         loggedUser = new User();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -148,11 +149,13 @@ public class MainActivity extends AppCompatActivity {
         }
         //
         else {
-            DatabaseReference currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
+            currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
             currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     MainActivity.loggedUser.setUserEmail((String)dataSnapshot.child("userEmail").getValue());
+                    MainActivity.loggedUser.setUserAddress((String)dataSnapshot.child("userAddress").getValue());
+                    MainActivity.loggedUser.setUserCity((String)dataSnapshot.child("userCity").getValue());
                     MainActivity.loggedUser.setUserFirstName((String)dataSnapshot.child("userFirstName").getValue());
                     MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userLastName").getValue());
                     nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
@@ -321,4 +324,11 @@ public class MainActivity extends AppCompatActivity {
         return loggedUser;
     }
 
+    public static FirebaseUser getCurrentUser() {
+        return currentUser;
+    }
+
+    public static DatabaseReference getCurrentUserDatabaseRef() {
+        return currentUserDatabaseRef;
+    }
 }

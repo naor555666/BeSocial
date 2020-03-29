@@ -135,7 +135,7 @@
                 android:editable="false"
                 android:ems="10"
                 android:enabled="false"
-                android:inputType="textPersonName" />
+                android:inputType="date" />
 
             <TextView
                 android:layout_width="50dp"
@@ -282,6 +282,14 @@
             android:layout_marginTop="40dp"
             android:layout_weight="1"
             android:src="@drawable/ic_edit_profile_24dp" />
+
+        <Button
+            android:id="@+id/profile_save_new_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="SAVE DETAILS"
+            android:visibility="invisible" />
 
 
     </LinearLayout>
