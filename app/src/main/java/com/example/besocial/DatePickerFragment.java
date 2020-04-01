@@ -68,7 +68,9 @@ public class DatePickerFragment extends DialogFragment
         strEndDate = endDate.getText().toString();
         strStartDate= startDate.getText().toString();
         if(strStartDate.equals(strEndDate))
-            if (TimePickerFragment.handleTimingsValidation(CreateEventFragment.getStartTime(), CreateEventFragment.getEndTime(), "", tv))
-                Toast.makeText(getContext(), CreateEventFragment.EVENT_TIME_ERROR_MESSAGE, Toast.LENGTH_LONG).show();
+            if (TimePickerFragment.handleTimingsValidation(CreateEventFragment.getStartTime(),
+                    CreateEventFragment.getEndTime(), "", tv))
+                Toast.makeText(getContext(), CreateEventFragment.EVENT_TIME_ERROR_MESSAGE,
+                        Toast.LENGTH_LONG).show();
     }
 }

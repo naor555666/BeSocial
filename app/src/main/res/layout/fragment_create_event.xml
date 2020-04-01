@@ -43,6 +43,7 @@
             android:layout_weight="0.5"
             android:background="@drawable/input_field"
             android:hint="Enter a title..."
+            android:maxLength="50"
             android:inputType="textPersonName"
             android:textColor="#050505"
             android:textSize="24sp" />

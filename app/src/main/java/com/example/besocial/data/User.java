@@ -17,6 +17,7 @@ public class User {
     private String socialLevel;
     private int socialStoreCredits;
     private ArrayList<User> followList;
+    private boolean isManager=false;
 
     public User(String userId, String userFirstName, String userLastName, String userEmail, String userAddress, String userCity, Date birthday, int socialPoints, String socialLevel, int socialStoreCredits, ArrayList<User> followList) {
         this.userId = userId;
@@ -122,5 +123,13 @@ public class User {
 
     public void setUserCity(String userCity) {
         this.userCity = userCity;
+    }
+
+    public boolean isManager() {
+        return isManager;
+    }
+
+    public void setManager(boolean manager) {
+        isManager = manager;
     }
 }
