@@ -24,6 +24,7 @@ import com.example.besocial.MainActivity;
 import com.example.besocial.R;
 import com.example.besocial.data.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -90,7 +91,12 @@ public class ProfileFragment extends Fragment {
         profileAddress.setText(loggedUser.getUserAddress());
         profileCity.setText(loggedUser.getUserCity());
         profileSocialLevel.setText(loggedUser.getSocialLevel());
-        //profileSocialPoints.setText(loggedUser.getSocialPoints());
+        profileSocialPoints.setText(loggedUser.getSocialPoints());
+        profileBirthday.setText(loggedUser.getBirthday());
+        //userPicturesRef= FirebaseStorage.getInstance().getReference().child(loggedUser.getUserId());
+
+
+
 
 
 
@@ -166,7 +172,21 @@ public class ProfileFragment extends Fragment {
 
         if(requestCode==galleryPick && resultCode== Activity.RESULT_OK && data!=null){
             Uri imageUri=data.getData();
-            userPicturesRef.child("profilePicture"+".jpg");
+            final StorageReference imageName=userPicturesRef.child("image "+imageUri.getLastPathSegment() );
+            imageName.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(getActivity(), "Profile picture changed", Toast.LENGTH_LONG).show();
+                    imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            DatabaseReference imageStore= FirebaseDatabase.getInstance().getReference().child("users").child(MainActivity.getCurrentUser().getUid()).child("profileImage");
+                            imageStore.setValue((String)uri.toString());
+                        }
+                    });
+                }
+            });
+            //userPicturesRef.child("profilePicture"+".jpg");
             /*
             userPicturesRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -180,7 +200,7 @@ public class ProfileFragment extends Fragment {
 
                 }
             });
-            
+
              */
            // CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1,1).start(getActivity());
             profileProfilePicture.setImageURI(imageUri);

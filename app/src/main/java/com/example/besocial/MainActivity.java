@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
         Log.d(TAG,"Main activity On create");
         fireBaseAuth = FirebaseAuth.getInstance();
@@ -153,14 +155,16 @@ public class MainActivity extends AppCompatActivity {
             currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                     MainActivity.loggedUser.setUserEmail((String)dataSnapshot.child("userEmail").getValue());
                     MainActivity.loggedUser.setUserAddress((String)dataSnapshot.child("userAddress").getValue());
                     MainActivity.loggedUser.setUserCity((String)dataSnapshot.child("userCity").getValue());
                     MainActivity.loggedUser.setUserFirstName((String)dataSnapshot.child("userFirstName").getValue());
                     MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userLastName").getValue());
+                    MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userBirthday").getValue());
                     MainActivity.loggedUser.setSocialLevel((String)dataSnapshot.child("userSocialLevel").getValue());
-                    //MainActivity.loggedUser.setSocialPoints(((Integer) dataSnapshot.child("userSocialPoints").getValue()).intValue());
-                    //MainActivity.loggedUser.setSocialPoints((Integer) dataSnapshot.child("userSocialPoints").getValue());
+                    MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userSocialPoints").getValue());
+                    MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userSocialStoreCredits").getValue());
 
                     nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
                     nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());

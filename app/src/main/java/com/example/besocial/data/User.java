@@ -12,13 +12,13 @@ public class User {
     private String userEmail;
     private String userAddress;
     private String userCity;
-    private Date birthday;
-    private int socialPoints;
+    private String birthday;
+    private String socialPoints;
     private String socialLevel;
-    private int socialStoreCredits;
+    private String socialStoreCredits;
     private ArrayList<User> followList;
 
-    public User(String userId, String userFirstName, String userLastName, String userEmail, String userAddress, String userCity, Date birthday, int socialPoints, String socialLevel, int socialStoreCredits, ArrayList<User> followList) {
+    public User(String userId, String userFirstName, String userLastName, String userEmail, String userAddress, String userCity, String birthday, String socialPoints, String socialLevel, String socialStoreCredits, ArrayList<User> followList) {
         this.userId = userId;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
@@ -36,27 +36,27 @@ public class User {
 
     }
 
-    public Date getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 
-    public int getSocialPoints() {
+    public String getSocialPoints() {
         return socialPoints;
     }
 
-    public void setSocialPoints(int socialPoints) {
+    public void setSocialPoints(String socialPoints) {
         this.socialPoints = socialPoints;
     }
 
-    public int getSocialStoreCredits() {
+    public String getSocialStoreCredits() {
         return socialStoreCredits;
     }
 
-    public void setSocialStoreCredits(int socialStoreCredits) {
+    public void setSocialStoreCredits(String socialStoreCredits) {
         this.socialStoreCredits = socialStoreCredits;
     }
 

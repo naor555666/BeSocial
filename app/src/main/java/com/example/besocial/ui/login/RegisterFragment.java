@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.besocial.MainActivity;
 import com.example.besocial.R;
+import com.example.besocial.data.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -127,6 +128,7 @@ public class RegisterFragment extends Fragment {
 
     private void saveUserDetails(String userID) {
         userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userID);
+
         HashMap userMap = new HashMap();
         userMap.put("userId", userID);
         userMap.put("userFirstName", firstName.getText().toString());
@@ -134,12 +136,15 @@ public class RegisterFragment extends Fragment {
         userMap.put("userEmail", email.getText().toString());
         userMap.put("userAddress","");
         userMap.put("userCity","");
-        userMap.put("userBirthday",null);
+        userMap.put("userBirthday","");
         userMap.put("userSocialLevel","shy socializer");
-        //userMap.put("userSocialPoints",0);
-        //userMap.put("userSocialStoreCredits",0);
+        userMap.put("userSocialPoints","0");
+        userMap.put("userSocialStoreCredits","0");
+
+
         userRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
-            @Override
+
+        @Override
             public void onComplete(@NonNull Task task) {
                 if (task.isSuccessful()) {
                     Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
