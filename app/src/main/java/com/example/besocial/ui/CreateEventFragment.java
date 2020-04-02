@@ -64,7 +64,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
 
     private ImageView locationIcon, eventPhoto;
-    private Uri pickedImageFromGallery;
+    private Uri pickedImageFromGallery = null;
     private TextView description;
     private TextView eventTitle;
     private Button createEventBtn;
@@ -75,7 +75,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     private static String chosenDate, chosenTime;
     private String saveCurrentDate, saveCurrentTime, eventRandomName, downloadUrl;
     User loggedUser = MainActivity.getLoggedUser();
-    private String strEventPhotoUrl;
+    private String strEventPhotoUrl=null;
     private String strEventCategory;
     private String strEventTitle;
     private String strStartDate;
@@ -209,7 +209,9 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
             loadingBar.setMessage("Please wait, while we are updating your new event...");
             loadingBar.show();
             loadingBar.setCanceledOnTouchOutside(true);
-            storeImageToFirebaseStorage();
+            if (pickedImageFromGallery == null) {
+                saveEventInformationToDatabase();
+            } else storeImageToFirebaseStorage();
 
 
         }
@@ -218,18 +220,12 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     }
 
     private void storeImageToFirebaseStorage() {
-        Calendar calFordDate = Calendar.getInstance();
-        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
-        saveCurrentDate = currentDate.format(calFordDate.getTime());
+        Long currentTime = System.currentTimeMillis();
+        eventRandomName = pickedImageFromGallery == null ?
+                currentTime.toString() : currentTime.toString() + pickedImageFromGallery.getLastPathSegment();
+        Log.d(TAG, "random name + path is: " + eventRandomName);
 
-        Calendar calFordTime = Calendar.getInstance();
-        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
-        saveCurrentTime = currentTime.format(calFordDate.getTime());
-
-        eventRandomName = saveCurrentDate + strStartTime;
-
-
-        StorageReference filePath = imagesReference.child("Events images").child(pickedImageFromGallery.getLastPathSegment() + eventRandomName + ".jpg");
+        StorageReference filePath = imagesReference.child("Events images/" + eventRandomName);
 
         filePath.putFile(pickedImageFromGallery).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
