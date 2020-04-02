@@ -161,10 +161,10 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.loggedUser.setUserCity((String)dataSnapshot.child("userCity").getValue());
                     MainActivity.loggedUser.setUserFirstName((String)dataSnapshot.child("userFirstName").getValue());
                     MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userLastName").getValue());
-                    MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userBirthday").getValue());
+                    MainActivity.loggedUser.setBirthday((String)dataSnapshot.child("userBirthday").getValue());
                     MainActivity.loggedUser.setSocialLevel((String)dataSnapshot.child("userSocialLevel").getValue());
-                    MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userSocialPoints").getValue());
-                    MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userSocialStoreCredits").getValue());
+                    MainActivity.loggedUser.setSocialPoints((String)dataSnapshot.child("userSocialPoints").getValue());
+                    MainActivity.loggedUser.setSocialStoreCredits((String)dataSnapshot.child("userSocialStoreCredits").getValue());
 
                     nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
                     nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());

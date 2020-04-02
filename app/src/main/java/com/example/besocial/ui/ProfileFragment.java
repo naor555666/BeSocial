@@ -27,11 +27,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -93,7 +97,7 @@ public class ProfileFragment extends Fragment {
         profileSocialLevel.setText(loggedUser.getSocialLevel());
         profileSocialPoints.setText(loggedUser.getSocialPoints());
         profileBirthday.setText(loggedUser.getBirthday());
-        //userPicturesRef= FirebaseStorage.getInstance().getReference().child(loggedUser.getUserId());
+        userRef=MainActivity.getCurrentUserDatabaseRef();
 
 
 
@@ -114,7 +118,6 @@ public class ProfileFragment extends Fragment {
         profileSaveDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userRef=MainActivity.getCurrentUserDatabaseRef();
 
                 boolean isFieldsValid=true;
                // String[] name=profileFullName.getText().toString().split(" ");
@@ -162,6 +165,23 @@ public class ProfileFragment extends Fragment {
                       //  .start(getView().getContext(), this);
 
                  startActivityForResult(galleryIntent,galleryPick);
+            }
+        });
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    String myProfileImage=dataSnapshot.child("profileImage").getValue().toString();
+                    Picasso.with(getContext()).load(myProfileImage).into(profileProfilePicture);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

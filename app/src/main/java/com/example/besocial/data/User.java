@@ -123,4 +123,7 @@ public class User {
     public void setUserCity(String userCity) {
         this.userCity = userCity;
     }
+
+
+
 }
