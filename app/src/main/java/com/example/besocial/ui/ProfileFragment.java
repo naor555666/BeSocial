@@ -24,11 +24,18 @@ import com.example.besocial.MainActivity;
 import com.example.besocial.R;
 import com.example.besocial.data.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -43,13 +50,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment {
     private CircleImageView profileProfilePicture;
     private TextView profilePageUsername;
-    private EditText profileFullName,profileEmail,profileCity,profileAddress,profileBirthday;
+    private EditText profileFullName,profileEmail,profileCity,profileAddress,profileBirthday,profileSocialLevel,profileSocialPoints;
     private User loggedUser;
     private Button profileSaveDetails;
     private final static int galleryPick=1;
     private ImageButton profileChangeProfilePicture,profileEditProfileDetails;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference userRef;
+    private static DatabaseReference userRef;
+    private StorageReference userPicturesRef;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -71,6 +79,8 @@ public class ProfileFragment extends Fragment {
         profilePageUsername=view.findViewById(R.id.profile_page_username);
         profileFullName=view.findViewById(R.id.profile_full_name);
         profileAddress=view.findViewById(R.id.profile_adress);
+        profileSocialLevel=view.findViewById(R.id.profile_social_level);
+        profileSocialPoints=view.findViewById(R.id.profile_social_points);
         profileCity=view.findViewById(R.id.profile_city);
         profileEmail=view.findViewById(R.id.profile_email);
         profileBirthday=view.findViewById(R.id.profile_birthday);
@@ -78,11 +88,20 @@ public class ProfileFragment extends Fragment {
         profileEditProfileDetails=view.findViewById(R.id.profile_edit_profile_details);
         firebaseDatabase = FirebaseDatabase.getInstance();
         loggedUser=MainActivity.getLoggedUser();
+        userPicturesRef= FirebaseStorage.getInstance().getReference().child(MainActivity.getCurrentUser().getUid());
         profilePageUsername.setText(loggedUser.getUserFirstName()+"  "+loggedUser.getUserLastName());
         profileEmail.setText(loggedUser.getUserEmail());
         profileFullName.setText(loggedUser.getUserFirstName()+"  "+loggedUser.getUserLastName());
         profileAddress.setText(loggedUser.getUserAddress());
         profileCity.setText(loggedUser.getUserCity());
+        profileSocialLevel.setText(loggedUser.getSocialLevel());
+        profileSocialPoints.setText(loggedUser.getSocialPoints());
+        profileBirthday.setText(loggedUser.getBirthday());
+        userRef=MainActivity.getCurrentUserDatabaseRef();
+
+
+
+
 
 
         profileEditProfileDetails.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +118,6 @@ public class ProfileFragment extends Fragment {
         profileSaveDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userRef=MainActivity.getCurrentUserDatabaseRef();
 
                 boolean isFieldsValid=true;
                // String[] name=profileFullName.getText().toString().split(" ");
@@ -128,6 +146,8 @@ public class ProfileFragment extends Fragment {
                             profileEditProfileDetails.setVisibility(View.VISIBLE);
                         }
                     });
+
+
                 }
                 else{
                     Toast.makeText(getActivity(), "Fields are not filled correctly", Toast.LENGTH_LONG).show();
@@ -147,6 +167,23 @@ public class ProfileFragment extends Fragment {
                  startActivityForResult(galleryIntent,galleryPick);
             }
         });
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    String myProfileImage=dataSnapshot.child("profileImage").getValue().toString();
+                    Picasso.with(getContext()).load(myProfileImage).into(profileProfilePicture);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -155,6 +192,36 @@ public class ProfileFragment extends Fragment {
 
         if(requestCode==galleryPick && resultCode== Activity.RESULT_OK && data!=null){
             Uri imageUri=data.getData();
+            final StorageReference imageName=userPicturesRef.child("image "+imageUri.getLastPathSegment() );
+            imageName.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(getActivity(), "Profile picture changed", Toast.LENGTH_LONG).show();
+                    imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            DatabaseReference imageStore= FirebaseDatabase.getInstance().getReference().child("users").child(MainActivity.getCurrentUser().getUid()).child("profileImage");
+                            imageStore.setValue((String)uri.toString());
+                        }
+                    });
+                }
+            });
+            //userPicturesRef.child("profilePicture"+".jpg");
+            /*
+            userPicturesRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    if(task.isSuccessful()){
+                        final String downloadUrl=task.getResult().getUploadSessionUri().toString();
+                        userRef.child("profileImage").setValue(downloadUrl);
+                        Toast.makeText(getActivity(), "Profile picture changed", Toast.LENGTH_LONG).show();
+                    }
+
+                }
+            });
+
+             */
            // CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1,1).start(getActivity());
             profileProfilePicture.setImageURI(imageUri);
         }
