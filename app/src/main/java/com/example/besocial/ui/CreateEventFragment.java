@@ -1,39 +1,32 @@
 package com.example.besocial.ui;
 
 
-import android.Manifest;
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.example.besocial.DatePickerFragment;
+//import com.example.besocial.EventDatePicker;
+import com.example.besocial.EventDatePicker;
 import com.example.besocial.MainActivity;
 import com.example.besocial.MapsActivity;
 import com.example.besocial.R;
@@ -49,8 +42,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 
 /**
@@ -75,7 +71,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     private static String chosenDate, chosenTime;
     private String saveCurrentDate, saveCurrentTime, eventRandomName, downloadUrl;
     User loggedUser = MainActivity.getLoggedUser();
-    private String strEventPhotoUrl=null;
+    private String strEventPhotoUrl = null;
     private String strEventCategory;
     private String strEventTitle;
     private String strStartDate;
@@ -278,6 +274,8 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         }
     }
 
+
+
     private class DateHandler implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -285,7 +283,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         }
 
         private void showDatePickerDialog(TextView tv) {
-            DatePickerFragment newFragment = new DatePickerFragment(tv, startDate, endDate);
+            EventDatePicker newFragment = new EventDatePicker(tv, startDate, endDate);
             newFragment.show(getFragmentManager(), null);
         }
     }
@@ -306,6 +304,9 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         }
     }
 
+
+
+    //getters&setters
     public static void setEventLocation(LatLng chosenEventLocation) {
         CreateEventFragment.eventLocation = chosenEventLocation;
     }

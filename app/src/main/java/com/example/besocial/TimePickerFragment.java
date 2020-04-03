@@ -76,7 +76,6 @@ public class TimePickerFragment extends DialogFragment
         }
 
         if (!isStartTimeBeforeEndTime) {
-
             startTime.setText(strChosenTime);
             endTime.setText(strChosenTime);
             return true;
