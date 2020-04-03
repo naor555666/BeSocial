@@ -98,6 +98,9 @@ public class ProfileFragment extends Fragment {
         profileSocialPoints.setText(loggedUser.getSocialPoints());
         profileBirthday.setText(loggedUser.getBirthday());
         userRef=MainActivity.getCurrentUserDatabaseRef();
+        String myProfileImage=loggedUser.getUserProfileImage();
+        if(!myProfileImage.equals(""))
+            Picasso.with(getContext()).load(myProfileImage).into(profileProfilePicture);
 
 
 
@@ -168,23 +171,9 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
-                    String myProfileImage=dataSnapshot.child("profileImage").getValue().toString();
-                    Picasso.with(getContext()).load(myProfileImage).into(profileProfilePicture);
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -240,6 +229,8 @@ public class ProfileFragment extends Fragment {
 
 
     }
+
+
 
 
 

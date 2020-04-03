@@ -45,13 +45,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import android.view.Menu;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
     private static User loggedUser;
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private static NavController navController;
+    private CircleImageView nav_header_user_profile_picture;
     private BroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
     private static DatabaseReference currentUserDatabaseRef;
     private static FirebaseUser currentUser;
@@ -114,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         View header = navigationView.getHeaderView(0);
         nav_header_user_email = (TextView) header.findViewById(R.id.nav_header_user_email);
         nav_header_user_full_name = (TextView) header.findViewById(R.id.nav_header_user_full_name);
+        nav_header_user_profile_picture= (CircleImageView) header.findViewById(R.id.nav_header_user_profile_picture);
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(myBroadcastReceiver, intentFilter);
@@ -165,9 +171,13 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.loggedUser.setSocialLevel((String)dataSnapshot.child("userSocialLevel").getValue());
                     MainActivity.loggedUser.setSocialPoints((String)dataSnapshot.child("userSocialPoints").getValue());
                     MainActivity.loggedUser.setSocialStoreCredits((String)dataSnapshot.child("userSocialStoreCredits").getValue());
-
+                    MainActivity.loggedUser.setUserProfileImage((String)dataSnapshot.child("profileImage").getValue().toString());
                     nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
                     nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());
+                    String myProfileImage=loggedUser.getUserProfileImage();
+                    if(!myProfileImage.equals("")) {
+                        Picasso.with(MainActivity.this).load(myProfileImage).into(nav_header_user_profile_picture);
+                    }
                 }
 
                 @Override
@@ -176,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "Failed to read value.", databaseError.toException());
                 }
             });
-            // nav_header_user_email.setText(currentUser.getEmail());
         }
     }
 
