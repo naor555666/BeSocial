@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layoutDirection="ltr"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/event_node_eventPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+    <TextView
+        android:id="@+id/event_node_eventDateAndTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="date at  time"
+        android:textColor="#FCF30F0F"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/event_node_EventTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textColor="#050505"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/event_node_eventLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="locationTitle"
+        android:textSize="22sp" />
+</LinearLayout>

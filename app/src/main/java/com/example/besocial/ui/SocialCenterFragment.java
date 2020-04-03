@@ -25,7 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 public class SocialCenterFragment extends Fragment implements View.OnClickListener {
     Button socialEventButton, bonusAreaButton, volunteerButton, getHelpButton;
     NavController navController;
-    public static final String IS_Help_EVENT="isHelpEvent";
+    public static final String IS_HELP_EVENT="isHelpEvent";
     public SocialCenterFragment() {
         // Required empty public constructor
     }
@@ -59,10 +59,17 @@ public class SocialCenterFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
+        Bundle bundle = new Bundle();
         if (v.getId() == R.id.getHelpButton) {
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(IS_Help_EVENT, true);
+            bundle.putBoolean(IS_HELP_EVENT, true);
             navController.navigate(R.id.action_nav_social_center_to_createEventFragment,bundle);
+        }
+        if (v.getId() == R.id.socialEventButton) {
+            navController.navigate(R.id.action_nav_social_center_to_eventsListFragment,bundle);
+        }
+        if (v.getId() == R.id.volunteerButton) {
+            bundle.putBoolean(IS_HELP_EVENT, true);
+            navController.navigate(R.id.action_nav_social_center_to_eventsListFragment,bundle);
         }
     }
 }

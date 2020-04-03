@@ -113,14 +113,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         createEventBtn = view.findViewById(R.id.eventCreate_createEventButton);
         loadingBar = new ProgressDialog(getContext());
 
-        // Use the current date as the default date in the picker
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-
-        String strDefaultDate = "" + day + "/" + (month + 1) + "/" + year;
-        startDate.setText(strDefaultDate);
+        initializeStartDate();
 
         //initializing the spinner list of categories
         categorySpinner = view.findViewById(R.id.eventCreate_categorySpinner);
@@ -131,11 +124,22 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
         //set the spinner to 'Help Me' category if the user chose get help option in socioal center
         if (!(getArguments().isEmpty())) {
-            isHelpEvent = getArguments().getBoolean(SocialCenterFragment.IS_Help_EVENT);
+            isHelpEvent = getArguments().getBoolean(SocialCenterFragment.IS_HELP_EVENT);
             categorySpinner.setSelection(categorySpinner.getAdapter().getCount() - 1);
             categorySpinner.setEnabled(false);
         }
         setListeners();
+    }
+
+    private void initializeStartDate() {
+        // Use the current date as the default date in the picker
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+
+        String strDefaultDate = "" + day + "/" + (month + 1) + "/" + year;
+        startDate.setText(strDefaultDate);
     }
 
 
@@ -201,10 +205,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         } else if (strDescription.isEmpty()) {
             Toast.makeText(getContext(), "Please choose a short description for the event", Toast.LENGTH_LONG).show();
         } else {
-            loadingBar.setTitle("Add New Event");
-            loadingBar.setMessage("Please wait, while we are updating your new event...");
-            loadingBar.show();
-            loadingBar.setCanceledOnTouchOutside(true);
+            showLoadingBar();
             if (pickedImageFromGallery == null) {
                 saveEventInformationToDatabase();
             } else storeImageToFirebaseStorage();
@@ -213,6 +214,13 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         }
 
 
+    }
+
+    private void showLoadingBar() {
+        loadingBar.setTitle("Add New Event");
+        loadingBar.setMessage("Please wait, while we are updating your new event...");
+        loadingBar.show();
+        loadingBar.setCanceledOnTouchOutside(true);
     }
 
     private void storeImageToFirebaseStorage() {
