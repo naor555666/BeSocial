@@ -21,13 +21,9 @@ import java.util.Date;
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
-    private TextView tv, startDate, endDate;
-    private static Date minDate = Calendar.getInstance().getTime();
+    protected String strChosenDate;
 
-    public DatePickerFragment(TextView tv, TextView startDate, TextView endDate) {
-        this.tv = tv;
-        this.startDate = startDate;
-        this.endDate = endDate;
+    public DatePickerFragment() {
     }
 
     @Override
@@ -41,34 +37,11 @@ public class DatePickerFragment extends DialogFragment
 
         // Create a new instance of DatePickerDialog and return it
         DatePickerDialog dpd = new DatePickerDialog(getActivity(), this, year, month, day);
-        if (tv.getId() == R.id.eventCreate_EndDate) {
-            dpd.getDatePicker().setMinDate(minDate.getTime());
-        } else
-            dpd.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         return dpd;
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        String strChosenDate = "" + day + "/" + (month + 1) + "/" + year;
-        String strEndDate = endDate.getText().toString();
-        String strStartDate= startDate.getText().toString();
-        //take care of dates input and correctness
-        if (tv.getId() == R.id.eventCreate_StartDate) {
-            try {
-                minDate = df.parse(strChosenDate);
-                Date realEndDate = df.parse(strEndDate);
-                if (minDate.after(realEndDate))
-                    this.endDate.setText(strChosenDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        tv.setText(strChosenDate);
-        strEndDate = endDate.getText().toString();
-        strStartDate= startDate.getText().toString();
-        if(strStartDate.equals(strEndDate))
-            if (TimePickerFragment.handleTimingsValidation(CreateEventFragment.getStartTime(), CreateEventFragment.getEndTime(), "", tv))
-                Toast.makeText(getContext(), CreateEventFragment.EVENT_TIME_ERROR_MESSAGE, Toast.LENGTH_LONG).show();
+        strChosenDate = "" + day + "/" + (month + 1) + "/" + year;
     }
 }

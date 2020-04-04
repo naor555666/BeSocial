@@ -17,6 +17,7 @@ public class User {
     private String socialLevel;
     private String socialStoreCredits;
     private ArrayList<User> followList;
+    private boolean isManager=false;
     private String userProfileImage;
 
     public User(String userId, String userFirstName, String userLastName, String userEmail, String userAddress, String userCity, String birthday, String socialPoints, String socialLevel, String socialStoreCredits, ArrayList<User> followList) {
@@ -128,8 +129,14 @@ public class User {
     public String getUserProfileImage() {
         return userProfileImage;
     }
+    public boolean isManager() {
+        return isManager;
+    }
 
     public void setUserProfileImage(String userProfileImage) {
         this.userProfileImage = userProfileImage;
+    }
+    public void setManager(boolean manager) {
+        isManager = manager;
     }
 }

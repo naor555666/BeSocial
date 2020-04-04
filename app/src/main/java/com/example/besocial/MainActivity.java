@@ -80,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_main);
         Log.d(TAG,"Main activity On create");
         fireBaseAuth = FirebaseAuth.getInstance();
@@ -161,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
             currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                     MainActivity.loggedUser.setUserEmail((String)dataSnapshot.child("userEmail").getValue());
                     MainActivity.loggedUser.setUserAddress((String)dataSnapshot.child("userAddress").getValue());
                     MainActivity.loggedUser.setUserCity((String)dataSnapshot.child("userCity").getValue());
@@ -172,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.loggedUser.setSocialPoints((String)dataSnapshot.child("userSocialPoints").getValue());
                     MainActivity.loggedUser.setSocialStoreCredits((String)dataSnapshot.child("userSocialStoreCredits").getValue());
                     MainActivity.loggedUser.setUserProfileImage((String)dataSnapshot.child("profileImage").getValue().toString());
+                    MainActivity.loggedUser.setUserId(currentUser.getUid());
                     nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
                     nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());
                     String myProfileImage=loggedUser.getUserProfileImage();

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:layoutDirection="ltr"
+    android:orientation="vertical"
     tools:context=".ui.EventsListFragment">
 
     <TextView
@@ -16,8 +16,16 @@
         android:textColor="#E20F0F0F"
         android:textSize="30sp"
         tools:text="@string/events_list_title" />
+
+    <Spinner
+        android:id="@+id/events_list_categorySpinner"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp" />
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/posts_recycler_view"
+        android:id="@+id/events_list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layoutDirection="ltr"

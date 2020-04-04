@@ -1,12 +1,10 @@
 package com.example.besocial.ui;
 
 import android.os.Bundle;
-import android.os.storage.StorageManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -14,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.besocial.MainActivity;
 import com.example.besocial.R;
 import com.example.besocial.data.Post;
 
@@ -35,7 +32,7 @@ public class HomeFragment extends Fragment{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         createNewPost=view.findViewById(R.id.create_new_post_button);
-        RecyclerView postsRecyclerView = view.findViewById(R.id.posts_recycler_view);
+        RecyclerView postsRecyclerView = view.findViewById(R.id.events_list_recycler_view);
         postsRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         postsRecyclerView.setLayoutManager(layoutManager);
