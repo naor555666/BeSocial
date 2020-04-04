@@ -14,7 +14,11 @@
         android:id="@+id/nav_my_profile"
         android:name="com.example.besocial.ui.ProfileFragment"
         android:label="MyProfile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_nav_my_profile_to_photosListFragment"
+            app:destination="@id/photosListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/nav_notifications"
         android:name="com.example.besocial.ui.NotificationsFragment"
@@ -75,6 +79,11 @@
             android:id="@+id/action_eventsListFragment_to_createEventFragment"
             app:destination="@id/createEventFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/photosListFragment"
+        android:name="com.example.besocial.ui.PhotosListFragment"
+        android:label="fragment_photos_list"
+        tools:layout="@layout/fragment_photos_list" />
 
 
 </navigation>
