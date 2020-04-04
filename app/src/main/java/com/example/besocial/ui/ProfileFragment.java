@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.besocial.MainActivity;
 import com.example.besocial.R;
 import com.example.besocial.data.User;
+import com.example.besocial.databinding.FragmentProfileBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -58,6 +59,10 @@ public class ProfileFragment extends Fragment {
     private FirebaseDatabase firebaseDatabase;
     private static DatabaseReference userRef;
     private StorageReference userPicturesRef;
+
+    // an instance of the layout
+    private FragmentProfileBinding binding;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -67,8 +72,9 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
-
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        return view;
     }
 
     @Override
@@ -240,7 +246,11 @@ public class ProfileFragment extends Fragment {
 
 
     }
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 
 
 }
