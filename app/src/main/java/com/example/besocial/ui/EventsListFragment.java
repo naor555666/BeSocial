@@ -1,6 +1,7 @@
 package com.example.besocial.ui;
 
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,17 +17,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.besocial.MainActivity;
 import com.example.besocial.R;
 import com.example.besocial.data.Event;
 import com.example.besocial.databinding.FragmentEventBinding;
 import com.example.besocial.databinding.FragmentEventsListBinding;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 
 /**
@@ -68,7 +74,7 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
         super.onViewCreated(view, savedInstanceState);
         navController = MainActivity.getNavController();
 
-        binding.eventsListRecyclerView.setHasFixedSize(true);
+        //binding.eventsListRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -86,12 +92,19 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
         }
 
         strEventCategory = (String) binding.eventsListCategorySpinner.getSelectedItem();
-
-        //eventsRef= FirebaseDatabase.getInstance().getReference().child("Events").child(strEventCategory);
+        binding.eventsListTitle.setText(strEventCategory + " Events");
+        //eventsRef = FirebaseDatabase.getInstance().getReference().child("Events").child(strEventCategory);
+        eventsRef = FirebaseDatabase.getInstance().getReference().child("Events").child("Help Me!");
 
         setListeners();
-        //displayEventsList();
+
         //addEventFab.setOnClickListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        displayEventsList();
     }
 
     private void setListeners() {
@@ -99,43 +112,61 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
     }
 
     private void displayEventsList() {
-/*        FirebaseRecyclerAdapter<Event, EventsViewHolder> firebaseRecyclerAdapter
-                = new FirebaseRecyclerAdapter<Event, EventsViewHolder>(Event.class,R.layout.event_node,EventsViewHolder.class,) {
+        FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions
+                .Builder<Event>()
+                .setQuery(eventsRef, Event.class)
+                .build();
+        FirebaseRecyclerAdapter<Event, EventsViewHolder> firebaseRecyclerAdapter
+                = new FirebaseRecyclerAdapter<Event, EventsViewHolder>(options) {
             @NonNull
             @Override
             public EventsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                return null;
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_node, parent, false);
+                EventsViewHolder viewHolder = new EventsViewHolder(view);
+                return viewHolder;
             }
 
             @Override
             protected void onBindViewHolder(@NonNull EventsViewHolder holder, int position, @NonNull Event model) {
-
+                if (model.getEventPhoto() != null) {
+                    Glide.with(getContext()).load(model.getEventPhoto()).into(holder.eventPhoto);
+                } else {
+                    holder.eventPhoto.setImageDrawable(getResources().getDrawable(R.drawable.img_help));
+                }
+                holder.eventDateAndTime.setText(model.getBeginDate() + " at " + model.getBeginTime());
+                holder.eventTitle.setText(model.getTitle());
+                holder.eventLocation.setText(model.getLocationTitle());
             }
-        }*/
+        };
+        binding.eventsListRecyclerView.setAdapter(firebaseRecyclerAdapter);
+        firebaseRecyclerAdapter.startListening();
+    }
 
+    public static class EventsViewHolder extends RecyclerView.ViewHolder {
+        ImageView eventPhoto;
+        TextView eventDateAndTime, eventTitle, eventLocation;
+
+        public EventsViewHolder(@NonNull View itemView) {
+            super(itemView);
+            eventPhoto = itemView.findViewById(R.id.event_node_eventPhoto);
+            eventDateAndTime = itemView.findViewById(R.id.event_node_eventDateAndTime);
+            eventTitle = itemView.findViewById(R.id.event_node_EventTitle);
+            eventLocation = itemView.findViewById(R.id.event_node_eventLocation);
+        }
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         strEventCategory = (String) parent.getItemAtPosition(position);
         Log.d(TAG, "eventCategory is " + strEventCategory);
+        binding.eventsListTitle.setText(strEventCategory + " Events");
+        displayEventsList();
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-
-
-    public static class EventsViewHolder extends RecyclerView.ViewHolder {
-        private View mview;
-
-        public EventsViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mview = itemView;
-        }
-    }
-
 
     @Override
     public void onClick(View v) {

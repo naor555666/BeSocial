@@ -3,7 +3,9 @@ package com.example.besocial.data;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
-import com.google.android.gms.maps.model.LatLng;
+//import com.google.android.gms.maps.model.LatLng;
+
+import com.example.besocial.LatLng;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,9 @@ public class Event {
     private String eventCreatorUid;
     private String eventCreatorUserName;
     private boolean isCompanyManagmentEvent=false;
+
+    public Event() {
+    }
 
     public Event(String strEventPhotoUrl, String eventCategory, String title, String beginDate
             , String finishDate, String beginTime, String finishTime, LatLng location
@@ -42,8 +47,6 @@ public class Event {
         this.isCompanyManagmentEvent = isCompanyManagmentEvent;
     }
 
-    public Event() {
-    }
 
     public String getEventPhoto() {
         return strEventPhotoUrl;
@@ -148,7 +151,16 @@ public class Event {
     public void setCompanyManagmentEvent(boolean companyManagmentEvent) {
         isCompanyManagmentEvent = companyManagmentEvent;
     }
-public Map<String,Object> toMap(){
+
+    public String getStrEventPhotoUrl() {
+        return strEventPhotoUrl;
+    }
+
+    public void setStrEventPhotoUrl(String strEventPhotoUrl) {
+        this.strEventPhotoUrl = strEventPhotoUrl;
+    }
+
+    public Map<String,Object> toMap(){
     HashMap<String, Object> result = new HashMap<>();
     result.put("strEventPhotoUrl", strEventPhotoUrl);
     result.put("eventCategory", eventCategory);

@@ -235,7 +235,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
-                    strEventPhotoUrl = task.getResult().toString();
+                    strEventPhotoUrl = task.getResult().getUploadSessionUri().toString();
                     Toast.makeText(getContext(), "image uploaded successfully to Storage...", Toast.LENGTH_SHORT).show();
                     saveEventInformationToDatabase();
                 } else {
@@ -248,7 +248,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
     private void saveEventInformationToDatabase() {
         Event newEvent = new Event(strEventPhotoUrl, strEventCategory, strEventTitle, strStartDate, strEndDate, strStartTime
-                , strEndTime, eventLocation, strLocationName, strDescription, loggedUser.getUserId()
+                , strEndTime, new com.example.besocial.LatLng(eventLocation.latitude,eventLocation.longitude), strLocationName, strDescription, loggedUser.getUserId()
                 , loggedUser.getUserFirstName() + " " + loggedUser.getUserLastName()
                 , loggedUser.isManager());
 

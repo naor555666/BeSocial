@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layoutDirection="ltr"
+    android:layout_marginTop="30dp"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/event_node_eventPhoto"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="100dp"
         android:scaleType="centerCrop"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:text="date at  time"
         android:textColor="#FCF30F0F"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/event_node_EventTitle"
@@ -36,5 +36,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="locationTitle"
-        android:textSize="22sp" />
+        android:textSize="20sp" />
 </LinearLayout>
