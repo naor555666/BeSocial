@@ -84,6 +84,7 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
             binding.eventsListCategorySpinner.setSelection(binding.eventsListCategorySpinner.getAdapter().getCount() - 1);
             binding.eventsListCategorySpinner.setEnabled(false);
         }
+
         strEventCategory = (String) binding.eventsListCategorySpinner.getSelectedItem();
 
         //eventsRef= FirebaseDatabase.getInstance().getReference().child("Events").child(strEventCategory);
