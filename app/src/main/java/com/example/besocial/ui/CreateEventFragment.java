@@ -35,6 +35,7 @@ import com.example.besocial.data.Event;
 import com.example.besocial.data.User;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -229,15 +230,22 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
                 currentTime.toString() : currentTime.toString() + pickedImageFromGallery.getLastPathSegment();
         Log.d(TAG, "random name + path is: " + eventRandomName);
 
-        StorageReference filePath = imagesReference.child("Events images/" + eventRandomName);
+        final StorageReference filePath = imagesReference.child("Events images/" + eventRandomName);
 
         filePath.putFile(pickedImageFromGallery).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
-                    strEventPhotoUrl = task.getResult().getUploadSessionUri().toString();
-                    Toast.makeText(getContext(), "image uploaded successfully to Storage...", Toast.LENGTH_SHORT).show();
-                    saveEventInformationToDatabase();
+                    //strEventPhotoUrl = task.getResult().getUploadSessionUri().toString();
+                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            strEventPhotoUrl = uri.toString();
+                            Toast.makeText(getContext(), "image uploaded successfully to Storage...", Toast.LENGTH_SHORT).show();
+                            saveEventInformationToDatabase();
+                        }
+                    });
+
                 } else {
                     String message = task.getException().getMessage();
                     Toast.makeText(getContext(), "Error occured: " + message, Toast.LENGTH_SHORT).show();
@@ -248,7 +256,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
     private void saveEventInformationToDatabase() {
         Event newEvent = new Event(strEventPhotoUrl, strEventCategory, strEventTitle, strStartDate, strEndDate, strStartTime
-                , strEndTime, new com.example.besocial.LatLng(eventLocation.latitude,eventLocation.longitude), strLocationName, strDescription, loggedUser.getUserId()
+                , strEndTime, new com.example.besocial.LatLng(eventLocation.latitude, eventLocation.longitude), strLocationName, strDescription, loggedUser.getUserId()
                 , loggedUser.getUserFirstName() + " " + loggedUser.getUserLastName()
                 , loggedUser.isManager());
 
@@ -283,7 +291,6 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     }
 
 
-
     private class DateHandler implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -311,7 +318,6 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
         }
     }
-
 
 
     //getters&setters

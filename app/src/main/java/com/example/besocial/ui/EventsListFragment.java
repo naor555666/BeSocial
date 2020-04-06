@@ -128,8 +128,8 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
 
             @Override
             protected void onBindViewHolder(@NonNull EventsViewHolder holder, int position, @NonNull Event model) {
-                if (model.getEventPhoto() != null) {
-                    Glide.with(getContext()).load(model.getEventPhoto()).into(holder.eventPhoto);
+                if (model.getStrEventPhotoUrl() != null) {
+                    Glide.with(getContext()).load(model.getStrEventPhotoUrl()).into(holder.eventPhoto);
                 } else {
                     holder.eventPhoto.setImageDrawable(getResources().getDrawable(R.drawable.img_help));
                 }
