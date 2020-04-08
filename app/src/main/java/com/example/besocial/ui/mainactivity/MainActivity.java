@@ -13,8 +13,8 @@ import com.example.besocial.MyMusicPlayerForegroundService;
 import com.example.besocial.R;
 import com.example.besocial.data.Post;
 import com.example.besocial.data.User;
-import com.example.besocial.ui.HomeFragment;
-import com.example.besocial.ui.LogoutDialog;
+import com.example.besocial.ui.mainactivity.HomeFragment;
+import com.example.besocial.ui.mainactivity.LogoutDialog;
 import com.example.besocial.ui.PostsAdapter;
 import com.example.besocial.ui.login.LoginActivity;
 
