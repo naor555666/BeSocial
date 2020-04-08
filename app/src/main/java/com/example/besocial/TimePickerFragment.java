@@ -10,14 +10,10 @@ import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 
-import com.example.besocial.ui.CreateEventFragment;
+import com.example.besocial.ui.mainactivity.socialcenter.CreateEventFragment;
 
-import java.sql.Time;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.SimpleTimeZone;
 
 public class TimePickerFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {

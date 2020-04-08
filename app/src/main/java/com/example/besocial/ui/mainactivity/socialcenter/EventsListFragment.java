@@ -1,12 +1,14 @@
-package com.example.besocial.ui;
+package com.example.besocial.ui.mainactivity.socialcenter;
 
 
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,21 +20,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.besocial.MainActivity;
+import com.example.besocial.ui.mainactivity.MainActivity;
 import com.example.besocial.R;
 import com.example.besocial.data.Event;
-import com.example.besocial.databinding.FragmentEventBinding;
 import com.example.besocial.databinding.FragmentEventsListBinding;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.squareup.picasso.Picasso;
+
+import java.util.Random;
 
 
 /**
@@ -47,6 +48,8 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
     private DatabaseReference eventsRef;
     private String strEventCategory;
     private boolean isHelpEvent;
+
+    private SocialCenterViewModel socialCenterViewModel;
 
     public EventsListFragment() {
         // Required empty public constructor
@@ -67,6 +70,13 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        socialCenterViewModel = ViewModelProviders.of(getActivity()).get(SocialCenterViewModel.class);
+
     }
 
     @Override
@@ -127,15 +137,19 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull EventsViewHolder holder, int position, @NonNull Event model) {
-                if (model.getStrEventPhotoUrl() != null) {
-                    Glide.with(getContext()).load(model.getStrEventPhotoUrl()).into(holder.eventPhoto);
-                } else {
-                    holder.eventPhoto.setImageDrawable(getResources().getDrawable(R.drawable.img_help));
-                }
+            protected void onBindViewHolder(@NonNull EventsViewHolder holder, int position, @NonNull final Event model) {
+                holder.eventNode = model;
+                Glide.with(getContext()).load(model.getStrEventPhotoUrl()).placeholder(R.drawable.social_event0).into(holder.eventPhoto);
                 holder.eventDateAndTime.setText(model.getBeginDate() + " at " + model.getBeginTime());
                 holder.eventTitle.setText(model.getTitle());
                 holder.eventLocation.setText(model.getLocationTitle());
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        socialCenterViewModel.setEvent(model);
+                        MainActivity.getNavController().navigate(R.id.action_eventsListFragment_to_eventFragment);
+                    }
+                });
             }
         };
         binding.eventsListRecyclerView.setAdapter(firebaseRecyclerAdapter);
@@ -143,10 +157,11 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
     }
 
     public static class EventsViewHolder extends RecyclerView.ViewHolder {
+        Event eventNode;
         ImageView eventPhoto;
         TextView eventDateAndTime, eventTitle, eventLocation;
 
-        public EventsViewHolder(@NonNull View itemView) {
+        public EventsViewHolder(@NonNull final View itemView) {
             super(itemView);
             eventPhoto = itemView.findViewById(R.id.event_node_eventPhoto);
             eventDateAndTime = itemView.findViewById(R.id.event_node_eventDateAndTime);

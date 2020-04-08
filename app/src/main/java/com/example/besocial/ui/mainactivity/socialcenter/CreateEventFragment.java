@@ -1,9 +1,7 @@
-package com.example.besocial.ui;
+package com.example.besocial.ui.mainactivity.socialcenter;
 
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,10 +21,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.besocial.DatePickerFragment;
 //import com.example.besocial.EventDatePicker;
 import com.example.besocial.EventDatePicker;
-import com.example.besocial.MainActivity;
+import com.example.besocial.ui.mainactivity.MainActivity;
 import com.example.besocial.MapsActivity;
 import com.example.besocial.R;
 import com.example.besocial.TimePickerFragment;
@@ -43,11 +39,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 
 /**

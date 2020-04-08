@@ -1,4 +1,4 @@
-package com.example.besocial.ui;
+package com.example.besocial.ui.mainactivity;
 
 
 import android.os.Bundle;
@@ -15,10 +15,10 @@ import com.example.besocial.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NotificationsFragment extends Fragment {
+public class ChatListFragment extends Fragment {
 
 
-    public NotificationsFragment() {
+    public ChatListFragment() {
         // Required empty public constructor
     }
 
@@ -27,7 +27,7 @@ public class NotificationsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notifications, container, false);
+        return inflater.inflate(R.layout.fragment_chat_list, container, false);
     }
 
 }

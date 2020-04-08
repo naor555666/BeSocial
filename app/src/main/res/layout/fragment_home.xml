@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#BBE4F7"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".ui.mainactivity.MainActivity">
 
     <TextView
         android:id="@+id/text_home"

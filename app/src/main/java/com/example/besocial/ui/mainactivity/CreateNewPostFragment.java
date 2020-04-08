@@ -1,4 +1,4 @@
-package com.example.besocial.ui;
+package com.example.besocial.ui.mainactivity;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,12 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.besocial.MainActivity;
 import com.example.besocial.R;
 import com.example.besocial.data.Post;
 import com.example.besocial.data.User;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 

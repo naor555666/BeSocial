@@ -7,27 +7,27 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.besocial.ui.HomeFragment"
+        android:name="com.example.besocial.ui.mainactivity.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/nav_my_profile"
-        android:name="com.example.besocial.ui.ProfileFragment"
+        android:name="com.example.besocial.ui.mainactivity.ProfileFragment"
         android:label="MyProfile"
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/nav_notifications"
-        android:name="com.example.besocial.ui.NotificationsFragment"
+        android:name="com.example.besocial.ui.mainactivity.NotificationsFragment"
         android:label="fragment_notifications"
         tools:layout="@layout/fragment_notifications" />
     <fragment
         android:id="@+id/nav_chat"
-        android:name="com.example.besocial.ui.ChatListFragment"
+        android:name="com.example.besocial.ui.mainactivity.ChatListFragment"
         android:label="fragment_chat_list"
         tools:layout="@layout/fragment_chat_list" />
     <fragment
         android:id="@+id/nav_social_center"
-        android:name="com.example.besocial.ui.SocialCenterFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.SocialCenterFragment"
         android:label="fragment_social_center"
         tools:layout="@layout/fragment_social_center" >
         <action
@@ -43,37 +43,40 @@
     </fragment>
     <fragment
         android:id="@+id/nav_bonus_area"
-        android:name="com.example.besocial.ui.BonusAreaFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.BonusAreaFragment"
         android:label="nav_bonus_area"
         tools:layout="@layout/fragment_bonus_area" />
     <fragment
         android:id="@+id/nav_settings"
-        android:name="com.example.besocial.ui.SettingsFragment"
+        android:name="com.example.besocial.ui.mainactivity.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/nav_about"
-        android:name="com.example.besocial.ui.AboutFragment"
+        android:name="com.example.besocial.ui.mainactivity.AboutFragment"
         android:label="AboutFragment"
         tools:layout="@layout/fragment_about"/>
     <fragment
         android:id="@+id/createEventFragment"
-        android:name="com.example.besocial.ui.CreateEventFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.CreateEventFragment"
         android:label="fragment_create_event"
         tools:layout="@layout/fragment_create_event" />
     <fragment
         android:id="@+id/eventFragment"
-        android:name="com.example.besocial.ui.EventFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.EventFragment"
         android:label="fragment_event"
         tools:layout="@layout/fragment_event" />
     <fragment
         android:id="@+id/eventsListFragment"
-        android:name="com.example.besocial.ui.EventsListFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.EventsListFragment"
         android:label="fragment_events_list"
         tools:layout="@layout/fragment_events_list" >
         <action
             android:id="@+id/action_eventsListFragment_to_createEventFragment"
             app:destination="@id/createEventFragment" />
+        <action
+            android:id="@+id/action_eventsListFragment_to_eventFragment"
+            app:destination="@id/eventFragment" />
     </fragment>
 
 

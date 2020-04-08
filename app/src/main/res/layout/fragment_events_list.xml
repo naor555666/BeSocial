@@ -6,7 +6,7 @@
     android:layoutDirection="ltr"
     android:orientation="vertical"
     android:padding="15dp"
-    tools:context=".ui.EventsListFragment">
+    tools:context=".ui.mainactivity.socialcenter.EventsListFragment">
 
     <TextView
         android:id="@+id/events_list_title"

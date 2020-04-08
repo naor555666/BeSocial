@@ -1,4 +1,4 @@
-package com.example.besocial.ui;
+package com.example.besocial.ui.mainactivity;
 
 
 import android.app.Dialog;
@@ -14,7 +14,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.example.besocial.MainActivity;
 import com.example.besocial.R;
 import com.example.besocial.ui.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
