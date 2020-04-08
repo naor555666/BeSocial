@@ -1,4 +1,4 @@
-package com.example.besocial.ui;
+package com.example.besocial.ui.mainactivity;
 
 
 import android.os.Bundle;
@@ -11,23 +11,28 @@ import android.view.ViewGroup;
 
 import com.example.besocial.R;
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FeedbackFragment extends Fragment {
+public class AboutFragment extends Fragment {
 
-
-    public FeedbackFragment() {
+    //private static AboutFragment aboutFragment;
+    public AboutFragment() {
         // Required empty public constructor
     }
+
+/*    public static AboutFragment getAboutFragment() {
+        if(aboutFragment==null)
+            aboutFragment=new AboutFragment();
+        return aboutFragment;
+    }*/
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_feedback, container, false);
+        return inflater.inflate(R.layout.fragment_about, container, false);
     }
 
 }

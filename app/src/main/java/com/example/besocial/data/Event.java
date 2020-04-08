@@ -1,10 +1,6 @@
 package com.example.besocial.data;
 
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-
-import com.google.android.gms.maps.model.LatLng;
-
+import com.example.besocial.LatLng;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +17,10 @@ public class Event {
     private String description;
     private String eventCreatorUid;
     private String eventCreatorUserName;
-    private boolean isCompanyManagmentEvent=false;
+    private boolean isCompanyManagmentEvent = false;
+
+    public Event() {
+    }
 
     public Event(String strEventPhotoUrl, String eventCategory, String title, String beginDate
             , String finishDate, String beginTime, String finishTime, LatLng location
@@ -42,16 +41,6 @@ public class Event {
         this.isCompanyManagmentEvent = isCompanyManagmentEvent;
     }
 
-    public Event() {
-    }
-
-    public String getEventPhoto() {
-        return strEventPhotoUrl;
-    }
-
-    public void setEventPhoto(String eventPhoto) {
-        this.strEventPhotoUrl = eventPhoto;
-    }
 
     public String getEventCategory() {
         return eventCategory;
@@ -148,28 +137,38 @@ public class Event {
     public void setCompanyManagmentEvent(boolean companyManagmentEvent) {
         isCompanyManagmentEvent = companyManagmentEvent;
     }
-public Map<String,Object> toMap(){
-    HashMap<String, Object> result = new HashMap<>();
-    result.put("strEventPhotoUrl", strEventPhotoUrl);
-    result.put("eventCategory", eventCategory);
-    result.put("title", title);
-    result.put("beginDate", beginDate);
-    result.put("finishDate", finishDate);
-    result.put("beginTime", beginTime);
-    result.put("finishTime", finishTime);
-    result.put("location", location);
-    result.put("locationTitle", locationTitle);
-    result.put("description", description);
-    result.put("eventCreatorUid", eventCreatorUid);
-    result.put("eventCreatorUserName", eventCreatorUserName);
-    result.put("isCompanyManagmentEvent", isCompanyManagmentEvent);
 
-    return result;
-}
+    public String getStrEventPhotoUrl() {
+        return strEventPhotoUrl;
+    }
+
+    public void setStrEventPhotoUrl(String strEventPhotoUrl) {
+        this.strEventPhotoUrl = strEventPhotoUrl;
+    }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("strEventPhotoUrl", strEventPhotoUrl);
+        result.put("eventCategory", eventCategory);
+        result.put("title", title);
+        result.put("beginDate", beginDate);
+        result.put("finishDate", finishDate);
+        result.put("beginTime", beginTime);
+        result.put("finishTime", finishTime);
+        result.put("location", location);
+        result.put("locationTitle", locationTitle);
+        result.put("description", description);
+        result.put("eventCreatorUid", eventCreatorUid);
+        result.put("eventCreatorUserName", eventCreatorUserName);
+        result.put("isCompanyManagmentEvent", isCompanyManagmentEvent);
+
+        return result;
+    }
+
     @Override
     public String toString() {
         return "Event{" +
-                "eventPhoto=" + strEventPhotoUrl +
+                "strEventPhotoUrl=" + strEventPhotoUrl +
                 ", eventCategory='" + eventCategory + '\'' +
                 ", title='" + title + '\'' +
                 ", beginDate='" + beginDate + '\'' +

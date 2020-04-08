@@ -7,7 +7,7 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.besocial.ui.CreateEventFragment;
+import com.example.besocial.ui.mainactivity.socialcenter.CreateEventFragment;
 
 import java.text.DateFormat;
 import java.text.ParseException;

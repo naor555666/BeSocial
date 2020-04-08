@@ -1,4 +1,4 @@
-package com.example.besocial;
+package com.example.besocial.ui.mainactivity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,6 +8,9 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 
+import com.example.besocial.MyBroadcastReceiver;
+import com.example.besocial.MyMusicPlayerForegroundService;
+import com.example.besocial.R;
 import com.example.besocial.data.Post;
 import com.example.besocial.data.User;
 import com.example.besocial.ui.HomeFragment;
@@ -23,11 +26,13 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.view.GravityCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.besocial.ui.mainactivity.socialcenter.SocialCenterViewModel;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -76,11 +81,13 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth fireBaseAuth;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Log.d(TAG,"Main activity On create");
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();

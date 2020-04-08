@@ -13,6 +13,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.besocial.ui.mainactivity.MainActivity;
+
 public class MyMusicPlayerForegroundService extends Service {
     MediaPlayer mediaPlayer;
     public static final String CHANNEL_ID = "ForegroundServiceChannel";

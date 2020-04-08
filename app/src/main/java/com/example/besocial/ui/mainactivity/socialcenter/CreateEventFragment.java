@@ -1,9 +1,7 @@
-package com.example.besocial.ui;
+package com.example.besocial.ui.mainactivity.socialcenter;
 
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,10 +21,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.besocial.DatePickerFragment;
 //import com.example.besocial.EventDatePicker;
 import com.example.besocial.EventDatePicker;
-import com.example.besocial.MainActivity;
+import com.example.besocial.ui.mainactivity.MainActivity;
 import com.example.besocial.MapsActivity;
 import com.example.besocial.R;
 import com.example.besocial.TimePickerFragment;
@@ -35,6 +31,7 @@ import com.example.besocial.data.Event;
 import com.example.besocial.data.User;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -42,11 +39,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 
 /**
@@ -229,15 +222,22 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
                 currentTime.toString() : currentTime.toString() + pickedImageFromGallery.getLastPathSegment();
         Log.d(TAG, "random name + path is: " + eventRandomName);
 
-        StorageReference filePath = imagesReference.child("Events images/" + eventRandomName);
+        final StorageReference filePath = imagesReference.child("Events images/" + eventRandomName);
 
         filePath.putFile(pickedImageFromGallery).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
-                    strEventPhotoUrl = task.getResult().toString();
-                    Toast.makeText(getContext(), "image uploaded successfully to Storage...", Toast.LENGTH_SHORT).show();
-                    saveEventInformationToDatabase();
+                    //strEventPhotoUrl = task.getResult().getUploadSessionUri().toString();
+                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            strEventPhotoUrl = uri.toString();
+                            Toast.makeText(getContext(), "image uploaded successfully to Storage...", Toast.LENGTH_SHORT).show();
+                            saveEventInformationToDatabase();
+                        }
+                    });
+
                 } else {
                     String message = task.getException().getMessage();
                     Toast.makeText(getContext(), "Error occured: " + message, Toast.LENGTH_SHORT).show();
@@ -248,7 +248,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
     private void saveEventInformationToDatabase() {
         Event newEvent = new Event(strEventPhotoUrl, strEventCategory, strEventTitle, strStartDate, strEndDate, strStartTime
-                , strEndTime, eventLocation, strLocationName, strDescription, loggedUser.getUserId()
+                , strEndTime, new com.example.besocial.LatLng(eventLocation.latitude, eventLocation.longitude), strLocationName, strDescription, loggedUser.getUserId()
                 , loggedUser.getUserFirstName() + " " + loggedUser.getUserLastName()
                 , loggedUser.isManager());
 
@@ -283,7 +283,6 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     }
 
 
-
     private class DateHandler implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -311,7 +310,6 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
         }
     }
-
 
 
     //getters&setters

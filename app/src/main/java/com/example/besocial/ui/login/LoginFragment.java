@@ -19,7 +19,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.besocial.MainActivity;
+import com.example.besocial.ui.mainactivity.MainActivity;
 import com.example.besocial.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

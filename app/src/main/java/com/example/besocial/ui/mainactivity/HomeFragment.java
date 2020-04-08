@@ -1,4 +1,4 @@
-package com.example.besocial.ui;
+package com.example.besocial.ui.mainactivity;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.besocial.R;
 import com.example.besocial.data.Post;
+import com.example.besocial.ui.PostsAdapter;
 
 import java.util.ArrayList;
 
