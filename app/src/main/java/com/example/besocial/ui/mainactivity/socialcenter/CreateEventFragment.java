@@ -21,14 +21,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-//import com.example.besocial.EventDatePicker;
 import com.example.besocial.EventDatePicker;
-import com.example.besocial.ui.mainactivity.MainActivity;
 import com.example.besocial.MapsActivity;
 import com.example.besocial.R;
 import com.example.besocial.TimePickerFragment;
 import com.example.besocial.data.Event;
 import com.example.besocial.data.User;
+import com.example.besocial.ui.mainactivity.MainActivity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,6 +39,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.Calendar;
+
+//import com.example.besocial.EventDatePicker;
 
 
 /**

@@ -1,9 +1,6 @@
 package com.example.besocial.data;
 
-import android.widget.ImageView;
-
 import java.util.ArrayList;
-import java.util.Date;
 
 public class User {
     private String userId;
