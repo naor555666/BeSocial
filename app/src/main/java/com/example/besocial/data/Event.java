@@ -1,6 +1,7 @@
 package com.example.besocial.data;
 
 import com.example.besocial.LatLng;
+
 import java.util.HashMap;
 import java.util.Map;
 
