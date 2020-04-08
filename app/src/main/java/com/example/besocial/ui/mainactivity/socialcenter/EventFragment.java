@@ -63,7 +63,7 @@ public class EventFragment extends Fragment {
         binding.fragmentEventHostFullName.setText("Hosted by: "+chosenEvent.getEventCreatorUserName());
         binding.fragmentEventDateTime.setText(chosenEvent.getBeginDate() + "," + chosenEvent.getBeginTime()
                 + "-" + chosenEvent.getFinishDate() + "," + chosenEvent.getFinishTime());
-        binding.fragmentEventLocation.setText(chosenEvent.getLocationTitle());
+        binding.fragmentEventLocation.setText("Location: "+chosenEvent.getLocationTitle());
         binding.fragmentEventDescription.setText(chosenEvent.getDescription());
     }
 }
