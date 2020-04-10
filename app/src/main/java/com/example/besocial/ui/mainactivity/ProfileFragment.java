@@ -5,6 +5,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,12 +55,13 @@ public class ProfileFragment extends Fragment {
     private TextView profilePageUsername;
     private EditText profileFullName,profileEmail,profileCity,profileAddress,profileBirthday,profileSocialLevel,profileSocialPoints;
     private User loggedUser;
-    private Button profileSaveDetails;
+    private Button profileSaveDetails,profileFollowList,profileMyPictures;
     private final static int galleryPick=1;
     private ImageButton profileChangeProfilePicture,profileEditProfileDetails;
     private FirebaseDatabase firebaseDatabase;
     private static DatabaseReference userRef;
     private StorageReference userPicturesRef;
+    private NavController navController;
 
     // an instance of the layout
     private FragmentProfileBinding binding;
@@ -87,7 +95,10 @@ public class ProfileFragment extends Fragment {
         profileBirthday=view.findViewById(R.id.profile_birthday);
         profileSaveDetails=view.findViewById(R.id.profile_save_new_details);
         profileEditProfileDetails=view.findViewById(R.id.profile_edit_profile_details);
+        profileMyPictures=view.findViewById(R.id.profile_my_pictures);
+        profileFollowList=view.findViewById(R.id.profile_follow_list);
         firebaseDatabase = FirebaseDatabase.getInstance();
+        navController= Navigation.findNavController(getActivity(),R.id.nav_host_fragment);
         loggedUser=MainActivity.getLoggedUser();
         userPicturesRef= FirebaseStorage.getInstance().getReference().child(MainActivity.getCurrentUser().getUid());
         profilePageUsername.setText(loggedUser.getUserFirstName()+"  "+loggedUser.getUserLastName());
@@ -99,10 +110,18 @@ public class ProfileFragment extends Fragment {
         profileSocialPoints.setText(loggedUser.getSocialPoints());
         profileBirthday.setText(loggedUser.getBirthday());
         userRef=MainActivity.getCurrentUserDatabaseRef();
+        String myProfileImage=loggedUser.getUserProfileImage();
+        if(!myProfileImage.equals(""))
+            Picasso.with(getContext()).load(myProfileImage).into(profileProfilePicture);
 
 
 
-
+        profileMyPictures.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navController.navigate(R.id.action_nav_my_profile_to_photosListFragment);
+            }
+        });
 
 
         profileEditProfileDetails.setOnClickListener(new View.OnClickListener() {
@@ -169,23 +188,9 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
-                    String myProfileImage=dataSnapshot.child("profileImage").getValue().toString();
-                    Picasso.with(getContext()).load(myProfileImage).into(profileProfilePicture);
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -246,6 +251,8 @@ public class ProfileFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+
 
 
 }

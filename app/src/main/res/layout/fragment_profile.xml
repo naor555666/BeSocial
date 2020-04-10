@@ -72,14 +72,14 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button5"
+                android:id="@+id/profile_follow_list"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Follow List" />
 
             <Button
-                android:id="@+id/button6"
+                android:id="@+id/profile_my_pictures"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -122,26 +122,26 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/profile_birthday"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                android:editable="false"
                 android:ems="10"
                 android:enabled="false"
                 android:inputType="date" />
 
             <TextView
                 android:layout_width="50dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="Birthday:" />
         </LinearLayout>
 
@@ -259,7 +259,8 @@
                 android:editable="false"
                 android:ems="10"
                 android:enabled="false"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textDirection="ltr" />
 
             <TextView
                 android:layout_width="50dp"

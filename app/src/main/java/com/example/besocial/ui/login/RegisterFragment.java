@@ -125,6 +125,8 @@ public class RegisterFragment extends Fragment {
         userMap.put("userSocialLevel","shy socializer");
         userMap.put("userSocialPoints","0");
         userMap.put("userSocialStoreCredits","0");
+        userMap.put("profileImage","");
+
 
 
         userRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
