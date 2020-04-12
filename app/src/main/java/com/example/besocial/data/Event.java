@@ -2,7 +2,9 @@ package com.example.besocial.data;
 
 import com.example.besocial.LatLng;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Event {
@@ -19,6 +21,8 @@ public class Event {
     private String eventCreatorUid;
     private String eventCreatorUserName;
     private boolean isCompanyManagmentEvent = false;
+    private boolean isFinished = false;
+    private List<FlatUserDetails> attendingUsers;
 
     public Event() {
     }
