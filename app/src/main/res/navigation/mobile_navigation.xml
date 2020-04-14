@@ -44,12 +44,19 @@
             android:name="social_events_list"
             app:argType="string"
             android:defaultValue="Social events list" />
+        <action
+            android:id="@+id/action_nav_social_center_to_nav_bonus_area"
+            app:destination="@id/nav_bonus_area" />
     </fragment>
     <fragment
         android:id="@+id/nav_bonus_area"
         android:name="com.example.besocial.ui.mainactivity.socialcenter.BonusAreaFragment"
         android:label="nav_bonus_area"
-        tools:layout="@layout/fragment_bonus_area" />
+        tools:layout="@layout/fragment_bonus_area" >
+        <action
+            android:id="@+id/action_nav_bonus_area_to_addNewRedeemableBonusFragment"
+            app:destination="@id/addNewRedeemableBonusFragment" />
+    </fragment>
     <fragment
         android:id="@+id/nav_settings"
         android:name="com.example.besocial.ui.mainactivity.SettingsFragment"
@@ -87,6 +94,11 @@
         android:name="com.example.besocial.ui.PhotosListFragment"
         android:label="fragment_photos_list"
         tools:layout="@layout/fragment_photos_list" />
+    <fragment
+        android:id="@+id/addNewRedeemableBonusFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.AddNewRedeemableBonusFragment"
+        android:label="fragment_add_new_redeemable_bonus"
+        tools:layout="@layout/fragment_add_new_redeemable_bonus" />
 
 
 </navigation>

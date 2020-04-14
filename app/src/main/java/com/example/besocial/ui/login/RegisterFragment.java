@@ -17,6 +17,8 @@ import androidx.fragment.app.Fragment;
 import com.example.besocial.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +46,6 @@ public class RegisterFragment extends Fragment {
     private String confirmEmailString;
     private String passwordString;
     private String confirmPasswordString;
-
 
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
@@ -126,6 +127,7 @@ public class RegisterFragment extends Fragment {
         userMap.put("userSocialPoints","0");
         userMap.put("userSocialStoreCredits","0");
         userMap.put("profileImage","");
+        userMap.put("isManager","false");
 
 
 
