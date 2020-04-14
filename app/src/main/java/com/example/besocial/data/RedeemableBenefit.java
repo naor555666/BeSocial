@@ -3,18 +3,62 @@ package com.example.besocial.data;
 import android.graphics.drawable.Drawable;
 
 public class RedeemableBenefit {
-    private String companyName;
-    private String benefitDescription;
-    private int pointsToRedeem;
-    private String minimumSocialLevel;
-    private Drawable benefitPicture;
+    private String name;
+    private String description;
+    private String category;
+    private String cost;
+    //private String minimumSocialLevel;
+    private Drawable benefitPhoto;
 
-    public RedeemableBenefit(String companyName, String benefitDescription, int pointsToRedeem, String minimumSocialLevel, Drawable benefitPicture) {
-        this.companyName = companyName;
-        this.benefitDescription = benefitDescription;
-        this.pointsToRedeem = pointsToRedeem;
-        this.minimumSocialLevel = minimumSocialLevel;
-        this.benefitPicture = benefitPicture;
+
+    public RedeemableBenefit(){
+
+    }
+    public RedeemableBenefit(String companyName, String benefitDescription, String pointsToRedeem,String category,Drawable benefitPhoto) {
+        this.name = companyName;
+        this.description = benefitDescription;
+        this.cost = pointsToRedeem;
+        this.category=category;
+        this.benefitPhoto=benefitPhoto;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getCost() {
+        return cost;
+    }
+
+    public void setCost(String cost) {
+        this.cost = cost;
+    }
+
+    public Drawable getBenefitPhoto() {
+        return benefitPhoto;
+    }
+
+    public void setBenefitPhoto(Drawable benefitPhoto) {
+        this.benefitPhoto = benefitPhoto;
+    }
 }

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,21 +17,31 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.besocial.R;
+import com.example.besocial.data.RedeemableBenefit;
 import com.example.besocial.data.User;
+import com.example.besocial.databinding.FragmentBonusAreaBinding;
 import com.example.besocial.ui.mainactivity.MainActivity;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DatabaseReference;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class BonusAreaFragment extends Fragment {
+    private FragmentBonusAreaBinding binding;
     private Spinner listOfCategories;
     private User loggedUser;
     private TextView socialLevel,socialPoints,socialCredits;
     private ImageButton addNewRedeemableBonus;
     private NavController navController;
+    private DatabaseReference benefitsRef;
+
     public BonusAreaFragment() {
         // Required empty public constructor
     }
@@ -40,7 +51,9 @@ public class BonusAreaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bonus_area, container, false);
+        binding = FragmentBonusAreaBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        return view;
     }
 
     @Override
@@ -85,5 +98,57 @@ public class BonusAreaFragment extends Fragment {
                 navController.navigate(R.id.action_nav_bonus_area_to_addNewRedeemableBonusFragment);
             }
         });
+    }
+
+
+    private void displayEventsList() {
+        FirebaseRecyclerOptions<RedeemableBenefit> options = new FirebaseRecyclerOptions
+                .Builder<RedeemableBenefit>()
+                .setQuery(benefitsRef, RedeemableBenefit.class)
+                .build();
+        FirebaseRecyclerAdapter<RedeemableBenefit, BenefitsViewHolder> firebaseRecyclerAdapter
+                = new FirebaseRecyclerAdapter<RedeemableBenefit, BenefitsViewHolder>(options) {
+            @NonNull
+            @Override
+            public BenefitsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_node, parent, false);
+                BenefitsViewHolder viewHolder = new BenefitsViewHolder(view);
+                return viewHolder;
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull BenefitsViewHolder holder, int position, @NonNull final RedeemableBenefit model) {
+                holder.benefitNode = model;
+                //Glide.with(getContext()).load(model.getStrEventPhotoUrl()).placeholder(R.drawable.social_event0).into(holder.eventPhoto);
+                holder.benefitName.setText(model.getName());
+                holder.benefitDescription.setText(model.getDescription());
+                holder.benefitCategory.setText(model.getCategory());
+                holder.benefitCost.setText(model.getCost());
+//                holder.itemView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        socialCenterViewModel.setEvent(model);
+//                        MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
+//                    }
+//                });
+            }
+        };
+        binding.bonusAreaBenefitsRecycler.setAdapter(firebaseRecyclerAdapter);
+        firebaseRecyclerAdapter.startListening();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    public static class BenefitsViewHolder extends RecyclerView.ViewHolder {
+        RedeemableBenefit benefitNode;
+        ImageView benefitPhoto;
+        TextView benefitCost, benefitName, benefitDescription,benefitCategory;
+        public BenefitsViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
     }
 }

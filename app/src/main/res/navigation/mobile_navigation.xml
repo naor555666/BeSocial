@@ -56,6 +56,9 @@
         <action
             android:id="@+id/action_nav_bonus_area_to_addNewRedeemableBonusFragment"
             app:destination="@id/addNewRedeemableBonusFragment" />
+        <action
+            android:id="@+id/action_nav_bonus_area_to_benefitFragment"
+            app:destination="@id/benefitFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_settings"
@@ -99,6 +102,11 @@
         android:name="com.example.besocial.ui.mainactivity.socialcenter.AddNewRedeemableBonusFragment"
         android:label="fragment_add_new_redeemable_bonus"
         tools:layout="@layout/fragment_add_new_redeemable_bonus" />
+    <fragment
+        android:id="@+id/benefitFragment"
+        android:name="com.example.besocial.BenefitFragment"
+        android:label="fragment_benefit"
+        tools:layout="@layout/fragment_benefit" />
 
 
 </navigation>
