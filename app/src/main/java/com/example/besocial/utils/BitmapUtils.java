@@ -139,7 +139,7 @@ public class BitmapUtils {
 
         //compress
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmapPhoto.compress(Bitmap.CompressFormat.JPEG, 30, stream);
+        bitmapPhoto.compress(Bitmap.CompressFormat.JPEG, 25, stream);
         byte[] imageInByte = stream.toByteArray();
 
         //return compmressed and rotated image in byte[] array
