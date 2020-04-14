@@ -260,7 +260,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     }
 
     private void saveEventInformationToDatabase() {
-        Event newEvent = new Event(strEventPhotoUrl, strEventCategory, strEventTitle, strStartDate, strEndDate, strStartTime
+        Event newEvent = new Event(eventRandomName,strEventPhotoUrl, strEventCategory, strEventTitle, strStartDate, strEndDate, strStartTime
                 , strEndTime, new com.example.besocial.LatLng(eventLocation.latitude, eventLocation.longitude), strLocationName, strDescription, loggedUser.getUserId()
                 , loggedUser.getUserFirstName() + " " + loggedUser.getUserLastName()
                 , loggedUser.isManager());
@@ -329,7 +329,6 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
             }
         }
     }
-
 
     //getters&setters
     public static void setEventLocation(LatLng chosenEventLocation) {
