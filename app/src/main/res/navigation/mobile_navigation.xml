@@ -67,7 +67,7 @@
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/nav_about"
-        android:name="com.example.besocial.ui.mainactivity.AboutFragment"
+        android:name="com.example.besocial.ui.mainactivity.mainmenu.AboutFragment"
         android:label="AboutFragment"
         tools:layout="@layout/fragment_about"/>
     <fragment

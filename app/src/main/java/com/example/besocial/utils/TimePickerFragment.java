@@ -1,4 +1,4 @@
-package com.example.besocial;
+package com.example.besocial.utils;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 
+import com.example.besocial.R;
 import com.example.besocial.ui.mainactivity.socialcenter.CreateEventFragment;
 
 import java.util.Calendar;

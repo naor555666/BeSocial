@@ -4,8 +4,11 @@ package com.example.besocial.ui.mainactivity.socialcenter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +24,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.besocial.EventDatePicker;
+import com.bumptech.glide.Glide;
+import com.example.besocial.utils.BitmapUtils;
+import com.example.besocial.utils.EventDatePicker;
 import com.example.besocial.MapsActivity;
 import com.example.besocial.R;
-import com.example.besocial.TimePickerFragment;
+import com.example.besocial.utils.BitmapUtils;
+import com.example.besocial.utils.TimePickerFragment;
 import com.example.besocial.data.Event;
 import com.example.besocial.data.User;
 import com.example.besocial.ui.mainactivity.MainActivity;
@@ -38,9 +44,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 
-//import com.example.besocial.EventDatePicker;
+//import com.example.besocial.utils.EventDatePicker;
 
 
 /**
@@ -55,6 +63,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
     private ImageView locationIcon, eventPhoto;
     private Uri pickedImageFromGallery = null;
+    private byte[] imageInByte=null;
     private TextView description;
     private TextView eventTitle;
     private Button createEventBtn;
@@ -78,6 +87,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference imagesReference = storage.getReference();
     private Boolean isHelpEvent = false;
+
 
 
     public CreateEventFragment() {
@@ -224,8 +234,10 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         Log.d(TAG, "random name + path is: " + eventRandomName);
 
         final StorageReference filePath = imagesReference.child("Events images/" + eventRandomName);
-
-        filePath.putFile(pickedImageFromGallery).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        //
+        //filePath.putBytes();
+        //
+        filePath.putBytes(imageInByte).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -307,8 +319,14 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
             pickedImageFromGallery = data.getData();
-            eventPhoto.setImageURI(pickedImageFromGallery);
+            try {
+                BitmapUtils rotateBitmap = new BitmapUtils();
+                imageInByte = rotateBitmap.compressAndRotateBitmap(getActivity(), pickedImageFromGallery);
+                Glide.with(getContext()).load(imageInByte).centerCrop().into(eventPhoto);
 
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

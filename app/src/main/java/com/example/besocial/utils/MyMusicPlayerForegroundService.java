@@ -1,4 +1,4 @@
-package com.example.besocial;
+package com.example.besocial.utils;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -13,6 +13,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.besocial.R;
 import com.example.besocial.ui.mainactivity.MainActivity;
 
 public class MyMusicPlayerForegroundService extends Service {

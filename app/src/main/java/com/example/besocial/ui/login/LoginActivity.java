@@ -8,7 +8,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.besocial.MyBroadcastReceiver;
+import com.example.besocial.utils.MyBroadcastReceiver;
 import com.example.besocial.R;
 
 public class LoginActivity extends AppCompatActivity {

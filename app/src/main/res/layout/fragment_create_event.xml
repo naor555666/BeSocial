@@ -24,8 +24,6 @@
             android:adjustViewBounds="true"
             android:background="@drawable/ic_add_a_photo_black_24dp"
             android:backgroundTint="#37D83D"
-            android:contentDescription="add event photo"
-            android:duplicateParentState="false"
             android:scaleType="centerCrop"
             tools:src="?attr/selectableItemBackground" />
 

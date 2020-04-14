@@ -70,7 +70,7 @@
         </activity>
 
         <service
-            android:name=".MyMusicPlayerForegroundService"
+            android:name=".utils.MyMusicPlayerForegroundService"
             android:enabled="true"
             android:exported="false"></service>
 

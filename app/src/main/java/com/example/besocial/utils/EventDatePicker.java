@@ -1,4 +1,4 @@
-package com.example.besocial;
+package com.example.besocial.utils;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -7,6 +7,7 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.besocial.R;
 import com.example.besocial.ui.mainactivity.socialcenter.CreateEventFragment;
 
 import java.text.DateFormat;
