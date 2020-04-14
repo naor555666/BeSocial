@@ -1,13 +1,14 @@
 package com.example.besocial.data;
 
 import com.example.besocial.LatLng;
+import com.google.firebase.database.Exclude;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Event {
+    private String eventId;
     private String strEventPhotoUrl;
     private String eventCategory;
     private String title;
@@ -22,8 +23,6 @@ public class Event {
     private String eventCreatorUserName;
     private boolean isCompanyManagmentEvent = false;
     private boolean isFinished = false;
-    private List<FlatUserDetails> attendingUsers;
-
     public Event() {
     }
 
@@ -150,7 +149,6 @@ public class Event {
     public void setStrEventPhotoUrl(String strEventPhotoUrl) {
         this.strEventPhotoUrl = strEventPhotoUrl;
     }
-
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("strEventPhotoUrl", strEventPhotoUrl);

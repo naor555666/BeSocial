@@ -1,4 +1,4 @@
-package com.example.besocial;
+package com.example.besocial.utils;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
