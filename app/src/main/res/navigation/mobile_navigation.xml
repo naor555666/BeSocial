@@ -104,7 +104,7 @@
         tools:layout="@layout/fragment_add_new_redeemable_bonus" />
     <fragment
         android:id="@+id/benefitFragment"
-        android:name="com.example.besocial.BenefitFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.BenefitFragment"
         android:label="fragment_benefit"
         tools:layout="@layout/fragment_benefit" />
 

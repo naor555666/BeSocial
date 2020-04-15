@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,6 +42,7 @@ public class BonusAreaFragment extends Fragment {
     private ImageButton addNewRedeemableBonus;
     private NavController navController;
     private DatabaseReference benefitsRef;
+    private SocialCenterViewModel socialCenterViewModel;
 
     public BonusAreaFragment() {
         // Required empty public constructor
@@ -119,18 +121,18 @@ public class BonusAreaFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull BenefitsViewHolder holder, int position, @NonNull final RedeemableBenefit model) {
                 holder.benefitNode = model;
-                //Glide.with(getContext()).load(model.getStrEventPhotoUrl()).placeholder(R.drawable.social_event0).into(holder.eventPhoto);
+                //Glide.with(getContext()).load(model).placeholder(R.drawable.social_event0).into(holder.eventPhoto);
                 holder.benefitName.setText(model.getName());
                 holder.benefitDescription.setText(model.getDescription());
                 holder.benefitCategory.setText(model.getCategory());
-                holder.benefitCost.setText(model.getCost());
-//                holder.itemView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        socialCenterViewModel.setEvent(model);
-//                        MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
-//                    }
-//                });
+                holder.benefitCost.setText(model.getCost().toString());
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        socialCenterViewModel.setBenefit(model);
+                        MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
+                    }
+                });
             }
         };
         binding.bonusAreaBenefitsRecycler.setAdapter(firebaseRecyclerAdapter);
@@ -145,10 +147,18 @@ public class BonusAreaFragment extends Fragment {
 
     public static class BenefitsViewHolder extends RecyclerView.ViewHolder {
         RedeemableBenefit benefitNode;
-        ImageView benefitPhoto;
+        //ImageView benefitPhoto;
         TextView benefitCost, benefitName, benefitDescription,benefitCategory;
         public BenefitsViewHolder(@NonNull View itemView) {
             super(itemView);
         }
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        socialCenterViewModel = ViewModelProviders.of(getActivity()).get(SocialCenterViewModel.class);
+
+    }
+
 }

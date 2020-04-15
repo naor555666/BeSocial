@@ -8,18 +8,27 @@ public class RedeemableBenefit {
     private String category;
     private String cost;
     //private String minimumSocialLevel;
-    private Drawable benefitPhoto;
+    private String benefitPhoto;
 
 
     public RedeemableBenefit(){
 
     }
-    public RedeemableBenefit(String companyName, String benefitDescription, String pointsToRedeem,String category,Drawable benefitPhoto) {
-        this.name = companyName;
-        this.description = benefitDescription;
-        this.cost = pointsToRedeem;
-        this.category=category;
-        this.benefitPhoto=benefitPhoto;
+
+    public RedeemableBenefit(String name, String description, String category, String cost, String benefitPhoto) {
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.cost = cost;
+        this.benefitPhoto = benefitPhoto;
+    }
+
+    public String getCost() {
+        return cost;
+    }
+
+    public void setCost(String cost) {
+        this.cost = cost;
     }
 
     public String getName() {
@@ -46,19 +55,11 @@ public class RedeemableBenefit {
         this.category = category;
     }
 
-    public String getCost() {
-        return cost;
-    }
-
-    public void setCost(String cost) {
-        this.cost = cost;
-    }
-
-    public Drawable getBenefitPhoto() {
+    public String getBenefitPhoto() {
         return benefitPhoto;
     }
 
-    public void setBenefitPhoto(Drawable benefitPhoto) {
+    public void setBenefitPhoto(String benefitPhoto) {
         this.benefitPhoto = benefitPhoto;
     }
 }

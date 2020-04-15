@@ -1,4 +1,4 @@
-package com.example.besocial;
+package com.example.besocial.ui.mainactivity.socialcenter;
 
 import android.os.Bundle;
 

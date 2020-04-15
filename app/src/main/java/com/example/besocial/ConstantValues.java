@@ -5,4 +5,5 @@ public interface ConstantValues {
     String USERS = "users";
     String ATTENDING_LIST = "attendingList";
     String USER_ATTENDING_EVENT = "attendingEvents";
+    String BENEFITS = "Benefits";
 }
