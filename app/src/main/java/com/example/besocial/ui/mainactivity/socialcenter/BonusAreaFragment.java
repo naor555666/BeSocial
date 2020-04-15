@@ -1,6 +1,7 @@
 package com.example.besocial.ui.mainactivity.socialcenter;
 
 
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,14 +31,20 @@ import com.example.besocial.databinding.FragmentBonusAreaBinding;
 import com.example.besocial.ui.mainactivity.MainActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class BonusAreaFragment extends Fragment {
+    public static final String TAG = "BonusAreaFragment";
     private FragmentBonusAreaBinding binding;
     private Spinner listOfCategories;
     private User loggedUser;
@@ -77,7 +84,9 @@ public class BonusAreaFragment extends Fragment {
         socialCredits.setText(loggedUser.getSocialStoreCredits());
         addNewRedeemableBonus=view.findViewById(R.id.new_redeemable_bonus_button);
         navController= MainActivity.getNavController();
-        benefitsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.BENEFITS).child("Food");
+       // benefitsRef = FirebaseDatabase.getInstance().getReference();
+
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -113,40 +122,55 @@ public class BonusAreaFragment extends Fragment {
 
 
     private void displayBenefitsList(String chosenCategory) {
-        //benefitsRef=benefitsRef.child(chosenCategory).getRef();
-        FirebaseRecyclerOptions<RedeemableBenefit> options = new FirebaseRecyclerOptions
-                .Builder<RedeemableBenefit>()
-                .setQuery(benefitsRef, RedeemableBenefit.class)
-                .build();
-        FirebaseRecyclerAdapter<RedeemableBenefit, BenefitsViewHolder> firebaseRecyclerAdapter
-                = new FirebaseRecyclerAdapter<RedeemableBenefit, BenefitsViewHolder>(options) {
-            @NonNull
+        benefitsRef=FirebaseDatabase.getInstance().getReference().child(ConstantValues.BENEFITS).child(chosenCategory);
+        benefitsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public BenefitsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_benefit, parent, false);
-                BenefitsViewHolder viewHolder = new BenefitsViewHolder(view);
-                return viewHolder;
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.hasChildren()){
+                    Toast.makeText(getContext(),"No benefits to display in this category.",Toast.LENGTH_LONG).show();
+                }else{
+                    FirebaseRecyclerOptions<RedeemableBenefit> options = new FirebaseRecyclerOptions
+                            .Builder<RedeemableBenefit>()
+                            .setQuery(benefitsRef, RedeemableBenefit.class)
+                            .build();
+                    FirebaseRecyclerAdapter<RedeemableBenefit, BenefitsViewHolder> firebaseRecyclerAdapter
+                            = new FirebaseRecyclerAdapter<RedeemableBenefit, BenefitsViewHolder>(options) {
+                        @NonNull
+                        @Override
+                        public BenefitsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_benefit, parent, false);
+                            BenefitsViewHolder viewHolder = new BenefitsViewHolder(view);
+                            return viewHolder;
+                        }
+
+                        @Override
+                        protected void onBindViewHolder(@NonNull BenefitsViewHolder holder, int position, @NonNull final RedeemableBenefit model) {
+                            //holder.benefitNode = model;
+                            Glide.with(getContext()).load(model.getBenefitPhoto()).placeholder(R.drawable.social_event0).into(holder.benefitPhoto);
+                            holder.benefitName.setText(model.getName());
+                            holder.benefitDescription.setText(model.getDescription());
+                            //holder.benefitCategory.setText(model.getCategory());
+                            holder.benefitCost.setText(model.getCost().toString());
+                            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    socialCenterViewModel.setBenefit(model);
+                                    MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
+                                }
+                            });
+                        }
+                    };
+                    binding.bonusAreaBenefitsRecycler.setAdapter(firebaseRecyclerAdapter);
+                    firebaseRecyclerAdapter.startListening();
+                }
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull BenefitsViewHolder holder, int position, @NonNull final RedeemableBenefit model) {
-                //holder.benefitNode = model;
-                Glide.with(getContext()).load(model.getBenefitPhoto()).placeholder(R.drawable.social_event0).into(holder.benefitPhoto);
-                holder.benefitName.setText(model.getName());
-                holder.benefitDescription.setText(model.getDescription());
-                //holder.benefitCategory.setText(model.getCategory());
-                holder.benefitCost.setText(model.getCost().toString());
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        socialCenterViewModel.setBenefit(model);
-                        MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
-                    }
-                });
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
-        };
-        binding.bonusAreaBenefitsRecycler.setAdapter(firebaseRecyclerAdapter);
-        firebaseRecyclerAdapter.startListening();
+        });
+
     }
 
     @Override

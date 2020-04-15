@@ -137,34 +137,61 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
             clearFields();
         }
         if(v.getId()==saveNewBenefit.getId()){
-            name=newBenefitName.getText().toString();
-            description=newBenefitDescription.getText().toString();
-            costString=newBenefitCost.getText().toString();
-            category=listOfCategories.getSelectedItem().toString();
-            if(checkFields(name,description,costString)==true){
-                showLoadingBar();
-                savePhotoOnDatabase();
-                DatabaseReference benefitsRef = FirebaseDatabase.getInstance().getReference();
-                newRedeemableBenefit=new RedeemableBenefit(name,description,category,costString,imageUri.toString());
-                benefitsRef.child(ConstantValues.BENEFITS).child(category).child(name)
-                        .setValue(newRedeemableBenefit).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getContext(), "New benefit is updated successfully.", Toast.LENGTH_SHORT).show();
-                            loadingBar.dismiss();
-                            getFragmentManager().popBackStack();
-                        } else {
-                            Toast.makeText(getContext(), "Error Occured while updating the new benefit", Toast.LENGTH_SHORT).show();
-                            loadingBar.dismiss();
-                        }
-                    }
-                });
-
-
-            }
+            storeImageToFirebaseStorage();
         }
+    }
+    void storeImageToFirebaseStorage() {
+        if(photoSet==false) {
+            Toast.makeText(getActivity(), "You have to set a photo for this benefit", Toast.LENGTH_SHORT).show();
+        }else {
+            showLoadingBar();
+            final StorageReference filePath = benefitsPicturesRef.child("image " + imageUri.getLastPathSegment());
 
+            filePath.putBytes(imageInByte).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                imageUri = uri;
+                                Toast.makeText(getContext(), "image uploaded successfully to Storage...", Toast.LENGTH_SHORT).show();
+                                saveBenefitInformationToDatabase();
+                            }
+                        });
+
+                    } else {
+                        String message = task.getException().getMessage();
+                        Toast.makeText(getContext(), "Error occured: " + message, Toast.LENGTH_SHORT).show();
+                        loadingBar.dismiss();
+                    }
+                }
+            });
+        }
+    }
+    private void saveBenefitInformationToDatabase() {
+        name=newBenefitName.getText().toString();
+        description=newBenefitDescription.getText().toString();
+        costString=newBenefitCost.getText().toString();
+        category=listOfCategories.getSelectedItem().toString();
+        if(checkFields(name,description,costString)==true){
+            DatabaseReference benefitsRef = FirebaseDatabase.getInstance().getReference();
+            newRedeemableBenefit=new RedeemableBenefit(name,description,category,costString,imageUri.toString());
+            benefitsRef.child(ConstantValues.BENEFITS).child(category).child(name)
+                    .setValue(newRedeemableBenefit).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(getContext(), "New benefit is updated successfully.", Toast.LENGTH_SHORT).show();
+                        getFragmentManager().popBackStack();
+                        loadingBar.dismiss();
+                    } else {
+                        Toast.makeText(getContext(), "Error Occured while updating the new benefit", Toast.LENGTH_SHORT).show();
+                        loadingBar.dismiss();
+                    }
+                }
+            });
+        }
     }
 
     void setListeners(){
@@ -224,26 +251,7 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
     }
 
 
-    void savePhotoOnDatabase(){
-        final StorageReference filePath=benefitsPicturesRef.child("image "+imageUri.getLastPathSegment() );
 
-        filePath.putBytes(imageInByte).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()) {
-                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            imageUri=uri;
-                        }
-                    });
-
-                } else {
-                    String message = task.getException().getMessage();
-                    Toast.makeText(getContext(), "Error occured: " + message, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 //        imageName.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 //            @Override
 //            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -257,4 +265,4 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
 //            }
 //        });
     }
-}
+
