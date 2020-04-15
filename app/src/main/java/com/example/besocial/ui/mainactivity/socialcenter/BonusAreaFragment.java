@@ -18,9 +18,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.besocial.ConstantValues;
 import com.example.besocial.R;
 import com.example.besocial.data.RedeemableBenefit;
 import com.example.besocial.data.User;
@@ -29,6 +31,7 @@ import com.example.besocial.ui.mainactivity.MainActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -74,7 +77,11 @@ public class BonusAreaFragment extends Fragment {
         socialCredits.setText(loggedUser.getSocialStoreCredits());
         addNewRedeemableBonus=view.findViewById(R.id.new_redeemable_bonus_button);
         navController= MainActivity.getNavController();
-
+        benefitsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.BENEFITS).child("Food");
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        binding.bonusAreaBenefitsRecycler.setLayoutManager(linearLayoutManager);
         setListeners();
     }
 
@@ -84,7 +91,9 @@ public class BonusAreaFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(position!=0){
-
+                    String selectedCategory=listOfCategories.getSelectedItem().toString();
+                    Toast.makeText(getContext(), "Displaying "+selectedCategory+" benefits", Toast.LENGTH_SHORT).show();
+                    displayBenefitsList(selectedCategory);
                 }
             }
 
@@ -103,7 +112,8 @@ public class BonusAreaFragment extends Fragment {
     }
 
 
-    private void displayEventsList() {
+    private void displayBenefitsList(String chosenCategory) {
+        //benefitsRef=benefitsRef.child(chosenCategory).getRef();
         FirebaseRecyclerOptions<RedeemableBenefit> options = new FirebaseRecyclerOptions
                 .Builder<RedeemableBenefit>()
                 .setQuery(benefitsRef, RedeemableBenefit.class)
@@ -113,18 +123,18 @@ public class BonusAreaFragment extends Fragment {
             @NonNull
             @Override
             public BenefitsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_node, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_benefit, parent, false);
                 BenefitsViewHolder viewHolder = new BenefitsViewHolder(view);
                 return viewHolder;
             }
 
             @Override
             protected void onBindViewHolder(@NonNull BenefitsViewHolder holder, int position, @NonNull final RedeemableBenefit model) {
-                holder.benefitNode = model;
-                //Glide.with(getContext()).load(model).placeholder(R.drawable.social_event0).into(holder.eventPhoto);
+                //holder.benefitNode = model;
+                Glide.with(getContext()).load(model.getBenefitPhoto()).placeholder(R.drawable.social_event0).into(holder.benefitPhoto);
                 holder.benefitName.setText(model.getName());
                 holder.benefitDescription.setText(model.getDescription());
-                holder.benefitCategory.setText(model.getCategory());
+                //holder.benefitCategory.setText(model.getCategory());
                 holder.benefitCost.setText(model.getCost().toString());
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -147,10 +157,14 @@ public class BonusAreaFragment extends Fragment {
 
     public static class BenefitsViewHolder extends RecyclerView.ViewHolder {
         RedeemableBenefit benefitNode;
-        //ImageView benefitPhoto;
+        ImageView benefitPhoto;
         TextView benefitCost, benefitName, benefitDescription,benefitCategory;
         public BenefitsViewHolder(@NonNull View itemView) {
             super(itemView);
+            benefitCost= itemView.findViewById(R.id.benefit_benefit_cost);
+            benefitDescription= itemView.findViewById(R.id.benefit_benefit_description);
+            benefitName= itemView.findViewById(R.id.benefit_benefit_name);
+            benefitPhoto= itemView.findViewById(R.id.benefit_benefit_photo);
         }
     }
 

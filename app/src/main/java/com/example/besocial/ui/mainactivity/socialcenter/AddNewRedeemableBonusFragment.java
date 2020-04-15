@@ -144,8 +144,8 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
             if(checkFields(name,description,costString)==true){
                 showLoadingBar();
                 savePhotoOnDatabase();
-                newRedeemableBenefit=new RedeemableBenefit(name,description,category,costString,imageUri.toString());
                 DatabaseReference benefitsRef = FirebaseDatabase.getInstance().getReference();
+                newRedeemableBenefit=new RedeemableBenefit(name,description,category,costString,imageUri.toString());
                 benefitsRef.child(ConstantValues.BENEFITS).child(category).child(name)
                         .setValue(newRedeemableBenefit).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -225,16 +225,16 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
 
 
     void savePhotoOnDatabase(){
-        final StorageReference imageName=benefitsPicturesRef.child("image "+imageUri.getLastPathSegment() );
+        final StorageReference filePath=benefitsPicturesRef.child("image "+imageUri.getLastPathSegment() );
 
-        imageName.putBytes(imageInByte).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        filePath.putBytes(imageInByte).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
-                    imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-
+                            imageUri=uri;
                         }
                     });
 

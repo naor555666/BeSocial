@@ -10,7 +10,6 @@ public class RedeemableBenefit {
     //private String minimumSocialLevel;
     private String benefitPhoto;
 
-
     public RedeemableBenefit(){
 
     }
@@ -21,14 +20,6 @@ public class RedeemableBenefit {
         this.category = category;
         this.cost = cost;
         this.benefitPhoto = benefitPhoto;
-    }
-
-    public String getCost() {
-        return cost;
-    }
-
-    public void setCost(String cost) {
-        this.cost = cost;
     }
 
     public String getName() {
@@ -53,6 +44,14 @@ public class RedeemableBenefit {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getCost() {
+        return cost;
+    }
+
+    public void setCost(String cost) {
+        this.cost = cost;
     }
 
     public String getBenefitPhoto() {
