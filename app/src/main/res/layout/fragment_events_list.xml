@@ -19,7 +19,37 @@
         android:text="Events" />
 
 
-    <Spinner
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/events_list_tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/events_list_tab_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="All" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/events_list_tab_hosting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hosting" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/events_list_tab_attending"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Attending" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/events_list_view_pager"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content" />
+
+<!--    <Spinner
         android:id="@+id/events_list_categorySpinner"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
@@ -31,6 +61,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layoutDirection="ltr"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical" />-->
 
 </LinearLayout>
