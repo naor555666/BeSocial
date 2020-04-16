@@ -101,7 +101,6 @@ public class BonusAreaFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(position!=0){
                     String selectedCategory=listOfCategories.getSelectedItem().toString();
-                    Toast.makeText(getContext(), "Displaying "+selectedCategory+" benefits", Toast.LENGTH_SHORT).show();
                     displayBenefitsList(selectedCategory);
                 }
             }
@@ -138,7 +137,7 @@ public class BonusAreaFragment extends Fragment {
                         @NonNull
                         @Override
                         public BenefitsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_benefit, parent, false);
+                            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.benefit_in_recycler, parent, false);
                             BenefitsViewHolder viewHolder = new BenefitsViewHolder(view);
                             return viewHolder;
                         }
@@ -148,9 +147,9 @@ public class BonusAreaFragment extends Fragment {
                             //holder.benefitNode = model;
                             Glide.with(getContext()).load(model.getBenefitPhoto()).placeholder(R.drawable.social_event0).into(holder.benefitPhoto);
                             holder.benefitName.setText(model.getName());
-                            holder.benefitDescription.setText(model.getDescription());
+                            //holder.benefitDescription.setText(model.getDescription());
                             //holder.benefitCategory.setText(model.getCategory());
-                            holder.benefitCost.setText(model.getCost().toString());
+                            //holder.benefitCost.setText(model.getCost().toString());
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -187,8 +186,8 @@ public class BonusAreaFragment extends Fragment {
             super(itemView);
             benefitCost= itemView.findViewById(R.id.benefit_benefit_cost);
             benefitDescription= itemView.findViewById(R.id.benefit_benefit_description);
-            benefitName= itemView.findViewById(R.id.benefit_benefit_name);
-            benefitPhoto= itemView.findViewById(R.id.benefit_benefit_photo);
+            benefitName= itemView.findViewById(R.id.recycler_benefit_name);
+            benefitPhoto= itemView.findViewById(R.id.recycler_benefit_photo);
         }
     }
 
