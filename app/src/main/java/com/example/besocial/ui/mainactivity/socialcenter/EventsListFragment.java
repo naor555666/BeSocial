@@ -14,10 +14,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.besocial.R;
@@ -27,6 +29,7 @@ import com.example.besocial.ui.mainactivity.MainActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -34,17 +37,25 @@ import com.google.firebase.database.FirebaseDatabase;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EventsListFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+//public class EventsListFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class EventsListFragment extends Fragment{
+
     public static final String TAG = "EventsListFragment";
 
     private FragmentEventsListBinding binding;
+
     private NavController navController;
     private FloatingActionButton addEventFab;
     private DatabaseReference eventsRef;
     private String strEventCategory;
     private boolean isHelpEvent;
 
+
     private SocialCenterViewModel socialCenterViewModel;
+
+    private EventsListPageAdapter eventsListPageAdapter;
+    private TabLayout tabLayout;
+    private ViewPager eventsListViewPager;
 
     public EventsListFragment() {
         // Required empty public constructor
@@ -54,17 +65,14 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentEventsListBinding.inflate(inflater, container, false);
+
+/*        binding = FragmentEventsListBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        return view;
+        return view;*/
+
+        return inflater.inflate(R.layout.fragment_events_list, container, false);
         // Inflate the layout for this fragment
         // return inflater.inflate(R.layout.fragment_events_list, container, false);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 
     @Override
@@ -83,11 +91,17 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
-        binding.eventsListRecyclerView.setLayoutManager(linearLayoutManager);
+        //binding.eventsListRecyclerView.setLayoutManager(linearLayoutManager);
 
+        tabLayout = view.findViewById(R.id.events_list_tab_layout);
+        eventsListViewPager = view.findViewById(R.id.events_list_view_pager);
+
+        //binding.eventsListViewPager.setAdapter(eventsListPageAdapter);
+        eventsListPageAdapter = new EventsListPageAdapter(getChildFragmentManager(),tabLayout.getTabCount());
+        eventsListViewPager.setAdapter(eventsListPageAdapter);
 
         //initializing the spinner list of categories
-        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.list_of_categories, R.layout.support_simple_spinner_dropdown_item);
+/*        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.list_of_categories, R.layout.support_simple_spinner_dropdown_item);
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         binding.eventsListCategorySpinner.setAdapter(arrayAdapter);
         if (!(getArguments().isEmpty())) {
@@ -99,7 +113,7 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
         strEventCategory = (String) binding.eventsListCategorySpinner.getSelectedItem();
         binding.eventsListTitle.setText(strEventCategory + " Events");
         //eventsRef = FirebaseDatabase.getInstance().getReference().child("Events").child(strEventCategory);
-        eventsRef = FirebaseDatabase.getInstance().getReference().child("Events").child("Help Me!");
+        eventsRef = FirebaseDatabase.getInstance().getReference().child("Events").child("Help Me!");*/
 
         setListeners();
 
@@ -109,14 +123,42 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
     @Override
     public void onStart() {
         super.onStart();
-        displayEventsList();
+        //displayEventsList();
     }
 
     private void setListeners() {
-        binding.eventsListCategorySpinner.setOnItemSelectedListener(this);
+        //binding.eventsListCategorySpinner.setOnItemSelectedListener(this);
+        //binding.eventsListTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                eventsListViewPager.setCurrentItem(tab.getPosition());
+                if (tab.getPosition() == 0) {
+                    eventsListPageAdapter.notifyDataSetChanged();
+                } else if (tab.getPosition() == 1) {
+                    eventsListPageAdapter.notifyDataSetChanged();
+                } else if (tab.getPosition() == 2) {
+                    eventsListPageAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        //
+        //binding.eventsListViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(binding.eventsListTabLayout));
+        eventsListViewPager.setOffscreenPageLimit(0);
+        eventsListViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
 
-    private void displayEventsList() {
+/*    private void displayEventsList() {
         FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions
                 .Builder<Event>()
                 .setQuery(eventsRef, Event.class)
@@ -163,14 +205,14 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
             eventTitle = itemView.findViewById(R.id.event_node_EventTitle);
             eventLocation = itemView.findViewById(R.id.event_node_eventLocation);
         }
-    }
+    }*/
 
-    @Override
+/*    @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         strEventCategory = (String) parent.getItemAtPosition(position);
         Log.d(TAG, "eventCategory is " + strEventCategory);
         binding.eventsListTitle.setText(strEventCategory + " Events");
-        displayEventsList();
+        // displayEventsList();
     }
 
     @Override
@@ -181,5 +223,11 @@ public class EventsListFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         navController.navigate(R.id.action_eventsListFragment_to_createEventFragment);
+    }*/
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
