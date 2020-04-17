@@ -56,7 +56,7 @@
             android:textStyle="bold" />
 
         <ImageButton
-            android:id="@+id/imageButton2"
+            android:id="@+id/redeem_benefit_button"
             android:layout_width="135dp"
             android:layout_height="54dp"
             android:layout_gravity="center_horizontal"

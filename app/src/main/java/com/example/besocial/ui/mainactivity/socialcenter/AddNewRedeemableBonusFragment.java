@@ -155,7 +155,7 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
                             @Override
                             public void onSuccess(Uri uri) {
                                 imageUri = uri;
-                                Toast.makeText(getContext(), "image uploaded successfully to Storage...", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getContext(), "image uploaded successfully to Storage...", Toast.LENGTH_SHORT).show();
                                 saveBenefitInformationToDatabase();
                             }
                         });

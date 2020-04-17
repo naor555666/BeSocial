@@ -14,17 +14,24 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.besocial.ConstantValues;
 import com.example.besocial.R;
+import com.example.besocial.data.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class RegisterFragment extends Fragment {
     private static final RegisterFragment registerFragment = new RegisterFragment();
@@ -49,7 +56,8 @@ public class RegisterFragment extends Fragment {
 
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference userRef;
+    private DatabaseReference userRef,usersListRef;
+    private List<String> usersList;
 
 
     @Override
@@ -70,13 +78,10 @@ public class RegisterFragment extends Fragment {
         confirmPassword = (EditText) view.findViewById(R.id.confirmPassword);
         clearFields = view.findViewById(R.id.clearFieldsRegister);
         createAccount = view.findViewById(R.id.createAccount);
-
-
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-
+        usersList=new ArrayList<String>();
         setListeners();
-
     }
 
 
@@ -114,28 +119,19 @@ public class RegisterFragment extends Fragment {
 
     private void saveUserDetails(String userID) {
         userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userID);
+        firstNameString=firstName.getText().toString();
+        lastNameString=lastName.getText().toString();
+        emailString=email.getText().toString();
 
-        HashMap userMap = new HashMap();
-        userMap.put("userId", userID);
-        userMap.put("userFirstName", firstName.getText().toString());
-        userMap.put("userLastName", lastName.getText().toString());
-        userMap.put("userEmail", email.getText().toString());
-        userMap.put("userAddress","");
-        userMap.put("userCity","");
-        userMap.put("userBirthday","");
-        userMap.put("userSocialLevel","shy socializer");
-        userMap.put("userSocialPoints","0");
-        userMap.put("userSocialStoreCredits","0");
-        userMap.put("profileImage","");
-        userMap.put("isManager","false");
-
-
-
-        userRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+        User newUser=new User(userID,firstNameString,lastNameString,emailString,"","","","0",ConstantValues.USER_LEVEL_1,"0",false,"");
+        userRef.setValue(newUser).addOnCompleteListener(new OnCompleteListener() {
 
         @Override
             public void onComplete(@NonNull Task task) {
                 if (task.isSuccessful()) {
+                   // userRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS_LIST);
+                  //  usersList.add(firstName.getText().toString());
+                   // userRef.setValue(usersList);
                     Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
                     getFragmentManager().popBackStack();
                 } else {
@@ -276,4 +272,5 @@ public class RegisterFragment extends Fragment {
         LoginFragment loginFragment = LoginFragment.getInstance();
         loginFragment.setRegisterValue(true);
     }
+
 }
