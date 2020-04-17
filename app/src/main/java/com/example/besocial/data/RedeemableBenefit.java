@@ -6,11 +6,11 @@ public class RedeemableBenefit {
     private String name;
     private String description;
     private String category;
-    private String cost;
-    //private String minimumSocialLevel;
+        private String cost;
+//    private String minimumSocialLevel;
     private String benefitPhoto;
 
-    public RedeemableBenefit(){
+    public RedeemableBenefit() {
 
     }
 

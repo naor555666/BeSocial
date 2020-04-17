@@ -2,7 +2,7 @@ package com.example.besocial.data;
 
 import com.example.besocial.LatLng;
 
-import java.util.ArrayList;
+
 
 public class User {
     private String userId;
@@ -16,16 +16,18 @@ public class User {
     private String socialLevel;
     private String socialStoreCredits;
     private boolean isManager=false;
-    private String userProfileImage;
+    private String profileImage;
     private LatLng userCurrentPosition;
 
 
 
     public User() {
-
     }
 
-    public User(String userId, String userFirstName, String userLastName, String userEmail, String userAddress, String userCity, String birthday, String socialPoints, String socialLevel, String socialStoreCredits, boolean isManager, String userProfileImage) {
+    public User(String userId, String userFirstName, String userLastName,
+                String userEmail, String userAddress, String userCity,
+                String birthday, String socialPoints, String socialLevel,
+                String socialStoreCredits, boolean isManager, String profileImage) {
         this.userId = userId;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
@@ -37,7 +39,7 @@ public class User {
         this.socialLevel = socialLevel;
         this.socialStoreCredits = socialStoreCredits;
         this.isManager = isManager;
-        this.userProfileImage = userProfileImage;
+        this.profileImage = profileImage;
     }
 
     public String getBirthday() {
@@ -120,16 +122,10 @@ public class User {
         this.userCity = userCity;
     }
 
-    public String getUserProfileImage() {
-        return userProfileImage;
-    }
     public boolean isManager() {
         return isManager;
     }
 
-    public void setUserProfileImage(String userProfileImage) {
-        this.userProfileImage = userProfileImage;
-    }
     public void setManager(boolean manager) {
         isManager = manager;
     }
@@ -140,5 +136,13 @@ public class User {
 
     public void setUserCurrentPosition(LatLng userCurrentPosition) {
         this.userCurrentPosition = userCurrentPosition;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }
