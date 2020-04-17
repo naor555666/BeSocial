@@ -1,5 +1,7 @@
 package com.example.besocial.data;
 
+import com.example.besocial.LatLng;
+
 import java.util.ArrayList;
 
 public class User {
@@ -13,11 +15,17 @@ public class User {
     private String socialPoints;
     private String socialLevel;
     private String socialStoreCredits;
-    private ArrayList<User> followList;
     private boolean isManager=false;
     private String userProfileImage;
+    private LatLng userCurrentPosition;
 
-    public User(String userId, String userFirstName, String userLastName, String userEmail, String userAddress, String userCity, String birthday, String socialPoints, String socialLevel, String socialStoreCredits, ArrayList<User> followList) {
+
+
+    public User() {
+
+    }
+
+    public User(String userId, String userFirstName, String userLastName, String userEmail, String userAddress, String userCity, String birthday, String socialPoints, String socialLevel, String socialStoreCredits, boolean isManager, String userProfileImage) {
         this.userId = userId;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
@@ -28,11 +36,8 @@ public class User {
         this.socialPoints = socialPoints;
         this.socialLevel = socialLevel;
         this.socialStoreCredits = socialStoreCredits;
-        this.followList = followList;
-    }
-
-    public User() {
-
+        this.isManager = isManager;
+        this.userProfileImage = userProfileImage;
     }
 
     public String getBirthday() {
@@ -99,14 +104,6 @@ public class User {
         this.socialLevel = socialLevel;
     }
 
-    public ArrayList<User> getFollowList() {
-        return followList;
-    }
-
-    public void setFollowList(ArrayList<User> followList) {
-        this.followList = followList;
-    }
-
     public String getUserAddress() {
         return userAddress;
     }
@@ -135,5 +132,13 @@ public class User {
     }
     public void setManager(boolean manager) {
         isManager = manager;
+    }
+
+    public LatLng getUserCurrentPosition() {
+        return userCurrentPosition;
+    }
+
+    public void setUserCurrentPosition(LatLng userCurrentPosition) {
+        this.userCurrentPosition = userCurrentPosition;
     }
 }

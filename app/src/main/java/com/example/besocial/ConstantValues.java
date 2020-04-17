@@ -8,4 +8,12 @@ public interface ConstantValues {
     String BENEFITS = "Benefits";
     String USERS_INCOMING_EVENTS = "UsersIncomingEvents";
     String EVENTS_ATTENDANTS = "EventsAttendants";
+    String USERS_LIST = "UsersList";
+
+    String USER_LEVEL_1 = "Shy Socializer";
+    String USER_LEVEL_2 = "Out Of The Shell Socializer";
+    String USER_LEVEL_3 = "Academic Socializer";
+    String USER_LEVEL_4 = "Socialized Ninja Turtle";
+    String USER_LEVEL_5 = "Socialozaurus";
+
 }

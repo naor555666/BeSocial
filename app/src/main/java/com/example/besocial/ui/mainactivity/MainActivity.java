@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 
+import com.bumptech.glide.Glide;
+import com.example.besocial.ui.login.RegisterFragment;
 import com.example.besocial.ui.mainactivity.mainmenu.LogoutDialog;
 import com.example.besocial.utils.MyBroadcastReceiver;
 import com.example.besocial.utils.MyMusicPlayerForegroundService;
@@ -17,10 +19,13 @@ import com.example.besocial.data.User;
 import com.example.besocial.ui.login.LoginActivity;
 
 import android.os.PersistableBundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -47,9 +52,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TextWatcher {
     private static User loggedUser;
 
     private static boolean isMusicPlaying = false;
@@ -57,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView nav_header_user_email, nav_header_user_full_name;
 
-
+    private EditText search;
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private static NavController navController;
@@ -68,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth fireBaseAuth;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
+    private List<String> usersList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
         //
 
-
+        search=findViewById(R.id.app_bar_search);
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -115,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(myBroadcastReceiver, intentFilter);
+        search.addTextChangedListener(new RegisterTextWatcher(search.getId()));
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         editor=sharedPref.edit();
@@ -143,33 +152,21 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "inside on Start");
 
-
         if (MainActivity.currentUser == null) {    // if the user is not logged in
             sendUserToLogin();
         }
         //
         else {
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
-            currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
+            currentUserDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            //currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    MainActivity.loggedUser.setUserEmail((String)dataSnapshot.child("userEmail").getValue());
-                    MainActivity.loggedUser.setUserAddress((String)dataSnapshot.child("userAddress").getValue());
-                    MainActivity.loggedUser.setUserCity((String)dataSnapshot.child("userCity").getValue());
-                    MainActivity.loggedUser.setUserFirstName((String)dataSnapshot.child("userFirstName").getValue());
-                    MainActivity.loggedUser.setUserLastName((String)dataSnapshot.child("userLastName").getValue());
-                    MainActivity.loggedUser.setBirthday((String)dataSnapshot.child("userBirthday").getValue());
-                    MainActivity.loggedUser.setSocialLevel((String)dataSnapshot.child("userSocialLevel").getValue());
-                    MainActivity.loggedUser.setSocialPoints((String)dataSnapshot.child("userSocialPoints").getValue());
-                    MainActivity.loggedUser.setSocialStoreCredits((String)dataSnapshot.child("userSocialStoreCredits").getValue());
-                    MainActivity.loggedUser.setUserProfileImage((String)dataSnapshot.child("profileImage").getValue().toString());
-                    MainActivity.loggedUser.setUserId(currentUser.getUid());
+                    MainActivity.loggedUser = dataSnapshot.getValue(User.class);
                     nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
                     nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());
                     String myProfileImage=loggedUser.getUserProfileImage();
-                    if(!myProfileImage.equals("")) {
-                        Picasso.with(MainActivity.this).load(myProfileImage).into(nav_header_user_profile_picture);
-                    }
+                        Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
                 }
 
                 @Override
@@ -339,5 +336,49 @@ public class MainActivity extends AppCompatActivity {
 
     public static DatabaseReference getCurrentUserDatabaseRef() {
         return currentUserDatabaseRef;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+    }
+
+    public class RegisterTextWatcher implements android.text.TextWatcher {
+        private int chosenEditText;
+
+        public RegisterTextWatcher(int chosenEditText) {
+            super();
+            this.chosenEditText = chosenEditText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (chosenEditText == search.getId()) {
+                if(!search.getText().toString().trim().equals("")){
+
+                }
+            }
+        }
+
+        @Override
+        public void afterTextChanged (Editable s){
+
+        }
+
     }
 }
