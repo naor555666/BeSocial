@@ -158,15 +158,15 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         //
         else {
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
-            currentUserDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            //currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
+//            currentUserDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     MainActivity.loggedUser = dataSnapshot.getValue(User.class);
                     nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
                     nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());
-                    String myProfileImage=loggedUser.getUserProfileImage();
-                        Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
+                    String myProfileImage=loggedUser.getProfileImage();
+                    Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
                 }
 
                 @Override

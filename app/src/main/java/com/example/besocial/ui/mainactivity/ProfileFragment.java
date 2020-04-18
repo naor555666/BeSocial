@@ -25,9 +25,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.besocial.R;
 import com.example.besocial.data.User;
 import com.example.besocial.databinding.FragmentProfileBinding;
+import com.example.besocial.utils.BitmapUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -42,6 +44,7 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -53,11 +56,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment {
     private CircleImageView profileProfilePicture;
     private TextView profilePageUsername;
-    private EditText profileFullName,profileEmail,profileCity,profileAddress,profileBirthday,profileSocialLevel,profileSocialPoints;
+    private EditText profileFullName, profileEmail, profileCity, profileAddress, profileBirthday, profileSocialLevel, profileSocialPoints;
     private User loggedUser;
-    private Button profileSaveDetails,profileFollowList,profileMyPictures;
-    private final static int galleryPick=1;
-    private ImageButton profileChangeProfilePicture,profileEditProfileDetails;
+    private Button profileSaveDetails, profileFollowList, profileMyPictures;
+    private final static int galleryPick = 1;
+    private ImageButton profileChangeProfilePicture, profileEditProfileDetails;
     private FirebaseDatabase firebaseDatabase;
     private static DatabaseReference userRef;
     private StorageReference userPicturesRef;
@@ -83,37 +86,36 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        profileProfilePicture=view.findViewById(R.id.profile_user_profile_picture);
-        profileChangeProfilePicture=view.findViewById(R.id.profile_change_profile_picture);
-        profilePageUsername=view.findViewById(R.id.profile_page_username);
-        profileFullName=view.findViewById(R.id.profile_full_name);
-        profileAddress=view.findViewById(R.id.profile_adress);
-        profileSocialLevel=view.findViewById(R.id.profile_social_level);
-        profileSocialPoints=view.findViewById(R.id.profile_social_points);
-        profileCity=view.findViewById(R.id.profile_city);
-        profileEmail=view.findViewById(R.id.profile_email);
-        profileBirthday=view.findViewById(R.id.profile_birthday);
-        profileSaveDetails=view.findViewById(R.id.profile_save_new_details);
-        profileEditProfileDetails=view.findViewById(R.id.profile_edit_profile_details);
-        profileMyPictures=view.findViewById(R.id.profile_my_pictures);
-        profileFollowList=view.findViewById(R.id.profile_follow_list);
+        profileProfilePicture = view.findViewById(R.id.profile_user_profile_picture);
+        profileChangeProfilePicture = view.findViewById(R.id.profile_change_profile_picture);
+        profilePageUsername = view.findViewById(R.id.profile_page_username);
+        profileFullName = view.findViewById(R.id.profile_full_name);
+        profileAddress = view.findViewById(R.id.profile_adress);
+        profileSocialLevel = view.findViewById(R.id.profile_social_level);
+        profileSocialPoints = view.findViewById(R.id.profile_social_points);
+        profileCity = view.findViewById(R.id.profile_city);
+        profileEmail = view.findViewById(R.id.profile_email);
+        profileBirthday = view.findViewById(R.id.profile_birthday);
+        profileSaveDetails = view.findViewById(R.id.profile_save_new_details);
+        profileEditProfileDetails = view.findViewById(R.id.profile_edit_profile_details);
+        profileMyPictures = view.findViewById(R.id.profile_my_pictures);
+        profileFollowList = view.findViewById(R.id.profile_follow_list);
         firebaseDatabase = FirebaseDatabase.getInstance();
-        navController= Navigation.findNavController(getActivity(),R.id.nav_host_fragment);
-        loggedUser=MainActivity.getLoggedUser();
-        userPicturesRef= FirebaseStorage.getInstance().getReference().child(MainActivity.getCurrentUser().getUid());
-        profilePageUsername.setText(loggedUser.getUserFirstName()+"  "+loggedUser.getUserLastName());
+        navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+        loggedUser = MainActivity.getLoggedUser();
+        userPicturesRef = FirebaseStorage.getInstance().getReference().child(MainActivity.getCurrentUser().getUid());
+        profilePageUsername.setText(loggedUser.getUserFirstName() + "  " + loggedUser.getUserLastName());
         profileEmail.setText(loggedUser.getUserEmail());
-        profileFullName.setText(loggedUser.getUserFirstName()+"  "+loggedUser.getUserLastName());
+        profileFullName.setText(loggedUser.getUserFirstName() + "  " + loggedUser.getUserLastName());
         profileAddress.setText(loggedUser.getUserAddress());
         profileCity.setText(loggedUser.getUserCity());
         profileSocialLevel.setText(loggedUser.getSocialLevel());
         profileSocialPoints.setText(loggedUser.getSocialPoints());
         profileBirthday.setText(loggedUser.getBirthday());
-        userRef=MainActivity.getCurrentUserDatabaseRef();
-        String myProfileImage=loggedUser.getUserProfileImage();
-        if(!myProfileImage.equals(""))
-            Picasso.with(getContext()).load(myProfileImage).into(profileProfilePicture);
-
+        userRef = MainActivity.getCurrentUserDatabaseRef();
+        String myProfileImage = loggedUser.getProfileImage();
+        //if(!myProfileImage.equals(""))
+        Glide.with(getContext()).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(profileProfilePicture);
 
 
         profileMyPictures.setOnClickListener(new View.OnClickListener() {
@@ -139,20 +141,20 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                boolean isFieldsValid=true;
-               // String[] name=profileFullName.getText().toString().split(" ");
-               // if(name[0].equals("") || name[1].equals(""))
-                    //isFieldsValid=false;
-                if(profileAddress.getText().toString().equals(""))
-                    isFieldsValid=false;
-                if(profileCity.getText().toString().equals(""))
-                    isFieldsValid=false;
-                if(isFieldsValid==true) {
+                boolean isFieldsValid = true;
+                // String[] name=profileFullName.getText().toString().split(" ");
+                // if(name[0].equals("") || name[1].equals(""))
+                //isFieldsValid=false;
+                if (profileAddress.getText().toString().equals(""))
+                    isFieldsValid = false;
+                if (profileCity.getText().toString().equals(""))
+                    isFieldsValid = false;
+                if (isFieldsValid == true) {
                     HashMap userMap = new HashMap();
                     //userMap.put("userFirstName", name[0]);
                     //userMap.put("userLastName", name[1]);
-                    userMap.put("userAddress",profileAddress.getText().toString());
-                    userMap.put("userCity",profileCity.getText().toString());
+                    userMap.put("userAddress", profileAddress.getText().toString());
+                    userMap.put("userCity", profileCity.getText().toString());
                     userRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                         @Override
                         public void onComplete(@NonNull Task task) {
@@ -168,8 +170,7 @@ public class ProfileFragment extends Fragment {
                     });
 
 
-                }
-                else{
+                } else {
                     Toast.makeText(getActivity(), "Fields are not filled correctly", Toast.LENGTH_LONG).show();
                 }
             }
@@ -178,41 +179,28 @@ public class ProfileFragment extends Fragment {
         profileChangeProfilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent galleryIntent=new Intent();
+                Intent galleryIntent = new Intent();
                 galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                 galleryIntent.setType("image/*");
                 //CropImage.activity()
-                      //  .start(getView().getContext(), this);
+                //  .start(getView().getContext(), this);
 
-                 startActivityForResult(galleryIntent,galleryPick);
+                startActivityForResult(galleryIntent, galleryPick);
             }
         });
 
     }
 
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==galleryPick && resultCode== Activity.RESULT_OK && data!=null){
-            Uri imageUri=data.getData();
-            final StorageReference imageName=userPicturesRef.child("image "+imageUri.getLastPathSegment() );
-            imageName.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(getActivity(), "Profile picture changed", Toast.LENGTH_LONG).show();
-                    imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            DatabaseReference imageStore= FirebaseDatabase.getInstance().getReference().child("users").child(MainActivity.getCurrentUser().getUid()).child("profileImage");
-                            imageStore.setValue((String)uri.toString());
-                        }
-                    });
-                }
-            });
-            //userPicturesRef.child("profilePicture"+".jpg");
+        if (requestCode == galleryPick && resultCode == Activity.RESULT_OK && data != null) {
+            uploadImageToStorage(data);
+        }
+
+        //userPicturesRef.child("profilePicture"+".jpg");
             /*
             userPicturesRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -228,11 +216,39 @@ public class ProfileFragment extends Fragment {
             });
 
              */
-           // CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1,1).start(getActivity());
-            profileProfilePicture.setImageURI(imageUri);
-        }
+        // CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1,1).start(getActivity());
+        //profileProfilePicture.setImageURI(imageUri);
 
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+    }
+
+    private void uploadImageToStorage(Intent data) {
+        Uri imageUri = data.getData();
+        final StorageReference profileImagesRef = userPicturesRef.child("profileImages/" + imageUri.getLastPathSegment());
+        BitmapUtils rotateNcompress = new BitmapUtils();
+        byte[] compressedPhoto = new byte[0];
+        try {
+            compressedPhoto = rotateNcompress.compressAndRotateBitmap(getContext(), imageUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        profileImagesRef.putBytes(compressedPhoto).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                profileImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        DatabaseReference imageStore = FirebaseDatabase.getInstance().getReference().child("users")
+                                .child(MainActivity.getLoggedUser().getUserId()).child("profileImage");
+                        imageStore.setValue(uri.toString());
+                        Toast.makeText(getContext(), "Image was uploaded successfully.", Toast.LENGTH_SHORT).show();
+                        Glide.with(getContext()).load(uri).placeholder(R.drawable.empty_profile_image).into(profileProfilePicture);
+                    }
+                });
+            }
+        });
+    }
+
+/*        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == Activity.RESULT_OK) {
                 Uri resultUri = result.getUri();
@@ -242,18 +258,14 @@ public class ProfileFragment extends Fragment {
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
-        }
+        }*/
 
 
-    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-
-
-
 
 }
 

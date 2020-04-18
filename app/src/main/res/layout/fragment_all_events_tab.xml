@@ -6,11 +6,6 @@
     android:orientation="vertical"
     tools:context=".ui.mainactivity.socialcenter.AllEventsTabFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="all"
-        android:textSize="30sp" />
 
     <Spinner
         android:id="@+id/all_events_tab_categorySpinner"
