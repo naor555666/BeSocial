@@ -111,11 +111,17 @@
         android:id="@+id/allEventsTabFragment"
         android:name="com.example.besocial.ui.mainactivity.socialcenter.AllEventsTabFragment"
         android:label="fragment_all_events_tab"
-        tools:layout="@layout/fragment_all_events_tab" >
-        <action
-            android:id="@+id/action_allEventsTabFragment_to_eventFragment"
-            app:destination="@id/eventFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_all_events_tab" />
+    <fragment
+        android:id="@+id/attendingEventsTabFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.AttendingEventsTabFragment"
+        android:label="fragment_attending_events_tab"
+        tools:layout="@layout/fragment_attending_events_tab" />
+    <fragment
+        android:id="@+id/hostingEventsTabFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.HostingEventsTabFragment"
+        android:label="fragment_hosting_events_tab"
+        tools:layout="@layout/fragment_hosting_events_tab" />
 
 
 </navigation>

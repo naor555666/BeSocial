@@ -145,6 +145,7 @@
             android:layout_marginTop="100dp"
             android:background="@drawable/round_button"
             android:backgroundTint="#0AF017"
+            android:visibility="invisible"
             android:text="Attend" />
     </LinearLayout>
 
