@@ -3,7 +3,6 @@ package com.example.besocial.data;
 import com.example.besocial.LatLng;
 
 
-
 public class User {
     private String userId;
     private String userFirstName;
@@ -12,13 +11,12 @@ public class User {
     private String userAddress;
     private String userCity;
     private String birthday;
-    private String socialPoints;
     private String socialLevel;
-    private String socialStoreCredits;
-    private boolean isManager=false;
+   private Long socialPoints;
+    private Long socialStoreCredits;
+    private boolean isManager = false;
     private String profileImage;
     private LatLng userCurrentPosition;
-
 
 
     public User() {
@@ -26,8 +24,8 @@ public class User {
 
     public User(String userId, String userFirstName, String userLastName,
                 String userEmail, String userAddress, String userCity,
-                String birthday, String socialPoints, String socialLevel,
-                String socialStoreCredits, boolean isManager, String profileImage) {
+                String birthday, Long socialPoints, String socialLevel,
+                Long socialStoreCredits, boolean isManager, String profileImage) {
         this.userId = userId;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
@@ -50,19 +48,19 @@ public class User {
         this.birthday = birthday;
     }
 
-    public String getSocialPoints() {
+    public Long getSocialPoints() {
         return socialPoints;
     }
 
-    public void setSocialPoints(String socialPoints) {
+    public void setSocialPoints(Long socialPoints) {
         this.socialPoints = socialPoints;
     }
 
-    public String getSocialStoreCredits() {
+    public Long getSocialStoreCredits() {
         return socialStoreCredits;
     }
 
-    public void setSocialStoreCredits(String socialStoreCredits) {
+    public void setSocialStoreCredits(Long socialStoreCredits) {
         this.socialStoreCredits = socialStoreCredits;
     }
 

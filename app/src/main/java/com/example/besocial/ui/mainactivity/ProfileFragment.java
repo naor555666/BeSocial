@@ -110,7 +110,7 @@ public class ProfileFragment extends Fragment {
         profileAddress.setText(loggedUser.getUserAddress());
         profileCity.setText(loggedUser.getUserCity());
         profileSocialLevel.setText(loggedUser.getSocialLevel());
-        profileSocialPoints.setText(loggedUser.getSocialPoints());
+        profileSocialPoints.setText(loggedUser.getSocialPoints().toString());
         profileBirthday.setText(loggedUser.getBirthday());
         userRef = MainActivity.getCurrentUserDatabaseRef();
         String myProfileImage = loggedUser.getProfileImage();

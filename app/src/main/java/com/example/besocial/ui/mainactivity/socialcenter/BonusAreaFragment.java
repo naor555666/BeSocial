@@ -79,9 +79,9 @@ public class BonusAreaFragment extends Fragment {
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         listOfCategories.setAdapter(arrayAdapter);
         loggedUser= MainActivity.getLoggedUser();
-        socialPoints.setText(loggedUser.getSocialPoints());
+        socialPoints.setText(loggedUser.getSocialPoints().toString());
         socialLevel.setText(loggedUser.getSocialLevel());
-        socialCredits.setText(loggedUser.getSocialStoreCredits());
+        socialCredits.setText(loggedUser.getSocialStoreCredits().toString());
         addNewRedeemableBonus=view.findViewById(R.id.new_redeemable_bonus_button);
         navController= MainActivity.getNavController();
        // benefitsRef = FirebaseDatabase.getInstance().getReference();
