@@ -121,6 +121,17 @@
         android:name="com.example.besocial.SearchUsersFragment"
         android:label="fragment_search_users"
         tools:layout="@layout/fragment_search_users" />
+        tools:layout="@layout/fragment_all_events_tab" />
+    <fragment
+        android:id="@+id/attendingEventsTabFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.AttendingEventsTabFragment"
+        android:label="fragment_attending_events_tab"
+        tools:layout="@layout/fragment_attending_events_tab" />
+    <fragment
+        android:id="@+id/hostingEventsTabFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.HostingEventsTabFragment"
+        android:label="fragment_hosting_events_tab"
+        tools:layout="@layout/fragment_hosting_events_tab" />
 
 
 </navigation>

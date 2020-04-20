@@ -154,7 +154,7 @@ public class EventsListFragment extends Fragment{
         });
         //
         //binding.eventsListViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(binding.eventsListTabLayout));
-        eventsListViewPager.setOffscreenPageLimit(0);
+        eventsListViewPager.setOffscreenPageLimit(2);
         eventsListViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
 

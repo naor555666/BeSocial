@@ -29,7 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class BenefitFragment extends Fragment implements View.OnClickListener {
     private SocialCenterViewModel socialCenterViewModel;
     private FragmentBenefitBinding binding;
-    private TextView benefitName,benefitDescription,benefitCost;
+    private TextView benefitName, benefitDescription, benefitCost;
     private ImageView benefitPhoto;
     private MutableLiveData<RedeemableBenefit> redeemableBenefitMutableLiveData;
     private RedeemableBenefit selectedBenefit;
@@ -37,9 +37,9 @@ public class BenefitFragment extends Fragment implements View.OnClickListener {
     private User user;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference userRef;
+
     public BenefitFragment() {
     }
-
 
 
     @Override
@@ -54,41 +54,44 @@ public class BenefitFragment extends Fragment implements View.OnClickListener {
         socialCenterViewModel = ViewModelProviders.of(getActivity()).get(SocialCenterViewModel.class);
         binding = FragmentBenefitBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        user= MainActivity.getLoggedUser();
-        redeemBenefit=binding.redeemBenefitButton;
-        benefitName=binding.benefitBenefitName;
-        benefitPhoto=binding.benefitBenefitPhoto;
-        benefitCost=binding.benefitBenefitCost;
-        benefitDescription=binding.benefitBenefitDescription;
-        redeemableBenefitMutableLiveData=socialCenterViewModel.getBenefit();
+        user = MainActivity.getLoggedUser();
+        redeemBenefit = binding.redeemBenefitButton;
+        benefitName = binding.benefitBenefitName;
+        benefitPhoto = binding.benefitBenefitPhoto;
+        benefitCost = binding.benefitBenefitCost;
+        benefitDescription = binding.benefitBenefitDescription;
+        redeemableBenefitMutableLiveData = socialCenterViewModel.getBenefit();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        selectedBenefit=redeemableBenefitMutableLiveData.getValue();
+        selectedBenefit = redeemableBenefitMutableLiveData.getValue();
         benefitName.setText(selectedBenefit.getName());
         benefitDescription.setText(selectedBenefit.getDescription());
-        benefitCost.setText("Cost: "+selectedBenefit.getCost()+" CREDITS");
+        benefitCost.setText("Cost: " + selectedBenefit.getCost() + " CREDITS");
         Glide.with(getContext()).load(selectedBenefit.getBenefitPhoto()).placeholder(R.drawable.social_event0).into(benefitPhoto);
 
         setListeners();
         return view;
     }
 
-    void setListeners(){
+    void setListeners() {
         redeemBenefit.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId()==redeemBenefit.getId()){
-            long benefitCost,userCredits,creditsLeft;
-            benefitCost=Long.parseLong(selectedBenefit.getCost());
-            userCredits=Long.parseLong(user.getSocialStoreCredits());
-            if(userCredits<benefitCost){
+        if (v.getId() == redeemBenefit.getId()) {
+            Long benefitCost, userCredits, creditsLeft;
+            benefitCost = selectedBenefit.getCost();
+            userCredits= user.getSocialStoreCredits();
+            if (userCredits.longValue() < benefitCost.longValue()) {
                 Toast.makeText(getContext(), "You don't have enough CREDITS", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                userRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS).child(user.getUserId()).child("userSocialStoreCredits");
-                creditsLeft=userCredits-benefitCost;
-                userRef.setValue(Long.toString(creditsLeft));
+            } else {
+                userRef = FirebaseDatabase.getInstance().getReference()
+                        .child(ConstantValues.USERS)
+                        .child(user.getUserId())
+                        .child("socialStoreCredits");
+
+                creditsLeft = userCredits - benefitCost;
+                userRef.setValue(creditsLeft);
                 Toast.makeText(getContext(), "You have purchased this benefit", Toast.LENGTH_SHORT).show();
             }
         }

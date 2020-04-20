@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 
 import com.example.besocial.R;
+import com.example.besocial.databinding.FragmentSocialCenterBinding;
 import com.example.besocial.ui.mainactivity.MainActivity;
 
 
@@ -20,7 +21,8 @@ import com.example.besocial.ui.mainactivity.MainActivity;
  * A simple {@link Fragment} subclass.
  */
 public class SocialCenterFragment extends Fragment implements View.OnClickListener {
-    Button socialEventButton, bonusAreaButton, volunteerButton, getHelpButton;
+    private FragmentSocialCenterBinding binding;
+
     NavController navController;
     public static final String IS_HELP_EVENT="isHelpEvent";
     public SocialCenterFragment() {
@@ -32,25 +34,23 @@ public class SocialCenterFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_social_center, container, false);
+        binding = FragmentSocialCenterBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        socialEventButton = view.findViewById(R.id.socialEventButton);
-        bonusAreaButton = view.findViewById(R.id.bonusAreaButton);
-        volunteerButton = view.findViewById(R.id.volunteerButton);
-        getHelpButton = view.findViewById(R.id.getHelpButton);
         setListeners();
         navController = MainActivity.getNavController();
     }
 
     private void setListeners() {
-        socialEventButton.setOnClickListener(this);
-        bonusAreaButton.setOnClickListener(this);
-        volunteerButton.setOnClickListener(this);
-        getHelpButton.setOnClickListener(this);
+        binding.socialEventButton.setOnClickListener(this);
+        binding.bonusAreaButton.setOnClickListener(this);
+        binding.volunteerButton.setOnClickListener(this);
+        binding.getHelpButton.setOnClickListener(this);
     }
 
 
@@ -71,5 +71,11 @@ public class SocialCenterFragment extends Fragment implements View.OnClickListen
         if(v.getId() == R.id.bonusAreaButton){
             navController.navigate(R.id.action_nav_social_center_to_nav_bonus_area);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        binding=null;
     }
 }

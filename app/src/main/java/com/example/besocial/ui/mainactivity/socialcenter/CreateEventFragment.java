@@ -267,7 +267,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
         Log.d(TAG, "new event is:\n" + newEvent.toString());
         DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference();
-        eventsRef.child("Events").child(strEventCategory).child(loggedUser.getUserId() + eventRandomName)
+        eventsRef.child("Events").child(loggedUser.getUserId() + eventRandomName)
                 .setValue(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

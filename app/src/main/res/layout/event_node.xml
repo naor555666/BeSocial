@@ -16,7 +16,6 @@
             android:id="@+id/event_node_eventPhoto"
             android:layout_width="130dp"
             android:layout_height="130dp"
-            android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
 

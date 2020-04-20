@@ -6,15 +6,15 @@ public class RedeemableBenefit {
     private String name;
     private String description;
     private String category;
-        private String cost;
-//    private String minimumSocialLevel;
+    private Long cost;
+////    private String minimumSocialLevel;
     private String benefitPhoto;
 
     public RedeemableBenefit() {
 
     }
 
-    public RedeemableBenefit(String name, String description, String category, String cost, String benefitPhoto) {
+    public RedeemableBenefit(String name, String description, String category, Long cost, String benefitPhoto) {
         this.name = name;
         this.description = description;
         this.category = category;
@@ -46,11 +46,11 @@ public class RedeemableBenefit {
         this.category = category;
     }
 
-    public String getCost() {
+    public Long getCost() {
         return cost;
     }
 
-    public void setCost(String cost) {
+    public void setCost(Long cost) {
         this.cost = cost;
     }
 

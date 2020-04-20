@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide;
 import com.example.besocial.ConstantValues;
 import com.example.besocial.R;
 import com.example.besocial.data.RedeemableBenefit;
+import com.example.besocial.databinding.FragmentAddNewRedeemableBonusBinding;
 import com.example.besocial.ui.mainactivity.MainActivity;
 import com.example.besocial.utils.BitmapUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -41,83 +42,73 @@ import java.io.IOException;
 
 
 public class AddNewRedeemableBonusFragment extends Fragment implements View.OnClickListener {
+    private FragmentAddNewRedeemableBonusBinding binding;
 
-    private ImageView newBenefitPhoto;
-    private Button clearFields,saveNewBenefit;
-    private String name,description,costString,category;
+    private String name, description, costString, category;
     private long cost;
-    private Spinner listOfCategories;
-    private final static int galleryPick=1;
-    private EditText newBenefitName,newBenefitDescription,newBenefitCost;
+
+    private final static int galleryPick = 1;
     private RedeemableBenefit newRedeemableBenefit;
     private Uri imageUri;
     private ProgressDialog loadingBar;
     private boolean photoSet;
     private StorageReference benefitsPicturesRef;
-    private byte[] imageInByte=null;
+    private byte[] imageInByte = null;
 
     public AddNewRedeemableBonusFragment() {
         // Required empty public constructor
     }
 
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_new_redeemable_bonus, container, false);
+        binding = FragmentAddNewRedeemableBonusBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        newBenefitPhoto=view.findViewById(R.id.new_benefit_photo);
-        saveNewBenefit=view.findViewById(R.id.new_benefit_save_benefit);
-        clearFields=view.findViewById(R.id.new_benefit_clear_fields);
-        newBenefitCost=view.findViewById(R.id.new_benefit_cost);
-        newBenefitDescription=view.findViewById(R.id.new_benefit_description);
-        newBenefitName=view.findViewById(R.id.new_benefit_name);
-        listOfCategories=view.findViewById(R.id.new_benefit_categories);
-        benefitsPicturesRef= FirebaseStorage.getInstance().getReference().child(ConstantValues.BENEFITS);
-        ArrayAdapter<CharSequence> arrayAdapter= ArrayAdapter.createFromResource(getContext(),R.array.list_of_bonus_area_categories,R.layout.support_simple_spinner_dropdown_item);
+
+        benefitsPicturesRef = FirebaseStorage.getInstance().getReference().child(ConstantValues.BENEFITS);
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.list_of_bonus_area_categories, R.layout.support_simple_spinner_dropdown_item);
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        listOfCategories.setAdapter(arrayAdapter);
+//        listOfCategories.setAdapter(arrayAdapter);
+        binding.newBenefitCategories.setAdapter((arrayAdapter));
         loadingBar = new ProgressDialog(getContext());
-        photoSet=false;
+        photoSet = false;
         setListeners();
     }
 
 
-
     void clearFields() {
-        newBenefitName.setText("");
-        newBenefitDescription.setText("");
-        newBenefitCost.setText("");
-        listOfCategories.setSelection(0);
+        binding.newBenefitName.setText("");
+        binding.newBenefitDescription.setText("");
+        binding.newBenefitCost.setText("");
+        binding.newBenefitCategories.setSelection(0);
     }
 
-    boolean checkFields(String name,String description,String costString){
-        boolean isOk=true;
-        long cost=0;
-        int categoryPosition=0;
-        categoryPosition=listOfCategories.getSelectedItemPosition();
-        if(costString.equals(""))
-            name="";
-        else cost=Long.parseLong(costString);
-        if(categoryPosition==0||name.equals("")||description.equals("")||cost<1 ){
+    boolean checkFields(String name, String description, String costString) {
+        boolean isOk = true;
+        long cost = 0;
+        int categoryPosition = 0;
+        categoryPosition =binding.newBenefitCategories.getSelectedItemPosition();
+        if (costString.equals(""))
+            name = "";
+        else cost = Long.parseLong(costString);
+        if (categoryPosition == 0 || name.equals("") || description.equals("") || cost < 1) {
             isOk = false;
             Toast.makeText(getActivity(), "Incorrect Fields", Toast.LENGTH_SHORT).show();
-        }
-        else if(photoSet==false){
-            isOk=false;
+        } else if (photoSet == false) {
+            isOk = false;
             Toast.makeText(getActivity(), "You have to set a photo for this benefit", Toast.LENGTH_SHORT).show();
         }
         return isOk;
@@ -126,24 +117,25 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        if(v.getId()==newBenefitPhoto.getId()){
-            Intent galleryIntent=new Intent();
+        if (v.getId() == binding.newBenefitPhoto.getId()) {
+            Intent galleryIntent = new Intent();
             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
             galleryIntent.setType("image/*");
 
-            startActivityForResult(galleryIntent,galleryPick);
+            startActivityForResult(galleryIntent, galleryPick);
         }
-        if(v.getId()==clearFields.getId()){
+        if (v.getId() == binding.newBenefitClearFields.getId()) {
             clearFields();
         }
-        if(v.getId()==saveNewBenefit.getId()){
+        if (v.getId() == binding.newBenefitSaveBenefit.getId()) {
             storeImageToFirebaseStorage();
         }
     }
+
     void storeImageToFirebaseStorage() {
-        if(photoSet==false) {
+        if (photoSet == false) {
             Toast.makeText(getActivity(), "You have to set a photo for this benefit", Toast.LENGTH_SHORT).show();
-        }else {
+        } else {
             showLoadingBar();
             final StorageReference filePath = benefitsPicturesRef.child("image " + imageUri.getLastPathSegment());
 
@@ -155,7 +147,6 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
                             @Override
                             public void onSuccess(Uri uri) {
                                 imageUri = uri;
-                                //Toast.makeText(getContext(), "image uploaded successfully to Storage...", Toast.LENGTH_SHORT).show();
                                 saveBenefitInformationToDatabase();
                             }
                         });
@@ -169,14 +160,15 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
             });
         }
     }
+
     private void saveBenefitInformationToDatabase() {
-        name=newBenefitName.getText().toString();
-        description=newBenefitDescription.getText().toString();
-        costString=newBenefitCost.getText().toString();
-        category=listOfCategories.getSelectedItem().toString();
-        if(checkFields(name,description,costString)==true){
+        name = binding.newBenefitName.getText().toString();
+        description = binding.newBenefitDescription.getText().toString();
+        costString = binding.newBenefitCost.getText().toString();
+        category = binding.newBenefitCategories.getSelectedItem().toString();
+        if (checkFields(name, description, costString) == true) {
             DatabaseReference benefitsRef = FirebaseDatabase.getInstance().getReference();
-            newRedeemableBenefit=new RedeemableBenefit(name,description,category,costString,imageUri.toString());
+            newRedeemableBenefit = new RedeemableBenefit(name, description, category, Long.parseLong(costString), imageUri.toString());
             benefitsRef.child(ConstantValues.BENEFITS).child(category).child(name)
                     .setValue(newRedeemableBenefit).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -194,10 +186,10 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
         }
     }
 
-    void setListeners(){
-        newBenefitPhoto.setOnClickListener(this);
-        clearFields.setOnClickListener(this);
-        saveNewBenefit.setOnClickListener(this);
+    void setListeners() {
+        binding.newBenefitPhoto.setOnClickListener(this);
+        binding.newBenefitClearFields.setOnClickListener(this);
+        binding.newBenefitSaveBenefit.setOnClickListener(this);
     }
 
 
@@ -212,8 +204,8 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
             try {
                 BitmapUtils rotateBitmap = new BitmapUtils();
                 imageInByte = rotateBitmap.compressAndRotateBitmap(getActivity(), imageUri);
-                Glide.with(getContext()).load(imageInByte).centerCrop().into(newBenefitPhoto);
-                photoSet=true;
+                Glide.with(getContext()).load(imageInByte).centerCrop().into(binding.newBenefitPhoto);
+                photoSet = true;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -250,9 +242,12 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
         loadingBar.setCanceledOnTouchOutside(false);
     }
 
-
-
-//        imageName.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        binding = null;
+    }
+    //        imageName.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 //            @Override
 //            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 //                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -264,5 +259,5 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
 //                });
 //            }
 //        });
-    }
+}
 
