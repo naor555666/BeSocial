@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
+import com.example.besocial.SearchUsersFragment;
 import com.example.besocial.ui.login.RegisterFragment;
 import com.example.besocial.ui.mainactivity.mainmenu.LogoutDialog;
 import com.example.besocial.utils.MyBroadcastReceiver;
@@ -27,9 +28,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -56,14 +59,14 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity implements TextWatcher {
+public class MainActivity extends AppCompatActivity{
     private static User loggedUser;
 
     private static boolean isMusicPlaying = false;
     private static final String TAG = "life cycle";
 
     private TextView nav_header_user_email, nav_header_user_full_name;
-
+    private boolean isSearching=true;
     private EditText search;
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         //
 
         search=findViewById(R.id.app_bar_search);
+        setSearchListener();
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -123,8 +127,6 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(myBroadcastReceiver, intentFilter);
-        search.addTextChangedListener(new RegisterTextWatcher(search.getId()));
-
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         editor=sharedPref.edit();
         MainActivity.isMusicPlaying=sharedPref.getBoolean("isMusicPlaying",false);
@@ -162,11 +164,11 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    MainActivity.loggedUser = dataSnapshot.getValue(User.class);
-                    nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
-                    nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());
-                    String myProfileImage=loggedUser.getProfileImage();
-                    Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
+//                    MainActivity.loggedUser = dataSnapshot.getValue(User.class);
+  //                  nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
+ //                   nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());
+   //                 String myProfileImage=loggedUser.getProfileImage();
+  //                  Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
                 }
 
                 @Override
@@ -338,47 +340,37 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         return currentUserDatabaseRef;
     }
 
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+    void setSearchListener(){
+        search.addTextChangedListener(new RegisterTextWatcher(search.getId()));
     }
 
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-
-    }
-
-    public class RegisterTextWatcher implements android.text.TextWatcher {
+    public class RegisterTextWatcher implements android.text.TextWatcher{
         private int chosenEditText;
-
-        public RegisterTextWatcher(int chosenEditText) {
+        public RegisterTextWatcher(int chosenEditText){
             super();
-            this.chosenEditText = chosenEditText;
+            this.chosenEditText=chosenEditText;
         }
-
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            //Toast.makeText(getParent(), "Searching users1", Toast.LENGTH_SHORT).show();
 
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (chosenEditText == search.getId()) {
-                if(!search.getText().toString().trim().equals("")){
-
-                }
+            if (isSearching == true) {
+                //HomeFragment homeFragment=new HomeFragment();
+                //homeFragment.changeToSearchFragment();
+                isSearching=false;
+                navController.navigate(R.id.searchUsersFragment);
             }
         }
 
         @Override
-        public void afterTextChanged (Editable s){
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
 
         }
 
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
     }
+
 }

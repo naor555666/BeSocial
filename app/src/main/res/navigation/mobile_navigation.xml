@@ -116,11 +116,11 @@
             android:id="@+id/action_allEventsTabFragment_to_eventFragment"
             app:destination="@id/eventFragment" />
     </fragment>
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="com.example.besocial.ui.mainactivity.MainActivity"
-        android:label="app_bar_main"
-        tools:layout="@layout/app_bar_main" />
+    <fragment
+        android:id="@+id/searchUsersFragment"
+        android:name="com.example.besocial.SearchUsersFragment"
+        android:label="fragment_search_users"
+        tools:layout="@layout/fragment_search_users" />
 
 
 </navigation>
