@@ -3,7 +3,6 @@ package com.example.besocial.ui.mainactivity.socialcenter;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 public class EventsListPageAdapter extends FragmentStatePagerAdapter {

@@ -1,10 +1,15 @@
 package com.example.besocial.ui.mainactivity;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 
@@ -19,6 +24,7 @@ import com.example.besocial.data.User;
 import com.example.besocial.ui.login.LoginActivity;
 
 import android.os.PersistableBundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,11 +33,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -55,6 +63,8 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static androidx.core.content.ContextCompat.getSystemService;
 
 public class MainActivity extends AppCompatActivity implements TextWatcher {
     private static User loggedUser;
@@ -83,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d(TAG,"Main activity On create");
+        Log.d(TAG, "Main activity On create");
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
         //  get user token (if he is logged in)
@@ -102,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
         //
 
-        search=findViewById(R.id.app_bar_search);
+        search = findViewById(R.id.app_bar_search);
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -119,28 +129,27 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         View header = navigationView.getHeaderView(0);
         nav_header_user_email = (TextView) header.findViewById(R.id.nav_header_user_email);
         nav_header_user_full_name = (TextView) header.findViewById(R.id.nav_header_user_full_name);
-        nav_header_user_profile_picture= (CircleImageView) header.findViewById(R.id.nav_header_user_profile_picture);
+        nav_header_user_profile_picture = (CircleImageView) header.findViewById(R.id.nav_header_user_profile_picture);
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(myBroadcastReceiver, intentFilter);
         search.addTextChangedListener(new RegisterTextWatcher(search.getId()));
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        editor=sharedPref.edit();
-        MainActivity.isMusicPlaying=sharedPref.getBoolean("isMusicPlaying",false);
-        System.out.println("on create: music playing: "+isMusicPlaying);
+        editor = sharedPref.edit();
+        MainActivity.isMusicPlaying = sharedPref.getBoolean("isMusicPlaying", false);
+        System.out.println("on create: music playing: " + isMusicPlaying);
         AppCompatImageView playButton = findViewById(R.id.play_music);
 
-        if(MyMusicPlayerForegroundService.getInstance()!=null) {
+        if (MyMusicPlayerForegroundService.getInstance() != null) {
 
             if (MainActivity.isMusicPlaying == false) {
                 playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
             } else {
                 playButton.setImageResource(R.drawable.ic_pause_green_24dp);
             }
-        }
-        else{
-            isMusicPlaying=false;
+        } else {
+            isMusicPlaying = false;
             playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
         }
 
@@ -164,8 +173,8 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     MainActivity.loggedUser = dataSnapshot.getValue(User.class);
                     nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
-                    nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());
-                    String myProfileImage=loggedUser.getProfileImage();
+                    nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName() + " " + MainActivity.loggedUser.getUserLastName());
+                    String myProfileImage = loggedUser.getProfileImage();
                     Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
                 }
 
@@ -303,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         Log.d(TAG, "inside on Destroy");
         unregisterReceiver(myBroadcastReceiver);
 
-        editor.putBoolean("isMusicPlaying",MainActivity.isMusicPlaying);
+        editor.putBoolean("isMusicPlaying", MainActivity.isMusicPlaying);
         editor.commit();
     }
 
@@ -326,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         MainActivity.isMusicPlaying = isMusicPlaying;
     }
 
-    public static User getLoggedUser(){
+    public static User getLoggedUser() {
         return loggedUser;
     }
 
@@ -353,32 +362,92 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
     }
 
-    public class RegisterTextWatcher implements android.text.TextWatcher {
-        private int chosenEditText;
+        public class RegisterTextWatcher implements android.text.TextWatcher {
+            private int chosenEditText;
 
-        public RegisterTextWatcher(int chosenEditText) {
-            super();
-            this.chosenEditText = chosenEditText;
+            public RegisterTextWatcher(int chosenEditText) {
+                super();
+                this.chosenEditText = chosenEditText;
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (chosenEditText == search.getId()) {
+                    if(!search.getText().toString().trim().equals("")){
+
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged (Editable s){
+
+            }
+        }
+/*    public class LocationHandler {
+        int PERMISSION_ID = 44;
+        private boolean checkPermissions(Activity activity) {
+            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            }
+            return false;
+        }
+
+        private void requestPermissions(Activity activity) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_ID
+            );
+        }
+
+        private boolean isLocationEnabled(Activity activity) {
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                    LocationManager.NETWORK_PROVIDER
+            );
         }
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (chosenEditText == search.getId()) {
-                if(!search.getText().toString().trim().equals("")){
-
+        public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            if (requestCode == PERMISSION_ID) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Granted. Start getting the location information
                 }
             }
         }
 
-        @Override
-        public void afterTextChanged (Editable s){
-
+        @SuppressLint("MissingPermission")
+        private void getLastLocation() {
+            if (checkPermissions()) {
+                if (isLocationEnabled()) {
+                    mFusedLocationClient.getLastLocation().addOnCompleteListener(
+                            new OnCompleteListener<Location>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Location> task) {
+                                    Location location = task.getResult();
+                                    if (location == null) {
+                                        requestNewLocationData();
+                                    } else {
+                                        latTextView.setText(location.getLatitude() + "");
+                                        lonTextView.setText(location.getLongitude() + "");
+                                    }
+                                }
+                            }
+                    );
+                } else {
+                    Toast.makeText(getApplicationContext(), "Turn on location", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                }
+            } else {
+                requestPermissions();
+            }
         }
-
-    }
+    }*/
 }

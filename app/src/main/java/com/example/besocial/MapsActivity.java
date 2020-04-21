@@ -120,7 +120,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //permission was granted
             mLocationPermissionGranted = true;
         }
-
     }
 
     public static GoogleMap getmMap() {

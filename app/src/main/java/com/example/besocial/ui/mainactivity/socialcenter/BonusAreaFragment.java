@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -195,6 +196,10 @@ public class BonusAreaFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         socialCenterViewModel = ViewModelProviders.of(getActivity()).get(SocialCenterViewModel.class);
+
+        //
+  /*      MainActivity.getNavController().navigate();
+        NavDestination*/
 
     }
 

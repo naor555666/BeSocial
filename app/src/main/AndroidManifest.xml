@@ -8,18 +8,17 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <uses-feature android:name="android.hardware.camera" android:required="true"/>
-
-
-
-
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+
+<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
 
@@ -73,6 +72,10 @@
             android:name=".utils.MyMusicPlayerForegroundService"
             android:enabled="true"
             android:exported="false"></service>
+<!--        <service
+            android:name=".utils.ShareLocationForegroundService"
+            android:enabled="true"
+            android:exported="false"></service>-->
 
         <meta-data
             android:name="preloaded_fonts"

@@ -164,9 +164,12 @@ public class AllEventsTabFragment extends Fragment implements View.OnClickListen
     public void onItemSelected(final AdapterView<?> parent, View view, int position, long id) {
         strEventCategory = (String) parent.getItemAtPosition(position);
         Log.d(TAG, "eventCategory is " + strEventCategory);
-        eventsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.EVENTS).orderByChild(ConstantValues.EVENT_HOST_UID);
+        eventsRef = FirebaseDatabase.getInstance().getReference()
+                .child(ConstantValues.EVENTS);
         if (!strEventCategory.equals(ConstantValues.GENERAL)) {
-            eventsRef = eventsRef.orderByChild(ConstantValues.CATEGORY).equalTo(strEventCategory);
+            eventsRef = eventsRef
+                    .orderByChild(ConstantValues.CATEGORY)
+                    .equalTo(strEventCategory);
         }
         eventsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
