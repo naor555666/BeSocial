@@ -8,6 +8,12 @@ admin.initializeApp();
   response.send("Hello from Firebase!");
  });
 
+  exports.test1 = functions.https.onRequest((request, response) => {
+   response.send("my upload test1");
+  });
+
+
+
 
 
 

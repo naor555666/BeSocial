@@ -41,6 +41,6 @@ public class SearchUsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         query= FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS);
-        
+
     }
 }
