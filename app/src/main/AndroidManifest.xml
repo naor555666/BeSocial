@@ -69,14 +69,12 @@
         </activity>
 
         <service
-            android:name=".utils.MyMusicPlayerForegroundService"
+            android:name=".utils.ShareLocationForegroundService"
+            android:foregroundServiceType="location"
             android:enabled="true"
             android:exported="false"></service>
-<!--        <service
-            android:name=".utils.ShareLocationForegroundService"
-            android:enabled="true"
-            android:exported="false"></service>-->
 
+        <receiver android:name=".GeofenceBroadcastReceiver"/>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

@@ -42,7 +42,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-public class ShareLocationForegroundService extends Service {
+public class LocationUpdatesService extends Service {
     private static final String PACKAGE_NAME = "com.example.besocial.utils";
     private static final String TAG = "ShareLocationForegroundService";
     private static final int REQUEST_CHECK_SETTINGS = 333;

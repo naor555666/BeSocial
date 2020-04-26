@@ -99,7 +99,6 @@ public class MyMusicPlayerForegroundService extends Service {
         mediaPlayer.release();
         mediaPlayer=null;
         return super.stopService(name);
-
     }
 
     public static MyMusicPlayerForegroundService getInstance() {

@@ -3,6 +3,7 @@ package com.example.besocial.ui.mainactivity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +12,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
+import com.example.besocial.GeofenceBroadcastReceiver;
 import com.example.besocial.ui.login.RegisterFragment;
 import com.example.besocial.ui.mainactivity.mainmenu.LogoutDialog;
+import com.example.besocial.utils.LocationUpdatesService;
 import com.example.besocial.utils.MyBroadcastReceiver;
 import com.example.besocial.utils.MyMusicPlayerForegroundService;
 import com.example.besocial.R;
@@ -40,6 +44,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -47,6 +52,14 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.besocial.utils.ShareLocationForegroundService;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingEvent;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.preference.PreferenceManager;
@@ -58,19 +71,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class MainActivity extends AppCompatActivity implements TextWatcher {
+    public static final String LOCATION_1 = "555";
     private static User loggedUser;
 
     private static boolean isMusicPlaying = false;
-    private static final String TAG = "life cycle";
+    private static final String TAG = "MainActivity";
 
     private TextView nav_header_user_email, nav_header_user_full_name;
 
@@ -87,13 +101,40 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     private SharedPreferences.Editor editor;
     private List<String> usersList;
 
+    private GeofencingClient geofencingClient;
+    private ArrayList<Geofence> geofenceList;
+    private PendingIntent geofencePendingIntent;
+    private int background_location_permission_request_code = 5;
+    private String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION};
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        handleGeofencingEvents();
+        geofenceList = new ArrayList<>();
+        //
+        geofencingClient = LocationServices.getGeofencingClient(this);
 
-        Log.d(TAG, "Main activity On create");
+        geofenceList.add(new Geofence.Builder()
+                // Set the request ID of the geofence. This is a string to identify this
+                // geofence.
+                .setRequestId(LOCATION_1)
+
+                .setCircularRegion(
+                        32.828925,
+                        35.076868,
+                        30
+                )
+                .setExpirationDuration(15 * 60 * 1000)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                        Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build());
+        Log.d(TAG, "geofence created");
+//
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
         //  get user token (if he is logged in)
@@ -153,6 +194,42 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
         }
 
+
+        //
+        addGeofences();
+        //
+    }
+
+    private void handleGeofencingEvents() {
+
+    }
+
+    private void addGeofences() {
+        Log.d(TAG, "checking permission before adding geofence");
+        if (checkLocationPermission()) {
+            Log.d(TAG, "permission was granted");
+
+            // Background location runtime permission already granted.
+            // You can now call geofencingClient.addGeofences().
+            geofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
+                    .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Geofences added
+                            Log.d(TAG, "geofence added");
+                            // ...
+                        }
+                    })
+                    .addOnFailureListener(this, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Failed to add geofences");
+                            // ...
+                        }
+                    });
+        } else {
+            requestPermissions();
+        }
     }
 
 
@@ -191,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "inside on Resume");
+
     }
 
 
@@ -265,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             String input = title.getText().toString();
             Toast.makeText(getApplicationContext(), filterText(input, ""), Toast.LENGTH_LONG).show();
         }*/
-        if (view.getId() == R.id.play_music) {
+/*        if (view.getId() == R.id.play_music) {
             Intent intent = new Intent(this, MyMusicPlayerForegroundService.class);
             if (MainActivity.isIsMusicPlaying()) {
                 intent.putExtra("isPlaying", true);
@@ -278,6 +356,25 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
             }
             startService(intent);
+        } else if (view.getId() == R.id.stop_music) {
+            setIsMusicPlaying(false);
+            AppCompatImageView playButton = findViewById(R.id.play_music);
+            playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
+            Intent intent = new Intent(this, MyMusicPlayerForegroundService.class);
+            stopService(intent);
+        }*/
+        if (view.getId() == R.id.play_music) {
+            Intent intent = new Intent(this, LocationUpdatesService.class);
+            if (MainActivity.isIsMusicPlaying()) {
+                stopService(intent);
+                setIsMusicPlaying(false);
+                ((AppCompatImageView) view).setImageResource(R.drawable.ic_play_arrow_green_24dp);
+            } else {
+                intent.putExtra("isPlaying", false);
+                setIsMusicPlaying(true);
+                ((AppCompatImageView) view).setImageResource(R.drawable.ic_pause_green_24dp);
+                startService(intent);
+            }
         } else if (view.getId() == R.id.stop_music) {
             setIsMusicPlaying(false);
             AppCompatImageView playButton = findViewById(R.id.play_music);
@@ -362,92 +459,155 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
     }
 
-        public class RegisterTextWatcher implements android.text.TextWatcher {
-            private int chosenEditText;
+    public class RegisterTextWatcher implements android.text.TextWatcher {
+        private int chosenEditText;
 
-            public RegisterTextWatcher(int chosenEditText) {
-                super();
-                this.chosenEditText = chosenEditText;
+        public RegisterTextWatcher(int chosenEditText) {
+            super();
+            this.chosenEditText = chosenEditText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (chosenEditText == search.getId()) {
+                if (!search.getText().toString().trim().equals("")) {
+
+                }
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    }
+
+    /*    public class LocationHandler {
+            int PERMISSION_ID = 44;
+            private boolean checkPermissions(Activity activity) {
+                if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    return true;
+                }
+                return false;
+            }
+
+            private void requestPermissions(Activity activity) {
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSION_ID
+                );
+            }
+
+            private boolean isLocationEnabled(Activity activity) {
+                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                        LocationManager.NETWORK_PROVIDER
+                );
             }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (chosenEditText == search.getId()) {
-                    if(!search.getText().toString().trim().equals("")){
-
+            public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                if (requestCode == PERMISSION_ID) {
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        // Granted. Start getting the location information
                     }
                 }
             }
 
-            @Override
-            public void afterTextChanged (Editable s){
-
-            }
-        }
-/*    public class LocationHandler {
-        int PERMISSION_ID = 44;
-        private boolean checkPermissions(Activity activity) {
-            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                return true;
-            }
-            return false;
-        }
-
-        private void requestPermissions(Activity activity) {
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSION_ID
-            );
-        }
-
-        private boolean isLocationEnabled(Activity activity) {
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-                    LocationManager.NETWORK_PROVIDER
-            );
-        }
-
-        @Override
-        public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            if (requestCode == PERMISSION_ID) {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Granted. Start getting the location information
-                }
-            }
-        }
-
-        @SuppressLint("MissingPermission")
-        private void getLastLocation() {
-            if (checkPermissions()) {
-                if (isLocationEnabled()) {
-                    mFusedLocationClient.getLastLocation().addOnCompleteListener(
-                            new OnCompleteListener<Location>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Location> task) {
-                                    Location location = task.getResult();
-                                    if (location == null) {
-                                        requestNewLocationData();
-                                    } else {
-                                        latTextView.setText(location.getLatitude() + "");
-                                        lonTextView.setText(location.getLongitude() + "");
+            @SuppressLint("MissingPermission")
+            private void getLastLocation() {
+                if (checkPermissions()) {
+                    if (isLocationEnabled()) {
+                        mFusedLocationClient.getLastLocation().addOnCompleteListener(
+                                new OnCompleteListener<Location>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Location> task) {
+                                        Location location = task.getResult();
+                                        if (location == null) {
+                                            requestNewLocationData();
+                                        } else {
+                                            latTextView.setText(location.getLatitude() + "");
+                                            lonTextView.setText(location.getLongitude() + "");
+                                        }
                                     }
                                 }
-                            }
-                    );
+                        );
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Turn on location", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                    }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Turn on location", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(intent);
+                    requestPermissions();
                 }
-            } else {
-                requestPermissions();
+            }
+        }*/
+
+
+    private GeofencingRequest getGeofencingRequest() {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.addGeofences(geofenceList);
+        return builder.build();
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        // Reuse the PendingIntent if we already have it.
+        if (geofencePendingIntent != null) {
+            return geofencePendingIntent;
+        }
+        Intent intent = new Intent(this, GeofenceBroadcastReceiver.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
+        // calling addGeofences() and removeGeofences().
+        geofencePendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
+        return geofencePendingIntent;
+    }
+
+    //if not already granted, request for the permission to use location
+    private boolean checkLocationPermission() {
+        if (Build.VERSION.SDK_INT >= 29) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
             }
         }
-    }*/
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        return true;
+    }
+
+    public void requestPermissions() {
+        // Permission to access the location is missing. Show rationale and request permission
+        ActivityCompat.requestPermissions(this, this.locationPermission,
+                background_location_permission_request_code);
+    }
+
+    //handle the user result for the permission request
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != background_location_permission_request_code) {
+            return;
+        }
+
+        if (grantResults.length > 0) {
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+//                    mLocationPermissionGranted = false;
+                    break;
+                }
+            }
+        } else {
+            //permission was granted
+            addGeofences();
+        }
+    }
 }
