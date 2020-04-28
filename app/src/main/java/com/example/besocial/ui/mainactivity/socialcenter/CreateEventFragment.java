@@ -231,12 +231,10 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         Long currentTime = System.currentTimeMillis();
         eventRandomName = pickedImageFromGallery == null ?
                 currentTime.toString() : currentTime.toString() + pickedImageFromGallery.getLastPathSegment();
+
         Log.d(TAG, "random name + path is: " + eventRandomName);
 
         final StorageReference filePath = imagesReference.child("Events images/" + eventRandomName);
-        //
-        //filePath.putBytes();
-        //
         filePath.putBytes(imageInByte).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {

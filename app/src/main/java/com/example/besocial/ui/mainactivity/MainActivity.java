@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -44,9 +44,9 @@ import com.example.besocial.data.Post;
 import com.example.besocial.data.User;
 import com.example.besocial.ui.login.LoginActivity;
 import com.example.besocial.ui.mainactivity.mainmenu.LogoutDialog;
+import com.example.besocial.utils.DateUtils;
 import com.example.besocial.utils.LocationUpdatesService;
 import com.example.besocial.utils.MyBroadcastReceiver;
-import com.example.besocial.utils.MyMusicPlayerForegroundService;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -56,11 +56,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -99,14 +99,15 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     private String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION};
     private boolean mLocationPermissionGranted;
-    private ArrayList<Event> currentOccuringEvents;
+    private static ArrayList<Event> currentOccuringEvents,eventsToRemoveGeofences;;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        handleGeofencingEvents();
+
+        geofenceList=new ArrayList<>();
 
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
@@ -151,13 +152,13 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sharedPref.edit();
-        MainActivity.isLocationActive = sharedPref.getBoolean(IS_LOCATION_ACTIVATED, false);
+        isLocationActive = sharedPref.getBoolean(IS_LOCATION_ACTIVATED, false);
         System.out.println("on create: music playing: " + isLocationActive);
         ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
 
         if (LocationUpdatesService.getInstance() != null) {
 
-            if (!MainActivity.isLocationActive) {
+            if (!isLocationActive) {
                 Glide.with(this).load(R.drawable.ic_my_location_blue_24dp).into((ImageButton) activateLocation);
             }
         } else {
@@ -178,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         super.onStart();
         Log.d(TAG, "inside on Start");
 
-        if (MainActivity.currentUser == null) {    // if the user is not logged in
+        if (currentUser == null) {    // if the user is not logged in
             sendUserToLogin();
         }
         //
@@ -188,9 +189,10 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    MainActivity.loggedUser = dataSnapshot.getValue(User.class);
-                    nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
-                    nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName() + " " + MainActivity.loggedUser.getUserLastName());
+                    loggedUser = dataSnapshot.getValue(User.class);
+                    nav_header_user_email.setText(loggedUser.getUserEmail());
+                    nav_header_user_full_name.setText(new StringBuilder().append(loggedUser.getUserFirstName())
+                            .append(" ").append(loggedUser.getUserLastName()).toString());
                     String myProfileImage = loggedUser.getProfileImage();
                     Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
                 }
@@ -285,25 +287,28 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         }*/
 
         if (view.getId() == R.id.app_bar_activate_location) {
-            if(currentOccuringEvents==null){
-                currentOccuringEvents=new ArrayList<>();
+            if (currentOccuringEvents == null) {
+                currentOccuringEvents = new ArrayList<>();
             }
-            getAttendingEventsList();
+
 
             if (checkLocationPermission()) {
-                handleGeofencingEvents();
+                Log.d(TAG, "permission was granted");
                 Intent intent = new Intent(this, LocationUpdatesService.class);
-                if (MainActivity.isLocationActive) {
-                    MainActivity.isLocationActive = false;
+                if (isLocationActive) {
+                    isLocationActive = false;
                     stopService(intent);
                     Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into((ImageButton) view);
                 } else {
-                    MainActivity.isLocationActive = true;
+                    getAttendingEventsList();
+                    isLocationActive = true;
                     startService(intent);
                     Glide.with(this).load(R.drawable.ic_my_location_blue_24dp).into((ImageButton) view);
                 }
-                editor.putBoolean(IS_LOCATION_ACTIVATED, MainActivity.isLocationActive);
+                editor.putBoolean(IS_LOCATION_ACTIVATED, isLocationActive);
                 editor.commit();
+            }else{
+                requestPermissions();
             }
         }
     }
@@ -312,10 +317,28 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         DatabaseReference attendingEventsRef = FirebaseDatabase.getInstance().getReference()
                 .child(ConstantValues.USERS_ATTENDING_TO_EVENTS)
                 .child(loggedUser.getUserId());
-        attendingEventsRef.addValueEventListener(new ValueEventListener() {
+        attendingEventsRef.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 saveRelevantEvents(dataSnapshot);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                    currentOccuringEvents.remove(dataSnapshot.getValue(Event.class));
+                   if(eventsToRemoveGeofences==null)
+                       eventsToRemoveGeofences=new ArrayList<>();
+                   eventsToRemoveGeofences.add(dataSnapshot.getValue(Event.class));
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
@@ -325,26 +348,21 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         });
     }
 
-    private void saveRelevantEvents(DataSnapshot dataSnapshot) {
-        for(DataSnapshot ds: dataSnapshot.getChildren()){
-            if (isEventCurrentlyOccuring(ds.child(ConstantValues.BEGIN_DATE)
-                    , ds.child(ConstantValues.FINISH_DATE)
-                    ,ds.child(ConstantValues.BEGIN_TIME)
-            ,ds.child(ConstantValues.FINISH_TIME))){
+    private void saveRelevantEvents(DataSnapshot ds) {
+
+            if (DateUtils.isEventCurrentlyOccurring(ds.child(ConstantValues.BEGIN_DATE).getValue().toString()
+                    , ds.child(ConstantValues.FINISH_DATE).getValue().toString()
+                    , ds.child(ConstantValues.BEGIN_TIME).getValue().toString()
+                    , ds.child(ConstantValues.FINISH_TIME).getValue().toString())) {
                 currentOccuringEvents.add(ds.getValue(Event.class));
+                handleGeofencingEvents(ds.getValue(Event.class));
+//                addGeofences(geofence);
             }
-        }
+
     }
 
-    private boolean isEventCurrentlyOccuring(DataSnapshot child, DataSnapshot child1, DataSnapshot child2, DataSnapshot child3) {
-        // TODO: 27/04/20202
-
-
-        return true;
-    }
-
-    private void handleGeofencingEvents() {
-        geofenceList = new ArrayList<>();
+/*    private void handleGeofencingEvents(Event event) {
+        //geofenceList = new ArrayList<>();
         //
         geofencingClient = LocationServices.getGeofencingClient(this);
 
@@ -354,23 +372,44 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 .setRequestId(LOCATION_1)
 
                 .setCircularRegion(
-                        32.828925,
-                        35.076868,
+                        event.getLocation().getLatitude().doubleValue(),
+                        event.getLocation().getLongitude().doubleValue(),
                         30
                 )
-                .setExpirationDuration(15 * 60 * 1000)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                         Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build());
         Log.d(TAG, "geofence created");
 //
-    }
+    }*/
+private void handleGeofencingEvents(Event event) {
+    //geofenceList = new ArrayList<>();
+    //
+    geofencingClient = LocationServices.getGeofencingClient(this);
 
-    private void addGeofences() {
+    Geofence geofence=new Geofence.Builder()
+            // Set the request ID of the geofence. This is a string to identify this
+            // geofence.
+            .setRequestId(event.getEventId())
+
+            .setCircularRegion(
+                    event.getLocation().getLatitude().doubleValue(),
+                    event.getLocation().getLongitude().doubleValue(),
+                    30
+            )
+            .setExpirationDuration(Geofence.NEVER_EXPIRE)
+            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                    Geofence.GEOFENCE_TRANSITION_EXIT)
+            .build();
+    Log.d(TAG, "geofence created");
+addGeofences(geofence);
+}
+
+/*    private void addGeofences() {
         Log.d(TAG, "checking permission before adding geofence");
         if (checkLocationPermission()) {
             Log.d(TAG, "permission was granted");
-
             // Background location runtime permission already granted.
             // You can now call geofencingClient.addGeofences().
             geofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
@@ -392,14 +431,46 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         } else {
             requestPermissions();
         }
+    }*/
+private void addGeofences(Geofence geofence) {
+    Log.d(TAG, "checking permission before adding geofence");
+    if (checkLocationPermission()) {
+        Log.d(TAG, "permission was granted");
+        // Background location runtime permission already granted.
+        // You can now call geofencingClient.addGeofences().
+        geofencingClient.addGeofences(getGeofencingRequest(geofence), getGeofencePendingIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Geofences added
+                        Log.d(TAG, "geofence added");
+                        // ...
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Failed to add geofences");
+                        // ...
+                    }
+                });
+    } else {
+        requestPermissions();
     }
+}
 
-    private GeofencingRequest getGeofencingRequest() {
+/*    private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
         builder.addGeofences(geofenceList);
         return builder.build();
-    }
+    }*/
+private GeofencingRequest getGeofencingRequest(Geofence geofence) {
+    GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+    builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+    builder.addGeofence(geofence);
+    return builder.build();
+}
 
     private PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
@@ -452,7 +523,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         } else {
             //permission was granted
             mLocationPermissionGranted = true;
-            addGeofences();
+//            addGeofences();
         }
     }
 
@@ -474,7 +545,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         super.onDestroy();
         Log.d(TAG, "inside on Destroy");
         unregisterReceiver(myBroadcastReceiver);
-        editor.putBoolean(IS_LOCATION_ACTIVATED, MainActivity.isLocationActive);
+        editor.putBoolean(IS_LOCATION_ACTIVATED, isLocationActive);
         editor.commit();
     }
 
