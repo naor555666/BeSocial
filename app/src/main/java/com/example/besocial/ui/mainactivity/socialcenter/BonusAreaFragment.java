@@ -79,7 +79,7 @@ public class BonusAreaFragment extends Fragment {
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         listOfCategories.setAdapter(arrayAdapter);
         loggedUser= MainActivity.getLoggedUser();
-        socialPoints.setText(loggedUser.getSocialPoints().toString());
+        socialPoints.setText(Long.toString(loggedUser.getSocialPoints().longValue()));
         socialLevel.setText(loggedUser.getSocialLevel());
         socialCredits.setText(loggedUser.getSocialStoreCredits().toString());
         addNewRedeemableBonus=view.findViewById(R.id.new_redeemable_bonus_button);

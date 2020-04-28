@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity{
     private static final String TAG = "life cycle";
 
     private TextView nav_header_user_email, nav_header_user_full_name;
-    private boolean isSearching=true;
+    private static boolean isSearching;
     private EditText search;
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        isSearching=true;
         Log.d(TAG,"Main activity On create");
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
@@ -373,4 +373,11 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    public static boolean isSearching() {
+        return isSearching;
+    }
+
+    public static void setSearching(boolean searching) {
+        isSearching = searching;
+    }
 }

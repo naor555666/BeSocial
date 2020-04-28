@@ -3,6 +3,7 @@ package com.example.besocial;
 import android.app.DownloadManager;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.besocial.ui.mainactivity.CreateNewPostFragment;
+import com.example.besocial.ui.mainactivity.MainActivity;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
@@ -43,4 +45,11 @@ public class SearchUsersFragment extends Fragment {
         query= FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS);
 
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        MainActivity.setSearching(true);
+    }
+
 }
