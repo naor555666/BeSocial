@@ -1,8 +1,6 @@
 package com.example.besocial.ui.mainactivity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,25 +8,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.bumptech.glide.Glide;
-import com.example.besocial.GeofenceBroadcastReceiver;
-import com.example.besocial.ui.login.RegisterFragment;
-import com.example.besocial.ui.mainactivity.mainmenu.LogoutDialog;
-import com.example.besocial.utils.LocationUpdatesService;
-import com.example.besocial.utils.MyBroadcastReceiver;
-import com.example.besocial.utils.MyMusicPlayerForegroundService;
-import com.example.besocial.R;
-import com.example.besocial.data.Post;
-import com.example.besocial.data.User;
-import com.example.besocial.ui.login.LoginActivity;
-
 import android.os.PersistableBundle;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -36,12 +19,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -51,27 +33,35 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
 
-import com.example.besocial.utils.ShareLocationForegroundService;
+import com.bumptech.glide.Glide;
+import com.example.besocial.ConstantValues;
+import com.example.besocial.GeofenceBroadcastReceiver;
+import com.example.besocial.R;
+import com.example.besocial.data.Event;
+import com.example.besocial.data.Post;
+import com.example.besocial.data.User;
+import com.example.besocial.ui.login.LoginActivity;
+import com.example.besocial.ui.mainactivity.mainmenu.LogoutDialog;
+import com.example.besocial.utils.LocationUpdatesService;
+import com.example.besocial.utils.MyBroadcastReceiver;
+import com.example.besocial.utils.MyMusicPlayerForegroundService;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
-import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
-
-import androidx.preference.PreferenceManager;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,10 +70,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends AppCompatActivity implements TextWatcher {
+    private final String IS_LOCATION_ACTIVATED = "isLocationActivated";
     public static final String LOCATION_1 = "555";
     private static User loggedUser;
 
-    private static boolean isMusicPlaying = false;
+    private static boolean isLocationActive = false;
     private static final String TAG = "MainActivity";
 
     private TextView nav_header_user_email, nav_header_user_full_name;
@@ -107,34 +98,16 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     private int background_location_permission_request_code = 5;
     private String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION};
+    private boolean mLocationPermissionGranted;
+    private ArrayList<Event> currentOccuringEvents;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         handleGeofencingEvents();
-        geofenceList = new ArrayList<>();
-        //
-        geofencingClient = LocationServices.getGeofencingClient(this);
 
-        geofenceList.add(new Geofence.Builder()
-                // Set the request ID of the geofence. This is a string to identify this
-                // geofence.
-                .setRequestId(LOCATION_1)
-
-                .setCircularRegion(
-                        32.828925,
-                        35.076868,
-                        30
-                )
-                .setExpirationDuration(15 * 60 * 1000)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                        Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build());
-        Log.d(TAG, "geofence created");
-//
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
         //  get user token (if he is logged in)
@@ -178,58 +151,25 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sharedPref.edit();
-        MainActivity.isMusicPlaying = sharedPref.getBoolean("isMusicPlaying", false);
-        System.out.println("on create: music playing: " + isMusicPlaying);
-        AppCompatImageView playButton = findViewById(R.id.play_music);
+        MainActivity.isLocationActive = sharedPref.getBoolean(IS_LOCATION_ACTIVATED, false);
+        System.out.println("on create: music playing: " + isLocationActive);
+        ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
 
-        if (MyMusicPlayerForegroundService.getInstance() != null) {
+        if (LocationUpdatesService.getInstance() != null) {
 
-            if (MainActivity.isMusicPlaying == false) {
-                playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
-            } else {
-                playButton.setImageResource(R.drawable.ic_pause_green_24dp);
+            if (!MainActivity.isLocationActive) {
+                Glide.with(this).load(R.drawable.ic_my_location_blue_24dp).into((ImageButton) activateLocation);
             }
         } else {
-            isMusicPlaying = false;
-            playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
+            isLocationActive = false;
+            Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into((ImageButton) activateLocation);
+
         }
 
 
         //
-        addGeofences();
+        //addGeofences();
         //
-    }
-
-    private void handleGeofencingEvents() {
-
-    }
-
-    private void addGeofences() {
-        Log.d(TAG, "checking permission before adding geofence");
-        if (checkLocationPermission()) {
-            Log.d(TAG, "permission was granted");
-
-            // Background location runtime permission already granted.
-            // You can now call geofencingClient.addGeofences().
-            geofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
-                    .addOnSuccessListener(this, new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            // Geofences added
-                            Log.d(TAG, "geofence added");
-                            // ...
-                        }
-                    })
-                    .addOnFailureListener(this, new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d(TAG, "Failed to add geofences");
-                            // ...
-                        }
-                    });
-        } else {
-            requestPermissions();
-        }
     }
 
 
@@ -343,58 +283,179 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
             String input = title.getText().toString();
             Toast.makeText(getApplicationContext(), filterText(input, ""), Toast.LENGTH_LONG).show();
         }*/
-/*        if (view.getId() == R.id.play_music) {
-            Intent intent = new Intent(this, MyMusicPlayerForegroundService.class);
-            if (MainActivity.isIsMusicPlaying()) {
-                intent.putExtra("isPlaying", true);
-                setIsMusicPlaying(false);
-                ((AppCompatImageView) view).setImageResource(R.drawable.ic_play_arrow_green_24dp);
-            } else {
-                intent.putExtra("isPlaying", false);
-                setIsMusicPlaying(true);
-                ((AppCompatImageView) view).setImageResource(R.drawable.ic_pause_green_24dp);
 
+        if (view.getId() == R.id.app_bar_activate_location) {
+            if(currentOccuringEvents==null){
+                currentOccuringEvents=new ArrayList<>();
             }
-            startService(intent);
-        } else if (view.getId() == R.id.stop_music) {
-            setIsMusicPlaying(false);
-            AppCompatImageView playButton = findViewById(R.id.play_music);
-            playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
-            Intent intent = new Intent(this, MyMusicPlayerForegroundService.class);
-            stopService(intent);
-        }*/
-        if (view.getId() == R.id.play_music) {
-            Intent intent = new Intent(this, LocationUpdatesService.class);
-            if (MainActivity.isIsMusicPlaying()) {
-                stopService(intent);
-                setIsMusicPlaying(false);
-                ((AppCompatImageView) view).setImageResource(R.drawable.ic_play_arrow_green_24dp);
-            } else {
-                intent.putExtra("isPlaying", false);
-                setIsMusicPlaying(true);
-                ((AppCompatImageView) view).setImageResource(R.drawable.ic_pause_green_24dp);
-                startService(intent);
+            getAttendingEventsList();
+
+            if (checkLocationPermission()) {
+                handleGeofencingEvents();
+                Intent intent = new Intent(this, LocationUpdatesService.class);
+                if (MainActivity.isLocationActive) {
+                    MainActivity.isLocationActive = false;
+                    stopService(intent);
+                    Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into((ImageButton) view);
+                } else {
+                    MainActivity.isLocationActive = true;
+                    startService(intent);
+                    Glide.with(this).load(R.drawable.ic_my_location_blue_24dp).into((ImageButton) view);
+                }
+                editor.putBoolean(IS_LOCATION_ACTIVATED, MainActivity.isLocationActive);
+                editor.commit();
             }
-        } else if (view.getId() == R.id.stop_music) {
-            setIsMusicPlaying(false);
-            AppCompatImageView playButton = findViewById(R.id.play_music);
-            playButton.setImageResource(R.drawable.ic_play_arrow_green_24dp);
-            Intent intent = new Intent(this, MyMusicPlayerForegroundService.class);
-            stopService(intent);
         }
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    private void getAttendingEventsList() {
+        DatabaseReference attendingEventsRef = FirebaseDatabase.getInstance().getReference()
+                .child(ConstantValues.USERS_ATTENDING_TO_EVENTS)
+                .child(loggedUser.getUserId());
+        attendingEventsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                saveRelevantEvents(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Log.d(TAG, "inside on RestoreInstanceState");
-
+    private void saveRelevantEvents(DataSnapshot dataSnapshot) {
+        for(DataSnapshot ds: dataSnapshot.getChildren()){
+            if (isEventCurrentlyOccuring(ds.child(ConstantValues.BEGIN_DATE)
+                    , ds.child(ConstantValues.FINISH_DATE)
+                    ,ds.child(ConstantValues.BEGIN_TIME)
+            ,ds.child(ConstantValues.FINISH_TIME))){
+                currentOccuringEvents.add(ds.getValue(Event.class));
+            }
+        }
     }
+
+    private boolean isEventCurrentlyOccuring(DataSnapshot child, DataSnapshot child1, DataSnapshot child2, DataSnapshot child3) {
+        // TODO: 27/04/20202
+
+
+        return true;
+    }
+
+    private void handleGeofencingEvents() {
+        geofenceList = new ArrayList<>();
+        //
+        geofencingClient = LocationServices.getGeofencingClient(this);
+
+        geofenceList.add(new Geofence.Builder()
+                // Set the request ID of the geofence. This is a string to identify this
+                // geofence.
+                .setRequestId(LOCATION_1)
+
+                .setCircularRegion(
+                        32.828925,
+                        35.076868,
+                        30
+                )
+                .setExpirationDuration(15 * 60 * 1000)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                        Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build());
+        Log.d(TAG, "geofence created");
+//
+    }
+
+    private void addGeofences() {
+        Log.d(TAG, "checking permission before adding geofence");
+        if (checkLocationPermission()) {
+            Log.d(TAG, "permission was granted");
+
+            // Background location runtime permission already granted.
+            // You can now call geofencingClient.addGeofences().
+            geofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
+                    .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Geofences added
+                            Log.d(TAG, "geofence added");
+                            // ...
+                        }
+                    })
+                    .addOnFailureListener(this, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Failed to add geofences");
+                            // ...
+                        }
+                    });
+        } else {
+            requestPermissions();
+        }
+    }
+
+    private GeofencingRequest getGeofencingRequest() {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.addGeofences(geofenceList);
+        return builder.build();
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        // Reuse the PendingIntent if we already have it.
+        if (geofencePendingIntent != null) {
+            return geofencePendingIntent;
+        }
+        Intent intent = new Intent(this, GeofenceBroadcastReceiver.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
+        // calling addGeofences() and removeGeofences().
+        geofencePendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
+        return geofencePendingIntent;
+    }
+
+    //if not already granted, request for the permission to use location
+    private boolean checkLocationPermission() {
+        if (Build.VERSION.SDK_INT >= 29) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        return true;
+    }
+
+    public void requestPermissions() {
+        // Permission to access the location is missing. Show rationale and request permission
+        ActivityCompat.requestPermissions(this, this.locationPermission,
+                background_location_permission_request_code);
+    }
+
+    //handle the user result for the permission request
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != background_location_permission_request_code) {
+            return;
+        }
+
+        if (grantResults.length > 0) {
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = false;
+                    break;
+                }
+            }
+        } else {
+            //permission was granted
+            mLocationPermissionGranted = true;
+            addGeofences();
+        }
+    }
+
 
     @Override
     protected void onStop() {
@@ -402,34 +463,23 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         Log.d(TAG, "inside on Stop");
     }
 
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "inside on Destroy");
-        unregisterReceiver(myBroadcastReceiver);
-
-        editor.putBoolean("isMusicPlaying", MainActivity.isMusicPlaying);
-        editor.commit();
-    }
-
-
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "inside on Pause");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "inside on Destroy");
+        unregisterReceiver(myBroadcastReceiver);
+        editor.putBoolean(IS_LOCATION_ACTIVATED, MainActivity.isLocationActive);
+        editor.commit();
+    }
+
     public static NavController getNavController() {
         return navController;
-    }
-
-    public static boolean isIsMusicPlaying() {
-        return isMusicPlaying;
-    }
-
-    public static void setIsMusicPlaying(boolean isMusicPlaying) {
-        MainActivity.isMusicPlaying = isMusicPlaying;
     }
 
     public static User getLoggedUser() {
@@ -550,64 +600,4 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         }*/
 
 
-    private GeofencingRequest getGeofencingRequest() {
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        builder.addGeofences(geofenceList);
-        return builder.build();
-    }
-
-    private PendingIntent getGeofencePendingIntent() {
-        // Reuse the PendingIntent if we already have it.
-        if (geofencePendingIntent != null) {
-            return geofencePendingIntent;
-        }
-        Intent intent = new Intent(this, GeofenceBroadcastReceiver.class);
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
-        // calling addGeofences() and removeGeofences().
-        geofencePendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.
-                FLAG_UPDATE_CURRENT);
-        return geofencePendingIntent;
-    }
-
-    //if not already granted, request for the permission to use location
-    private boolean checkLocationPermission() {
-        if (Build.VERSION.SDK_INT >= 29) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        }
-        return true;
-    }
-
-    public void requestPermissions() {
-        // Permission to access the location is missing. Show rationale and request permission
-        ActivityCompat.requestPermissions(this, this.locationPermission,
-                background_location_permission_request_code);
-    }
-
-    //handle the user result for the permission request
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode != background_location_permission_request_code) {
-            return;
-        }
-
-        if (grantResults.length > 0) {
-            for (int i = 0; i < grantResults.length; i++) {
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-//                    mLocationPermissionGranted = false;
-                    break;
-                }
-            }
-        } else {
-            //permission was granted
-            addGeofences();
-        }
-    }
 }

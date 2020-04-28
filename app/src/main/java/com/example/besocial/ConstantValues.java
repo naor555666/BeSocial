@@ -15,7 +15,13 @@ public interface ConstantValues {
 
     //events
     String EVENT_HOST_UID = "eventCreatorUid";
+    String BEGIN_DATE = "beginDate";
+    String BEGIN_TIME = "beginTime";
+    String FINISH_DATE = "finishDate";
+    String FINISH_TIME = "finishTime";
 
+
+    //user levels
     String USER_LEVEL_1 = "Shy Socializer";
     String USER_LEVEL_2 = "Out Of The Shell Socializer";
     String USER_LEVEL_3 = "Academic Socializer";

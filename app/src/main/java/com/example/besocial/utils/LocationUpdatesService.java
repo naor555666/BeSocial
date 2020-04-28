@@ -44,7 +44,7 @@ import com.google.android.gms.tasks.Task;
 
 public class LocationUpdatesService extends Service {
     private static final String PACKAGE_NAME = "com.example.besocial.utils";
-    private static final String TAG = "ShareLocationForegroundService";
+    private static final String TAG = "LocationUpdatesService";
     private static final int REQUEST_CHECK_SETTINGS = 333;
     int PERMISSION_ID = 44;
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
@@ -58,17 +58,18 @@ public class LocationUpdatesService extends Service {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 666;
     private String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION};
-    private boolean mLocationPermissionGranted;
     FusedLocationProviderClient mFusedLocationClient;
     private static boolean isServiceRunning = false;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
+    private static LocationUpdatesService instance;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mLocationCallback= new LocationCallback() {
+        mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
@@ -114,16 +115,9 @@ public class LocationUpdatesService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        isServiceRunning = false;
-//        final boolean isPlaying = intent.getBooleanExtra("isPlaying", false);
-        // on/off music and show suitable notification
-        if (!isServiceRunning) {
-            startForeground(NOTIFICATION_ID1, updateNotification("Location is being used"));
-            getLastLocation();
-            startLocationUpdates();
-        } else {
-            stopSelf();
-        }
+        startForeground(NOTIFICATION_ID1, updateNotification("Location is being used"));
+        getLastLocation();
+        startLocationUpdates();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -217,14 +211,17 @@ public class LocationUpdatesService extends Service {
             onNewLocation(locationResult.getLastLocation());
         }
     };
+
     private void startLocationUpdates() {
         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                 mLocationCallback,
                 Looper.getMainLooper());
     }
+
     private void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
+
     private void onNewLocation(Location location) {
         mLastLocation = location;
         Log.d(TAG, "latitude: " + mLastLocation.getLatitude() + " longitude :" + mLastLocation.getLongitude());
@@ -241,37 +238,6 @@ public class LocationUpdatesService extends Service {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
                 LocationManager.NETWORK_PROVIDER
         );
-/*        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(mLocationRequest);
-        SettingsClient client = LocationServices.getSettingsClient(this);
-        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-        task.addOnSuccessListener(, new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                // All location settings are satisfied. The client can initialize
-                // location requests here.
-                // ...
-            }
-        });
-
-        task.addOnFailureListener(this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                if (e instanceof ResolvableApiException) {
-                    // Location settings are not satisfied, but this can be fixed
-                    // by showing the user a dialog.
-                    try {
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
-                        ResolvableApiException resolvable = (ResolvableApiException) e;
-                        resolvable.startResolutionForResult(Context.LOCATION_SERVICE,
-                                REQUEST_CHECK_SETTINGS);
-                    } catch (IntentSender.SendIntentException sendEx) {
-                        // Ignore the error.
-                    }
-                }
-            }
-        });*/
     }
 
     public boolean stopService(Intent name) {
@@ -289,5 +255,9 @@ public class LocationUpdatesService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public static LocationUpdatesService getInstance() {
+        return instance;
     }
 }

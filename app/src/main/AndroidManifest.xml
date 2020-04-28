@@ -67,12 +67,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <service
-            android:name=".utils.ShareLocationForegroundService"
+            android:name=".utils.LocationUpdatesService"
             android:foregroundServiceType="location"
             android:enabled="true"
             android:exported="false"></service>
+<!--        <service
+            android:name=".utils.ShareLocationForegroundService"
+            android:foregroundServiceType="location"
+            android:enabled="true"
+            android:exported="false"></service>-->
 
         <receiver android:name=".GeofenceBroadcastReceiver"/>
         <meta-data
