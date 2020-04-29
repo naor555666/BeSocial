@@ -14,6 +14,8 @@ public interface ConstantValues {
     String HELP_ME= "Help Me!";
 
     //events
+    String EVENT_ID = "eventId";
+    String EVENT_TITLE= "title";
     String EVENT_HOST_UID = "eventCreatorUid";
     String BEGIN_DATE = "beginDate";
     String BEGIN_TIME = "beginTime";

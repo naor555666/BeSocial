@@ -1,5 +1,7 @@
 package com.example.besocial.utils;
 
+import android.util.Log;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,9 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static java.util.Calendar.*;
+
 
 public class DateUtils {
+    private static final String TAG ="DateUtils" ;
+
     public DateUtils() {
     }
 
@@ -18,7 +22,7 @@ public class DateUtils {
         try {
             Date beginDate = df.parse(strBeginDate);
             Date finishDate = df.parse(strFinishDate);
-            Date currentDate = df.parse(df.format(getInstance().getTime()));
+            Date currentDate = df.parse(df.format(Calendar.getInstance().getTime()));
 
             final Calendar c = Calendar.getInstance();
             int hour = c.get(Calendar.HOUR_OF_DAY);
@@ -29,24 +33,30 @@ public class DateUtils {
             if (isDateBetweenTwoGivenDate(currentDate, beginDate, finishDate)) {
                 //the event is occurring for one day only
                 if (currentDate.compareTo(beginDate) == 0 && currentDate.compareTo(finishDate) == 0) {
+                    Log.d(TAG, "the current event is relevant to date");
                     return isTimeBetweenTwoGivenTimes(strCurrentTime, strBeginTime, strFinishTime);
                 }
                 //the beginning date is today and the event will occur for more than one day
                 else if (currentDate.compareTo(beginDate) == 0 && currentDate.compareTo(finishDate) < 0) {
+                    Log.d(TAG, "the beginning date is today and the event will occur for more than one day");
                     return isTimeBeforeGivenTime(strBeginTime, strCurrentTime);
                 }
                 //the finishing date is today and the event has been occurring for more than one day
                 else if (currentDate.compareTo(beginDate) > 0 && currentDate.compareTo(finishDate) == 0) {
+                    Log.d(TAG, "the finishing date is today and the event has been occurring for more than one day");
                     return isTimeBeforeGivenTime(strCurrentTime, strFinishTime);
                 }
                 //the event has started some day before and will finish some day after today
                 else if (currentDate.compareTo(beginDate) > 0 && currentDate.compareTo(finishDate) < 0) {
+                    Log.d(TAG, "the event has started some day before and will finish some day after today");
                     return true;
                 }
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        Log.d(TAG, "the event is irrelevant");
+
         return false;
     }
 

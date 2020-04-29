@@ -93,6 +93,6 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
     private void alertWithGeofenceDetails(Context context, String title, String transition) {
                     // Send notification and log the transition details.
             Toast.makeText(context,title+transition , Toast.LENGTH_LONG).show();
-            Log.i(TAG, title+transition);
+            Log.i(TAG, String.valueOf(new StringBuilder().append(title).append(" ").append(transition)));
     }
 }

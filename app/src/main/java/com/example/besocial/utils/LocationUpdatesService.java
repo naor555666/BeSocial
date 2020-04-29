@@ -9,7 +9,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -21,22 +20,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ServiceCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.besocial.R;
 import com.example.besocial.ui.mainactivity.MainActivity;
-import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,24 +39,21 @@ import com.google.android.gms.tasks.Task;
 public class LocationUpdatesService extends Service {
     private static final String PACKAGE_NAME = "com.example.besocial.utils";
     private static final String TAG = "LocationUpdatesService";
-    private static final int REQUEST_CHECK_SETTINGS = 333;
-    int PERMISSION_ID = 44;
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
 
     static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
     static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
 
     public static final int NOTIFICATION_ID1 = 1;
+    private static final long INTERVALS_GAP = 5 * 1000;
     private NotificationManager mNotiMgr;
     private Notification.Builder mNotifyBuilder;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 666;
-    private String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION};
+
     FusedLocationProviderClient mFusedLocationClient;
-    private static boolean isServiceRunning = false;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
     private static LocationUpdatesService instance;
+    private static GeofencingEvent geofencingClient;
 
     @Override
     public void onCreate() {
@@ -160,32 +151,6 @@ public class LocationUpdatesService extends Service {
         return false;
     }
 
-/*    private void requestPermissions() {
-        // Permission to access the location is missing. Show rationale and request permission
-
-    }
-
-    //handle the user result for the permission request
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
-            return;
-        }
-
-        if (grantResults.length > 0) {
-            for (int i = 0; i < grantResults.length; i++) {
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    mLocationPermissionGranted = false;
-                    break;
-                }
-            }
-        } else {
-            //permission was granted
-            mLocationPermissionGranted = true;
-        }
-    }*/
-
-
     @SuppressLint("MissingPermission")
     private void requestNewLocationData() {
 
@@ -193,12 +158,11 @@ public class LocationUpdatesService extends Service {
         //isLocationEnabled(mLocationRequest);
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(2 * 1000);
+        mLocationRequest.setInterval(INTERVALS_GAP);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         //mLocationRequest.setNumUpdates(10);
 
-        //mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationClient.requestLocationUpdates(
                 mLocationRequest, mLocationCallback,
                 Looper.myLooper()
@@ -248,7 +212,26 @@ public class LocationUpdatesService extends Service {
     public void onDestroy() {
         Log.d(TAG, "stopping location service");
         stopLocationUpdates();
+        removeGeofences();
         super.onDestroy();
+    }
+
+    private void removeGeofences() {
+/*        geofencingClient.removeGeofences(MainActivity.getGeofencePendingIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Geofences removed
+                        // ...
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to remove geofences
+                        // ...
+                    }
+                });*/
     }
 
     @Nullable

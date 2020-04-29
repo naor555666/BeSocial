@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.besocial.ConstantValues;
 import com.example.besocial.utils.BitmapUtils;
 import com.example.besocial.utils.EventDatePicker;
 import com.example.besocial.MapsActivity;
@@ -63,7 +64,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
     private ImageView locationIcon, eventPhoto;
     private Uri pickedImageFromGallery = null;
-    private byte[] imageInByte=null;
+    private byte[] imageInByte = null;
     private TextView description;
     private TextView eventTitle;
     private Button createEventBtn;
@@ -87,7 +88,6 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference imagesReference = storage.getReference();
     private Boolean isHelpEvent = false;
-
 
 
     public CreateEventFragment() {
@@ -258,15 +258,18 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     }
 
     private void saveEventInformationToDatabase() {
-        Event newEvent = new Event(eventRandomName,strEventPhotoUrl, strEventCategory, strEventTitle, strStartDate, strEndDate, strStartTime
+
+        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference()
+                .child(ConstantValues.EVENTS).push();
+//        eventsRef.child("Events").child(loggedUser.getUserId() + eventRandomName)
+        eventRandomName = eventsRef.getKey();
+        Event newEvent = new Event(eventRandomName, strEventPhotoUrl, strEventCategory, strEventTitle, strStartDate, strEndDate, strStartTime
                 , strEndTime, new com.example.besocial.LatLng(eventLocation.latitude, eventLocation.longitude), strLocationName, strDescription, loggedUser.getUserId()
                 , loggedUser.getUserFirstName() + " " + loggedUser.getUserLastName()
                 , loggedUser.isManager());
 
         Log.d(TAG, "new event is:\n" + newEvent.toString());
-        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference();
-        eventsRef.child("Events").child(loggedUser.getUserId() + eventRandomName)
-                .setValue(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
+                eventsRef.setValue(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {

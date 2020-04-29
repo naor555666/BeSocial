@@ -70,6 +70,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends AppCompatActivity implements TextWatcher {
+    private static final long EXPIRATION_DURATION = 15*1000 ;
     private final String IS_LOCATION_ACTIVATED = "isLocationActivated";
     public static final String LOCATION_1 = "555";
     private static User loggedUser;
@@ -320,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         attendingEventsRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d(TAG, "children count on dataSnapshot: "+ dataSnapshot.getChildrenCount());
                 saveRelevantEvents(dataSnapshot);
             }
 
@@ -349,14 +351,18 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     }
 
     private void saveRelevantEvents(DataSnapshot ds) {
-
+        Log.d(TAG, "ds.eventID is: "+ (String) ds.child(ConstantValues.EVENT_ID).getValue());
             if (DateUtils.isEventCurrentlyOccurring(ds.child(ConstantValues.BEGIN_DATE).getValue().toString()
                     , ds.child(ConstantValues.FINISH_DATE).getValue().toString()
                     , ds.child(ConstantValues.BEGIN_TIME).getValue().toString()
                     , ds.child(ConstantValues.FINISH_TIME).getValue().toString())) {
+                Log.d(TAG, "this event is suitable for geofencing: "+ (String) ds.child(ConstantValues.EVENT_TITLE).getValue());
                 currentOccuringEvents.add(ds.getValue(Event.class));
                 handleGeofencingEvents(ds.getValue(Event.class));
 //                addGeofences(geofence);
+            }
+            else{
+                Log.d(TAG, "this event is not suitable for geofencing: "+ (String) ds.child(ConstantValues.EVENT_TITLE).getValue());
             }
 
     }
@@ -387,10 +393,11 @@ private void handleGeofencingEvents(Event event) {
     //geofenceList = new ArrayList<>();
     //
     geofencingClient = LocationServices.getGeofencingClient(this);
-
+    Log.d(TAG, "creating geofence with id: "+ event.getEventId());
     Geofence geofence=new Geofence.Builder()
             // Set the request ID of the geofence. This is a string to identify this
             // geofence.
+
             .setRequestId(event.getEventId())
 
             .setCircularRegion(
@@ -398,7 +405,7 @@ private void handleGeofencingEvents(Event event) {
                     event.getLocation().getLongitude().doubleValue(),
                     30
             )
-            .setExpirationDuration(Geofence.NEVER_EXPIRE)
+            .setExpirationDuration(EXPIRATION_DURATION)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                     Geofence.GEOFENCE_TRANSITION_EXIT)
             .build();
@@ -472,7 +479,7 @@ private GeofencingRequest getGeofencingRequest(Geofence geofence) {
     return builder.build();
 }
 
-    private PendingIntent getGeofencePendingIntent() {
+    public PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
         if (geofencePendingIntent != null) {
             return geofencePendingIntent;
