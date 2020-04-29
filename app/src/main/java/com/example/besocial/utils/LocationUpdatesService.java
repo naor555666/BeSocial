@@ -45,7 +45,7 @@ public class LocationUpdatesService extends Service {
     static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
 
     public static final int NOTIFICATION_ID1 = 1;
-    private static final long INTERVALS_GAP = 5 * 1000;
+    private static final long INTERVALS_GAP = 3 * 1000;
     private NotificationManager mNotiMgr;
     private Notification.Builder mNotifyBuilder;
 
