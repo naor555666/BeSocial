@@ -5,9 +5,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
@@ -49,6 +51,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -136,7 +139,6 @@ public class EventFragment extends Fragment {
             if (isUserAttending) {
                 Log.d(TAG, "set to check in");
                 binding.fragmentEventAttendBtn.setText("Check in");
-                getLastLocation();
             }
             Log.d(TAG, "set to visible");
             binding.fragmentEventAttendBtn.setVisibility(View.VISIBLE);
@@ -247,6 +249,17 @@ public class EventFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 attendToEvent();
+            }
+        });
+        binding.fragmentEventLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri locationURL= Uri.parse(new StringBuilder().append("https://www.google.com/maps/search/?api=1&query=")
+                        .append(chosenEvent.getLocation().getLatitude()).append(",")
+                        .append(chosenEvent.getLocation().getLongitude()).toString());
+                Intent mapsIntent = new Intent(Intent.ACTION_VIEW, locationURL);
+
+                startActivity(mapsIntent);
             }
         });
     }
