@@ -168,10 +168,6 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
         }
 
-
-        //
-        //addGeofences();
-        //
     }
 
 
