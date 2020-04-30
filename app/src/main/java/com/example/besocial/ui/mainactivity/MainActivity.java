@@ -70,7 +70,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends AppCompatActivity implements TextWatcher {
-    private static final long EXPIRATION_DURATION = 15*1000 ;
+    private static final long EXPIRATION_DURATION = 15*60*1000 ;
     private final String IS_LOCATION_ACTIVATED = "isLocationActivated";
     public static final String LOCATION_1 = "555";
     private static User loggedUser;
