@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -57,7 +58,7 @@ public class ProfileFragment extends Fragment {
     private CircleImageView profileProfilePicture;
     private TextView profilePageUsername;
     private EditText profileFullName, profileEmail, profileCity, profileAddress, profileBirthday, profileSocialLevel, profileSocialPoints;
-    private User loggedUser;
+    private User loggedUser,userData;
     private Button profileSaveDetails, profileFollowList, profileMyPictures;
     private final static int galleryPick = 1;
     private ImageButton profileChangeProfilePicture, profileEditProfileDetails;
@@ -65,6 +66,8 @@ public class ProfileFragment extends Fragment {
     private static DatabaseReference userRef;
     private StorageReference userPicturesRef;
     private NavController navController;
+    private static UsersViewModel mViewModel;
+
 
     // an instance of the layout
     private FragmentProfileBinding binding;
@@ -79,6 +82,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(inflater, container, false);
+        mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
         View view = binding.getRoot();
         return view;
     }

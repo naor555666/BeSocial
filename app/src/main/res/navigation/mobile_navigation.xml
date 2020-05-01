@@ -115,13 +115,9 @@
         <action
             android:id="@+id/action_allEventsTabFragment_to_eventFragment"
             app:destination="@id/eventFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/searchUsersFragment"
-        android:name="com.example.besocial.SearchUsersFragment"
-        android:label="fragment_search_users"
-        tools:layout="@layout/fragment_search_users" />
-        tools:layout="@layout/fragment_all_events_tab" />
+    </fragment><![CDATA[
+    tools:layout="@layout/fragment_all_events_tab" />
+    ]]>
     <fragment
         android:id="@+id/attendingEventsTabFragment"
         android:name="com.example.besocial.ui.mainactivity.socialcenter.AttendingEventsTabFragment"
@@ -132,6 +128,15 @@
         android:name="com.example.besocial.ui.mainactivity.socialcenter.HostingEventsTabFragment"
         android:label="fragment_hosting_events_tab"
         tools:layout="@layout/fragment_hosting_events_tab" />
+    <fragment
+        android:id="@+id/searchUsersFragment"
+        android:name="com.example.besocial.ui.mainactivity.SearchUsersFragment"
+        android:label="search_users_fragment"
+        tools:layout="@layout/search_users_fragment" >
+        <action
+            android:id="@+id/action_searchUsersFragment_to_nav_my_profile"
+            app:destination="@id/nav_my_profile" />
+    </fragment>
 
 
 </navigation>

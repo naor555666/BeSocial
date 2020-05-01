@@ -9,7 +9,6 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
-import com.example.besocial.SearchUsersFragment;
 import com.example.besocial.ui.login.RegisterFragment;
 import com.example.besocial.ui.mainactivity.mainmenu.LogoutDialog;
 import com.example.besocial.utils.MyBroadcastReceiver;
@@ -67,7 +66,7 @@ public class MainActivity extends AppCompatActivity{
 
     private TextView nav_header_user_email, nav_header_user_full_name;
     private static boolean isSearching;
-    private EditText search;
+    private static EditText search;
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private static NavController navController;
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity{
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
     private List<String> usersList;
-
+    private static Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -92,7 +91,7 @@ public class MainActivity extends AppCompatActivity{
         //  get user token (if he is logged in)
         loggedUser = new User();
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
         HomeFragment.getPosts().add(new Post(getResources().getDrawable(R.drawable.naor_profile_picture),
@@ -379,5 +378,9 @@ public class MainActivity extends AppCompatActivity{
 
     public static void setSearching(boolean searching) {
         isSearching = searching;
+    }
+
+    public static EditText getSearch() {
+        return search;
     }
 }
