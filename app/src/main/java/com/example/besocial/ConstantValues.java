@@ -30,4 +30,9 @@ public interface ConstantValues {
     String USER_LEVEL_4 = "Socialized Ninja Turtle";
     String USER_LEVEL_5 = "Socialozaurus";
 
+    //times in milliseconds
+    int SECOND= 1000;
+    int MINUTE= 60*1000;
+    int HOUR= 3600*1000;
+
 }

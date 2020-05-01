@@ -1,6 +1,7 @@
 package com.example.besocial.ui.mainactivity;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,9 +72,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends AppCompatActivity implements TextWatcher {
-    private static final long EXPIRATION_DURATION = 15*60*1000 ;
+    private static final long EXPIRATION_DURATION = 15 * ConstantValues.MINUTE;
     private final String IS_LOCATION_ACTIVATED = "isLocationActivated";
-    public static final String LOCATION_1 = "555";
     private static User loggedUser;
 
     private static boolean isLocationActive = false;
@@ -96,11 +97,12 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     private GeofencingClient geofencingClient;
     private ArrayList<Geofence> geofenceList;
     private PendingIntent geofencePendingIntent;
+
     private int background_location_permission_request_code = 5;
     private String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION};
-    private boolean mLocationPermissionGranted;
-    private static ArrayList<Event> currentOccuringEvents,eventsToRemoveGeofences;;
+    private static ArrayList<Event> currentOccuringEvents, eventsToRemoveGeofences;
+    ;
 
 
     @Override
@@ -108,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        geofenceList=new ArrayList<>();
+        geofenceList = new ArrayList<>();
 
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
@@ -304,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 }
                 editor.putBoolean(IS_LOCATION_ACTIVATED, isLocationActive);
                 editor.commit();
-            }else{
+            } else {
                 requestPermissions();
             }
         }
@@ -317,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         attendingEventsRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d(TAG, "children count on dataSnapshot: "+ dataSnapshot.getChildrenCount());
+                Log.d(TAG, "children count on dataSnapshot: " + dataSnapshot.getChildrenCount());
                 saveRelevantEvents(dataSnapshot);
             }
 
@@ -328,10 +330,10 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                    currentOccuringEvents.remove(dataSnapshot.getValue(Event.class));
-                   if(eventsToRemoveGeofences==null)
-                       eventsToRemoveGeofences=new ArrayList<>();
-                   eventsToRemoveGeofences.add(dataSnapshot.getValue(Event.class));
+                currentOccuringEvents.remove(dataSnapshot.getValue(Event.class));
+                if (eventsToRemoveGeofences == null)
+                    eventsToRemoveGeofences = new ArrayList<>();
+                eventsToRemoveGeofences.add(dataSnapshot.getValue(Event.class));
             }
 
             @Override
@@ -347,75 +349,51 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     }
 
     private void saveRelevantEvents(DataSnapshot ds) {
-        Log.d(TAG, "ds.eventID is: "+ (String) ds.child(ConstantValues.EVENT_ID).getValue());
-            if (DateUtils.isEventCurrentlyOccurring(ds.child(ConstantValues.BEGIN_DATE).getValue().toString()
-                    , ds.child(ConstantValues.FINISH_DATE).getValue().toString()
-                    , ds.child(ConstantValues.BEGIN_TIME).getValue().toString()
-                    , ds.child(ConstantValues.FINISH_TIME).getValue().toString())) {
-                Log.d(TAG, "this event is suitable for geofencing: "+ (String) ds.child(ConstantValues.EVENT_TITLE).getValue());
-                currentOccuringEvents.add(ds.getValue(Event.class));
-                handleGeofencingEvents(ds.getValue(Event.class));
-//                addGeofences(geofence);
-            }
-            else{
-                Log.d(TAG, "this event is not suitable for geofencing: "+ (String) ds.child(ConstantValues.EVENT_TITLE).getValue());
-            }
-
+        Log.d(TAG, "ds.eventID is: " + (String) ds.child(ConstantValues.EVENT_ID).getValue());
+        if (DateUtils.isEventCurrentlyOccurring(ds.child(ConstantValues.BEGIN_DATE).getValue().toString()
+                , ds.child(ConstantValues.FINISH_DATE).getValue().toString()
+                , ds.child(ConstantValues.BEGIN_TIME).getValue().toString()
+                , ds.child(ConstantValues.FINISH_TIME).getValue().toString())) {
+            Log.d(TAG, "this event is suitable for geofencing: " + (String) ds.child(ConstantValues.EVENT_TITLE).getValue());
+            currentOccuringEvents.add(ds.getValue(Event.class));
+            handleGeofencingEvents(ds.getValue(Event.class));
+        } else {
+            Log.d(TAG, "this event is not suitable for geofencing: " + (String) ds.child(ConstantValues.EVENT_TITLE).getValue());
+        }
     }
 
-/*    private void handleGeofencingEvents(Event event) {
+
+    private void handleGeofencingEvents(Event event) {
         //geofenceList = new ArrayList<>();
         //
         geofencingClient = LocationServices.getGeofencingClient(this);
-
-        geofenceList.add(new Geofence.Builder()
+        Log.d(TAG, "creating geofence with id: " + event.getEventId());
+        Geofence geofence = new Geofence.Builder()
                 // Set the request ID of the geofence. This is a string to identify this
                 // geofence.
-                .setRequestId(LOCATION_1)
+
+                .setRequestId(event.getEventId())
 
                 .setCircularRegion(
                         event.getLocation().getLatitude().doubleValue(),
                         event.getLocation().getLongitude().doubleValue(),
                         30
                 )
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setExpirationDuration(EXPIRATION_DURATION)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                         Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build());
+                .build();
         Log.d(TAG, "geofence created");
-//
-    }*/
-private void handleGeofencingEvents(Event event) {
-    //geofenceList = new ArrayList<>();
-    //
-    geofencingClient = LocationServices.getGeofencingClient(this);
-    Log.d(TAG, "creating geofence with id: "+ event.getEventId());
-    Geofence geofence=new Geofence.Builder()
-            // Set the request ID of the geofence. This is a string to identify this
-            // geofence.
+        addGeofences(geofence);
+    }
 
-            .setRequestId(event.getEventId())
-
-            .setCircularRegion(
-                    event.getLocation().getLatitude().doubleValue(),
-                    event.getLocation().getLongitude().doubleValue(),
-                    30
-            )
-            .setExpirationDuration(EXPIRATION_DURATION)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                    Geofence.GEOFENCE_TRANSITION_EXIT)
-            .build();
-    Log.d(TAG, "geofence created");
-addGeofences(geofence);
-}
-
-/*    private void addGeofences() {
+    private void addGeofences(Geofence geofence) {
         Log.d(TAG, "checking permission before adding geofence");
         if (checkLocationPermission()) {
             Log.d(TAG, "permission was granted");
             // Background location runtime permission already granted.
             // You can now call geofencingClient.addGeofences().
-            geofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
+            geofencingClient.addGeofences(getGeofencingRequest(geofence), getGeofencePendingIntent())
                     .addOnSuccessListener(this, new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -434,46 +412,15 @@ addGeofences(geofence);
         } else {
             requestPermissions();
         }
-    }*/
-private void addGeofences(Geofence geofence) {
-    Log.d(TAG, "checking permission before adding geofence");
-    if (checkLocationPermission()) {
-        Log.d(TAG, "permission was granted");
-        // Background location runtime permission already granted.
-        // You can now call geofencingClient.addGeofences().
-        geofencingClient.addGeofences(getGeofencingRequest(geofence), getGeofencePendingIntent())
-                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Geofences added
-                        Log.d(TAG, "geofence added");
-                        // ...
-                    }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "Failed to add geofences");
-                        // ...
-                    }
-                });
-    } else {
-        requestPermissions();
     }
-}
 
-/*    private GeofencingRequest getGeofencingRequest() {
+
+    private GeofencingRequest getGeofencingRequest(Geofence geofence) {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        builder.addGeofences(geofenceList);
+        builder.addGeofence(geofence);
         return builder.build();
-    }*/
-private GeofencingRequest getGeofencingRequest(Geofence geofence) {
-    GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-    builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-    builder.addGeofence(geofence);
-    return builder.build();
-}
+    }
 
     public PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
@@ -481,6 +428,7 @@ private GeofencingRequest getGeofencingRequest(Geofence geofence) {
             return geofencePendingIntent;
         }
         Intent intent = new Intent(this, GeofenceBroadcastReceiver.class);
+        intent.putExtra("uid", loggedUser.getUserId());
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
         geofencePendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.
@@ -519,14 +467,14 @@ private GeofencingRequest getGeofencingRequest(Geofence geofence) {
         if (grantResults.length > 0) {
             for (int i = 0; i < grantResults.length; i++) {
                 if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    mLocationPermissionGranted = false;
+
                     break;
                 }
             }
         } else {
             //permission was granted
-            mLocationPermissionGranted = true;
-//            addGeofences();
+
+
         }
     }
 
@@ -610,68 +558,4 @@ private GeofencingRequest getGeofencingRequest(Geofence geofence) {
 
         }
     }
-
-    /*    public class LocationHandler {
-            int PERMISSION_ID = 44;
-            private boolean checkPermissions(Activity activity) {
-                if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    return true;
-                }
-                return false;
-            }
-
-            private void requestPermissions(Activity activity) {
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
-                        PERMISSION_ID
-                );
-            }
-
-            private boolean isLocationEnabled(Activity activity) {
-                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-                        LocationManager.NETWORK_PROVIDER
-                );
-            }
-
-            @Override
-            public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-                if (requestCode == PERMISSION_ID) {
-                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        // Granted. Start getting the location information
-                    }
-                }
-            }
-
-            @SuppressLint("MissingPermission")
-            private void getLastLocation() {
-                if (checkPermissions()) {
-                    if (isLocationEnabled()) {
-                        mFusedLocationClient.getLastLocation().addOnCompleteListener(
-                                new OnCompleteListener<Location>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Location> task) {
-                                        Location location = task.getResult();
-                                        if (location == null) {
-                                            requestNewLocationData();
-                                        } else {
-                                            latTextView.setText(location.getLatitude() + "");
-                                            lonTextView.setText(location.getLongitude() + "");
-                                        }
-                                    }
-                                }
-                        );
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Turn on location", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(intent);
-                    }
-                } else {
-                    requestPermissions();
-                }
-            }
-        }*/
-
-
 }

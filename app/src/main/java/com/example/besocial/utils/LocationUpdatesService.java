@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.example.besocial.GeofenceBroadcastReceiver;
 import com.example.besocial.R;
 import com.example.besocial.ui.mainactivity.MainActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -40,7 +41,7 @@ public class LocationUpdatesService extends Service {
     private static final String PACKAGE_NAME = "com.example.besocial.utils";
     private static final String TAG = "LocationUpdatesService";
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
-
+    GeofenceBroadcastReceiver geofenceBroadcastReceiver;
     static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
     static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
 
@@ -194,7 +195,6 @@ public class LocationUpdatesService extends Service {
         Intent intent = new Intent(ACTION_BROADCAST);
         intent.putExtra(EXTRA_LOCATION, location);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-
     }
 
     private boolean isLocationEnabled() {
