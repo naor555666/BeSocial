@@ -102,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     private String[] locationPermission = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION};
     private static ArrayList<Event> currentOccuringEvents, eventsToRemoveGeofences;
+    private ValueEventListener userDetailsListener;
+    private ChildEventListener attendingEventsListener;
+    private DatabaseReference attendingEventsRef;
     ;
 
 
@@ -156,18 +159,15 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sharedPref.edit();
         isLocationActive = sharedPref.getBoolean(IS_LOCATION_ACTIVATED, false);
-        System.out.println("on create: music playing: " + isLocationActive);
         ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
 
         if (LocationUpdatesService.getInstance() != null) {
 
-            if (!isLocationActive) {
-                Glide.with(this).load(R.drawable.ic_my_location_blue_24dp).into((ImageButton) activateLocation);
+            if (isLocationActive) {
+                Glide.with(this).load(R.drawable.ic_my_location_blue_24dp).into(activateLocation);
+            } else {
+                Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into(activateLocation);
             }
-        } else {
-            isLocationActive = false;
-            Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into((ImageButton) activateLocation);
-
         }
 
     }
@@ -177,7 +177,8 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "inside on Start");
-
+        final ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
+        activateLocation.setEnabled(false);
         if (currentUser == null) {    // if the user is not logged in
             sendUserToLogin();
         }
@@ -185,10 +186,11 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
         else {
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
 //            currentUserDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
+            userDetailsListener = currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     loggedUser = dataSnapshot.getValue(User.class);
+                    activateLocation.setEnabled(true);
                     nav_header_user_email.setText(loggedUser.getUserEmail());
                     nav_header_user_full_name.setText(new StringBuilder().append(loggedUser.getUserFirstName())
                             .append(" ").append(loggedUser.getUserLastName()).toString());
@@ -295,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 Log.d(TAG, "permission was granted");
                 Intent intent = new Intent(this, LocationUpdatesService.class);
                 if (isLocationActive) {
+                    attendingEventsRef.removeEventListener(attendingEventsListener);
                     isLocationActive = false;
                     stopService(intent);
                     Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into((ImageButton) view);
@@ -313,10 +316,10 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     }
 
     private void getAttendingEventsList() {
-        DatabaseReference attendingEventsRef = FirebaseDatabase.getInstance().getReference()
+        attendingEventsRef = FirebaseDatabase.getInstance().getReference()
                 .child(ConstantValues.USERS_ATTENDING_TO_EVENTS)
                 .child(loggedUser.getUserId());
-        attendingEventsRef.addChildEventListener(new ChildEventListener() {
+        attendingEventsListener = attendingEventsRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d(TAG, "children count on dataSnapshot: " + dataSnapshot.getChildrenCount());
@@ -373,15 +376,13 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
                 // geofence.
 
                 .setRequestId(event.getEventId())
-
                 .setCircularRegion(
                         event.getLocation().getLatitude().doubleValue(),
                         event.getLocation().getLongitude().doubleValue(),
                         30
                 )
                 .setExpirationDuration(EXPIRATION_DURATION)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                        Geofence.GEOFENCE_TRANSITION_EXIT)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                 .build();
         Log.d(TAG, "geofence created");
         addGeofences(geofence);
@@ -483,6 +484,7 @@ public class MainActivity extends AppCompatActivity implements TextWatcher {
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "inside on Stop");
+        currentUserDatabaseRef.removeEventListener(userDetailsListener);
     }
 
     @Override

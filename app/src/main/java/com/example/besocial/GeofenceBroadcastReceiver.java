@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.besocial.data.Event;
 import com.example.besocial.ui.mainactivity.MainActivity;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
@@ -25,7 +26,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 
@@ -35,7 +38,8 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive: user id "+intent.getStringExtra("uid"));
+        Log.d(TAG, "onReceive: user id " + intent.getStringExtra("uid"));
+        String uid = intent.getStringExtra("uid");
         PendingIntent geofencePendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.
                 FLAG_UPDATE_CURRENT);
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
@@ -59,7 +63,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
             // Get the transition details as a String.
             handleGeofenceTransitionDetails(context,
                     geofenceTransition,
-                    triggeringGeofences,geofencePendingIntent,intent
+                    triggeringGeofences, geofencePendingIntent, uid
             );
 
 /*            // Send notification and log the transition details.
@@ -72,12 +76,11 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
     }
 
     private void handleGeofenceTransitionDetails(final Context context, int geofenceTransition, List<Geofence> triggeringGeofences,
-                                                 final PendingIntent geofencePendingIntent, final Intent intent) {
+                                                 final PendingIntent geofencePendingIntent, final String uid) {
 
-        final String requestId, transition;
+        final String transition;
         transition = geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ? "Entered" : "Exited";
         DatabaseReference usersAttendingEventsRef;
-        //requestId = triggeringGeofences.get(0).getRequestId().equals(MainActivity.LOCATION_1) ? "Home" : "";
         for (Geofence geo : triggeringGeofences) {
             usersAttendingEventsRef = FirebaseDatabase.getInstance().getReference()
                     .child(ConstantValues.USERS_ATTENDING_TO_EVENTS)
@@ -86,9 +89,11 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
             usersAttendingEventsRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Event chosenEvent = dataSnapshot.getValue(Event.class);
+                    checkInUserToEvent(context, chosenEvent, uid);
                     alertWithGeofenceDetails(context, dataSnapshot.child("title").getValue().toString(), transition);
 
-                    removeGeofence(context,intent,geofencePendingIntent);
+                    removeGeofence(context, geofencePendingIntent);
                 }
 
                 @Override
@@ -99,7 +104,31 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
-    private void removeGeofence(Context context, Intent intent, PendingIntent geofencePendingIntent) {
+    private void checkInUserToEvent(final Context context, final Event chosenEvent, String uid) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> childUpdates = new HashMap<>();
+
+        childUpdates.put("/" + ConstantValues.USERS_ATTENDING_TO_EVENTS
+                + "/" + uid + "/" + chosenEvent.getEventId() + "/" + ConstantValues.IS_CHECKED_IN, true);
+
+        childUpdates.put("/" + ConstantValues.EVENTS_WITH_ATTENDINGS
+                + "/" + chosenEvent.getEventId() + "/" + uid +"/"+ ConstantValues.IS_CHECKED_IN, true);
+
+        databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(context, "Checked in successful to the event: " + chosenEvent.getTitle(), Toast.LENGTH_LONG).show();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "onFailure: problem on checking user to event");
+            }
+        });
+    }
+
+    private void removeGeofence(Context context, PendingIntent geofencePendingIntent) {
         GeofencingClient geofencingClient = LocationServices.getGeofencingClient(context);
         geofencingClient.removeGeofences(geofencePendingIntent).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -118,7 +147,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
     private void alertWithGeofenceDetails(Context context, String title, String transition) {
         // Send notification and log the transition details.
         Toast.makeText(context, String.valueOf(new StringBuilder().append(title).append(" ").append(transition)), Toast.LENGTH_LONG).show();
-        Log.i(TAG, String.valueOf(new StringBuilder().append(title).append(" ").append(transition)));
+        Log.d(TAG, String.valueOf(new StringBuilder().append(title).append(" ").append(transition)));
     }
 
 

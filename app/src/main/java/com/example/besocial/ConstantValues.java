@@ -21,7 +21,7 @@ public interface ConstantValues {
     String BEGIN_TIME = "beginTime";
     String FINISH_DATE = "finishDate";
     String FINISH_TIME = "finishTime";
-
+    String IS_CHECKED_IN = "isCheckedIn";
 
     //user levels
     String USER_LEVEL_1 = "Shy Socializer";

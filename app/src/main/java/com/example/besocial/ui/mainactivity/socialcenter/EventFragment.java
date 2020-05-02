@@ -22,6 +22,8 @@ import com.example.besocial.data.Event;
 import com.example.besocial.data.LiteUserDetails;
 import com.example.besocial.databinding.FragmentEventBinding;
 import com.example.besocial.ui.mainactivity.MainActivity;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -156,11 +158,21 @@ public class EventFragment extends Fragment {
         childUpdates.put("/" + ConstantValues.EVENTS_WITH_ATTENDINGS
                 + "/" + chosenEvent.getEventId() + "/" + MainActivity.getLoggedUser().getUserId(), user);
 
-        databaseReference.updateChildren(childUpdates);
-        Toast.makeText(getContext(), "Attending to this event!", Toast.LENGTH_LONG).show();
-        isUserAttending = true;
-        binding.fragmentEventAttendBtn.setText("Cancel attending");
-        binding.fragmentEventAttendBtn.setEnabled(true);
+        databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getContext(), "Attending to this event!", Toast.LENGTH_LONG).show();
+                isUserAttending = true;
+                binding.fragmentEventAttendBtn.setText("Cancel attending");
+                binding.fragmentEventAttendBtn.setEnabled(true);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), "Sorry, problem has occured", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void cancelAttending() {
@@ -174,11 +186,21 @@ public class EventFragment extends Fragment {
         childUpdates.put("/" + ConstantValues.EVENTS_WITH_ATTENDINGS
                 + "/" + chosenEvent.getEventId() + "/" + MainActivity.getLoggedUser().getUserId(), null);
 
-        databaseReference.updateChildren(childUpdates);
-        Toast.makeText(getContext(), "attending was canceled", Toast.LENGTH_LONG).show();
-        isUserAttending = false;
-        binding.fragmentEventAttendBtn.setText("Attend");
-        binding.fragmentEventAttendBtn.setEnabled(true);
+        databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getContext(), "attending was canceled", Toast.LENGTH_LONG).show();
+                isUserAttending = false;
+                binding.fragmentEventAttendBtn.setText("Attend");
+                binding.fragmentEventAttendBtn.setEnabled(true);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), "Sorry, problem has occured", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void setEventDetails() {
