@@ -52,6 +52,18 @@
                 app:layout_constraintEnd_toStartOf="@id/profile_user_profile_picture"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="MissingConstraints" />
+
+            <ImageButton
+                android:id="@+id/new_chat_conversation_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:layout_marginEnd="100dp"
+                android:src="@drawable/ic_new_chat_conversation_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.315"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="0dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView

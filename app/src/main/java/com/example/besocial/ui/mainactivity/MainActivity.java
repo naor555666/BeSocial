@@ -36,6 +36,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -78,6 +79,8 @@ public class MainActivity extends AppCompatActivity{
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
     private List<String> usersList;
+    static UsersViewModel mViewModel;
+
     private static Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +88,7 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         isSearching=true;
+        mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
         Log.d(TAG,"Main activity On create");
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
@@ -94,12 +98,12 @@ public class MainActivity extends AppCompatActivity{
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
-        HomeFragment.getPosts().add(new Post(getResources().getDrawable(R.drawable.naor_profile_picture),
-                "Naor Ohana", "12.1.20", "Hi everyone !", getResources().getDrawable(R.drawable.naor_profile_picture)));
-        HomeFragment.getPosts().add(new Post(getResources().getDrawable(R.drawable.besociallogo),
-                "BeSocial", "12.1.20", "Hello !", null));
-        HomeFragment.getPosts().add(new Post(getResources().getDrawable(R.drawable.or_profile),
-                "Or Magogi", "12.1.20", "I am here too", null));
+        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(),getResources().getDrawable(R.drawable.naor_profile_picture),
+                "Naor Ohana", "12.1.20", "Hi everyone !","General", getResources().getDrawable(R.drawable.naor_profile_picture)));
+        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(),getResources().getDrawable(R.drawable.besociallogo),
+                "BeSocial", "12.1.20", "Hello !","General", null));
+        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(),getResources().getDrawable(R.drawable.or_profile),
+                "Or Magogi", "12.1.20", "I am here too","General", null));
 
 
         //
@@ -164,6 +168,7 @@ public class MainActivity extends AppCompatActivity{
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     MainActivity.loggedUser = dataSnapshot.getValue(User.class);
+                    mViewModel.setUser(loggedUser);
                     nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
                     nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());
                     String myProfileImage=loggedUser.getProfileImage();

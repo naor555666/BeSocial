@@ -12,6 +12,8 @@ public interface ConstantValues {
     String CATEGORY= "eventCategory";
     String GENERAL= "General";
     String HELP_ME= "Help Me!";
+    String CHATS="Chats";
+    String CHAT_MESSAGES="Chat Messages";
 
     //events
     String EVENT_HOST_UID = "eventCreatorUid";

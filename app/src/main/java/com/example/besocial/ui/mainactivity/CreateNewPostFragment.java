@@ -63,7 +63,7 @@ public class CreateNewPostFragment extends Fragment {
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newPost=new Post(getResources().getDrawable(R.drawable.empty_profile_image),loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName(),currentTime+"  "+currentDate,"MY first post creation",null);
+                newPost=new Post(loggedUser.getUserId(),getResources().getDrawable(R.drawable.empty_profile_image),loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName(),currentTime+"  "+currentDate,"MY first post creation","General",null);
                 HomeFragment.addPost(newPost);
                 Toast.makeText(getActivity(), "post created successfuly", Toast.LENGTH_LONG).show();
 

@@ -4,15 +4,23 @@ import android.graphics.drawable.Drawable;
 
 public class Post {
     private Drawable userProfilePicture;
-    private String postUserName, postDate, postDescription;
+    private String postUserName, postDate, postDescription,category,userId;
+    private Long numberOfLikes;
     private Drawable postImage;
 
-    public Post(Drawable userProfilePicture, String postUserName, String postDate, String postDescription, Drawable postImage) {
+
+    public Post(){
+
+    }
+    public Post(String userId, Drawable userProfilePicture, String postUserName, String postDate, String postDescription, String category, Drawable postImage) {
+        this.userId=userId;
         this.userProfilePicture = userProfilePicture;
         this.postUserName = postUserName;
         this.postDate = postDate;
         this.postDescription = postDescription;
+        this.category = category;
         this.postImage = postImage;
+        this.numberOfLikes.valueOf(0);
     }
 
     public Drawable getUserProfilePicture() {
@@ -47,11 +55,36 @@ public class Post {
         this.postDescription = postDescription;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public Long getNumberOfLikes() {
+        return numberOfLikes;
+    }
+
+    public void setNumberOfLikes(Long numberOfLikes) {
+        this.numberOfLikes = numberOfLikes;
+    }
+
     public Drawable getPostImage() {
         return postImage;
     }
 
     public void setPostImage(Drawable postImage) {
         this.postImage = postImage;
+    }
+
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

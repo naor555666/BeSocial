@@ -19,15 +19,6 @@
             android:textColor="#E20F0F0F"
             android:textSize="30sp" />
 
-        <ImageButton
-            android:id="@+id/new_chat_conversation_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="fill_horizontal"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="30dp"
-            android:src="@drawable/ic_new_chat_conversation_24dp" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chat_list"
             android:layout_width="match_parent"

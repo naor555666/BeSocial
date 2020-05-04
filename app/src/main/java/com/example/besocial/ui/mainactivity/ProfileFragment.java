@@ -27,7 +27,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.besocial.ConstantValues;
 import com.example.besocial.R;
+import com.example.besocial.data.ChatConversation;
 import com.example.besocial.data.User;
 import com.example.besocial.databinding.FragmentProfileBinding;
 import com.example.besocial.utils.BitmapUtils;
@@ -62,8 +64,9 @@ public class ProfileFragment extends Fragment {
     private Button profileSaveDetails, profileFollowList, profileMyPictures;
     private final static int galleryPick = 1;
     private ImageButton profileChangeProfilePicture, profileEditProfileDetails;
+    private ImageButton newChatButton;
     private FirebaseDatabase firebaseDatabase;
-    private static DatabaseReference userRef;
+    private static DatabaseReference userRef,chatRef;
     private StorageReference userPicturesRef;
     private NavController navController;
     private static UsersViewModel mViewModel;
@@ -82,7 +85,6 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(inflater, container, false);
-        mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
         View view = binding.getRoot();
         return view;
     }
@@ -90,7 +92,10 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
         profileProfilePicture = view.findViewById(R.id.profile_user_profile_picture);
+        newChatButton=view.findViewById(R.id.new_chat_conversation_button);
+        newChatButton.setVisibility(View.INVISIBLE);
         profileChangeProfilePicture = view.findViewById(R.id.profile_change_profile_picture);
         profilePageUsername = view.findViewById(R.id.profile_page_username);
         profileFullName = view.findViewById(R.id.profile_full_name);
@@ -104,23 +109,31 @@ public class ProfileFragment extends Fragment {
         profileEditProfileDetails = view.findViewById(R.id.profile_edit_profile_details);
         profileMyPictures = view.findViewById(R.id.profile_my_pictures);
         profileFollowList = view.findViewById(R.id.profile_follow_list);
+        userData=mViewModel.getUser().getValue();
         firebaseDatabase = FirebaseDatabase.getInstance();
         navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
         loggedUser = MainActivity.getLoggedUser();
         userPicturesRef = FirebaseStorage.getInstance().getReference().child(MainActivity.getCurrentUser().getUid());
-        profilePageUsername.setText(loggedUser.getUserFirstName() + "  " + loggedUser.getUserLastName());
-        profileEmail.setText(loggedUser.getUserEmail());
-        profileFullName.setText(loggedUser.getUserFirstName() + "  " + loggedUser.getUserLastName());
-        profileAddress.setText(loggedUser.getUserAddress());
-        profileCity.setText(loggedUser.getUserCity());
-        profileSocialLevel.setText(loggedUser.getSocialLevel());
-        profileSocialPoints.setText(loggedUser.getSocialPoints().toString());
-        profileBirthday.setText(loggedUser.getBirthday());
-        userRef = MainActivity.getCurrentUserDatabaseRef();
-        String myProfileImage = loggedUser.getProfileImage();
-        //if(!myProfileImage.equals(""))
-        Glide.with(getContext()).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(profileProfilePicture);
 
+        profilePageUsername.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
+        profileEmail.setText(userData.getUserEmail());
+        profileFullName.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
+        profileAddress.setText(userData.getUserAddress());
+        profileCity.setText(userData.getUserCity());
+        profileSocialLevel.setText(userData.getSocialLevel());
+        profileSocialPoints.setText(userData.getSocialPoints().toString());
+        profileBirthday.setText(userData.getBirthday());
+        String myProfileImage = userData.getProfileImage();
+        if(!loggedUser.getUserId().equals(userData.getUserId())){
+            profileChangeProfilePicture.setVisibility(View.INVISIBLE);
+            profileEditProfileDetails.setVisibility(View.INVISIBLE);
+            profileMyPictures.setText("UPLOADED PHOTOS");
+            profileFollowList.setText("FOLLOW LIST");
+            newChatButton.setVisibility(View.VISIBLE);
+        }
+        userRef = MainActivity.getCurrentUserDatabaseRef();
+        Glide.with(getContext()).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(profileProfilePicture);
+        setNewChatListener();
 
         profileMyPictures.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,17 +159,12 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
 
                 boolean isFieldsValid = true;
-                // String[] name=profileFullName.getText().toString().split(" ");
-                // if(name[0].equals("") || name[1].equals(""))
-                //isFieldsValid=false;
                 if (profileAddress.getText().toString().equals(""))
                     isFieldsValid = false;
                 if (profileCity.getText().toString().equals(""))
                     isFieldsValid = false;
                 if (isFieldsValid == true) {
                     HashMap userMap = new HashMap();
-                    //userMap.put("userFirstName", name[0]);
-                    //userMap.put("userLastName", name[1]);
                     userMap.put("userAddress", profileAddress.getText().toString());
                     userMap.put("userCity", profileCity.getText().toString());
                     userRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
@@ -170,6 +178,9 @@ public class ProfileFragment extends Fragment {
                             }
                             profileSaveDetails.setVisibility(View.INVISIBLE);
                             profileEditProfileDetails.setVisibility(View.VISIBLE);
+                            profileAddress.setEnabled(false);
+                            profileCity.setEnabled(false);
+                            profileBirthday.setEnabled(false);
                         }
                     });
 
@@ -271,5 +282,51 @@ public class ProfileFragment extends Fragment {
         binding = null;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mViewModel.setUser(loggedUser);
+    }
+
+    void setNewChatListener(){
+        newChatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String sendFrom,sendTo,sendFromId,sendToId,chatId;
+                sendTo=profileFullName.getText().toString();
+                sendToId=userData.getUserId();
+                sendFrom=loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName();
+                sendFromId= loggedUser.getUserId();
+                chatId=generateChatId(sendFromId,sendToId);
+                ChatConversation newChatConversation=new ChatConversation
+                        (sendFrom,sendTo,chatId,userData.getProfileImage());
+                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(chatId);
+                chatRef.setValue(newChatConversation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            navController.navigate(R.id.action_nav_my_profile_to_nav_chat);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    String generateChatId(String sendFromId,String sendToId){
+        String id;
+        if(sendFromId.compareTo(sendToId)>=0){   // if sendFromId is greater, then it is first in chatId
+            id=sendFromId+sendToId;
+        }
+        else{
+            id=sendToId+sendFromId;
+        }
+        return id;
+    }
 }
 

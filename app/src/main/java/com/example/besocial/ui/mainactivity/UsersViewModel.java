@@ -7,7 +7,7 @@ import com.example.besocial.data.User;
 
 public class UsersViewModel extends ViewModel {
     // TODO: Implement the ViewModel
-    private MutableLiveData<User> user = new MutableLiveData<>();
+    private static MutableLiveData<User> user = new MutableLiveData<>();
 
 
     public MutableLiveData<User> getUser() {
