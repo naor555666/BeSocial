@@ -65,7 +65,6 @@ public class AttendingEventsTabFragment extends Fragment {
         displayEventsList(binding.attendingEventsRecyclerview, query);
     }
     public void displayEventsList(RecyclerView eventsRecyclerView, Query eventsRef) {
-        //if(mActivity==null){ return;}
         FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions
                 .Builder<Event>()
                 .setQuery(eventsRef, Event.class)
