@@ -1,4 +1,4 @@
-package com.example.besocial;
+package com.example.besocial.utils;
 
 public interface ConstantValues {
     String EVENTS = "Events";
@@ -35,4 +35,5 @@ public interface ConstantValues {
     int MINUTE= 60*1000;
     int HOUR= 3600*1000;
 
+    String IS_HELP_EVENT = "isHelpEvent";
 }

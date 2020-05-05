@@ -1,4 +1,4 @@
-package com.example.besocial;
+package com.example.besocial.ui.mainactivity.socialcenter;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -18,7 +18,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import com.example.besocial.ui.mainactivity.socialcenter.CreateEventFragment;
+import com.example.besocial.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;

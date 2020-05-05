@@ -4,11 +4,8 @@ package com.example.besocial.ui.mainactivity.socialcenter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,12 +22,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.besocial.ConstantValues;
+import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.utils.BitmapUtils;
 import com.example.besocial.utils.EventDatePicker;
-import com.example.besocial.MapsActivity;
 import com.example.besocial.R;
-import com.example.besocial.utils.BitmapUtils;
 import com.example.besocial.utils.TimePickerFragment;
 import com.example.besocial.data.Event;
 import com.example.besocial.data.User;
@@ -45,7 +40,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -72,6 +66,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     private static LatLng eventLocation;
     private static Spinner categorySpinner;
     private static TextView startTime, endTime, startDate, endDate;
+    private TextView helpCategory;
     private static String chosenDate, chosenTime;
     private String saveCurrentDate, saveCurrentTime, eventRandomName, downloadUrl;
     User loggedUser = MainActivity.getLoggedUser();
@@ -113,6 +108,8 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         endTime = view.findViewById(R.id.eventCreate_EndTime);
         startDate = view.findViewById(R.id.eventCreate_StartDate);
         endDate = view.findViewById(R.id.eventCreate_EndDate);
+        helpCategory = view.findViewById(R.id.fragment_create_event_category);
+
         description = view.findViewById(R.id.eventCreate_Description);
         createEventBtn = view.findViewById(R.id.eventCreate_createEventButton);
         loadingBar = new ProgressDialog(getContext());
@@ -128,9 +125,12 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
         //set the spinner to 'Help Me' category if the user chose get help option in socioal center
         if (!(getArguments().isEmpty())) {
-            isHelpEvent = getArguments().getBoolean(SocialCenterFragment.IS_HELP_EVENT);
-            categorySpinner.setSelection(categorySpinner.getAdapter().getCount() - 1);
-            categorySpinner.setEnabled(false);
+            isHelpEvent = getArguments().getBoolean(ConstantValues.IS_HELP_EVENT);
+/*            categorySpinner.setSelection(categorySpinner.getAdapter().getCount() - 1);
+            categorySpinner.setEnabled(false);*/
+            categorySpinner.setVisibility(View.GONE);
+            helpCategory.setVisibility(view.VISIBLE);
+
         }
         setListeners();
     }
@@ -183,7 +183,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     }
 
     private void validateEventDetails() {
-        strEventCategory = (String) categorySpinner.getSelectedItem();
+        strEventCategory = isHelpEvent ? ConstantValues.HELP_ME : (String) categorySpinner.getSelectedItem();
         strEventTitle = eventTitle.getText().toString();
         strStartDate = startDate.getText().toString();
         strEndDate = endDate.getText().toString();
@@ -259,17 +259,22 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
     private void saveEventInformationToDatabase() {
 
-        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference()
-                .child(ConstantValues.EVENTS).push();
+        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference();
+        if (!isHelpEvent) {
+            eventsRef=eventsRef.child(ConstantValues.EVENTS).push();
+        }else {
+            eventsRef=eventsRef.child(ConstantValues.HELP_ME).push();
+        }
+
 //        eventsRef.child("Events").child(loggedUser.getUserId() + eventRandomName)
         eventRandomName = eventsRef.getKey();
         Event newEvent = new Event(eventRandomName, strEventPhotoUrl, strEventCategory, strEventTitle, strStartDate, strEndDate, strStartTime
-                , strEndTime, new com.example.besocial.LatLng(eventLocation.latitude, eventLocation.longitude), strLocationName, strDescription, loggedUser.getUserId()
+                , strEndTime, new com.example.besocial.data.LatLng(eventLocation.latitude, eventLocation.longitude), strLocationName, strDescription, loggedUser.getUserId()
                 , loggedUser.getUserFirstName() + " " + loggedUser.getUserLastName()
                 , loggedUser.isManager());
 
         Log.d(TAG, "new event is:\n" + newEvent.toString());
-                eventsRef.setValue(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
+        eventsRef.setValue(newEvent).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {

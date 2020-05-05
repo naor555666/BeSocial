@@ -1,7 +1,6 @@
 package com.example.besocial.ui.mainactivity;
 
 import android.Manifest;
-import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,8 +36,8 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
-import com.example.besocial.ConstantValues;
-import com.example.besocial.GeofenceBroadcastReceiver;
+import com.example.besocial.utils.ConstantValues;
+import com.example.besocial.utils.GeofenceBroadcastReceiver;
 import com.example.besocial.R;
 import com.example.besocial.data.Event;
 import com.example.besocial.data.Post;

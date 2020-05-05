@@ -1,6 +1,5 @@
-package com.example.besocial;
+package com.example.besocial.utils;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,6 +11,7 @@ import androidx.annotation.NonNull;
 
 import com.example.besocial.data.Event;
 import com.example.besocial.ui.mainactivity.MainActivity;
+import com.example.besocial.utils.ConstantValues;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingClient;
@@ -29,7 +29,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
@@ -150,8 +149,4 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         Log.d(TAG, String.valueOf(new StringBuilder().append(title).append(" ").append(transition)));
     }
 
-
-    void setMainActivityHandler(MainActivity main) {
-        this.main = main;
-    }
 }

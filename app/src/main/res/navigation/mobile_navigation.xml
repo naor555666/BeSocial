@@ -94,7 +94,7 @@
     </fragment>
     <fragment
         android:id="@+id/photosListFragment"
-        android:name="com.example.besocial.ui.PhotosListFragment"
+        android:name="com.example.besocial.ui.mainactivity.PhotosListFragment"
         android:label="fragment_photos_list"
         tools:layout="@layout/fragment_photos_list" />
     <fragment
@@ -122,6 +122,11 @@
         android:name="com.example.besocial.ui.mainactivity.socialcenter.HostingEventsTabFragment"
         android:label="fragment_hosting_events_tab"
         tools:layout="@layout/fragment_hosting_events_tab" />
+    <fragment
+        android:id="@+id/getHelpFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.GetHelpFragment"
+        android:label="fragment_get_help"
+        tools:layout="@layout/fragment_get_help" />
 
 
 </navigation>

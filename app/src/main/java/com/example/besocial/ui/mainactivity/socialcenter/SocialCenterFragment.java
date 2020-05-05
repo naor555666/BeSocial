@@ -15,6 +15,7 @@ import androidx.navigation.NavController;
 import com.example.besocial.R;
 import com.example.besocial.databinding.FragmentSocialCenterBinding;
 import com.example.besocial.ui.mainactivity.MainActivity;
+import com.example.besocial.utils.ConstantValues;
 
 
 /**
@@ -24,7 +25,6 @@ public class SocialCenterFragment extends Fragment implements View.OnClickListen
     private FragmentSocialCenterBinding binding;
 
     NavController navController;
-    public static final String IS_HELP_EVENT="isHelpEvent";
     public SocialCenterFragment() {
         // Required empty public constructor
     }
@@ -58,14 +58,13 @@ public class SocialCenterFragment extends Fragment implements View.OnClickListen
     public void onClick(View v) {
         Bundle bundle = new Bundle();
         if (v.getId() == R.id.getHelpButton) {
-            bundle.putBoolean(IS_HELP_EVENT, true);
-            navController.navigate(R.id.action_nav_social_center_to_createEventFragment,bundle);
+            navController.navigate(R.id.getHelpFragment,bundle);
         }
         if (v.getId() == R.id.socialEventButton) {
             navController.navigate(R.id.action_nav_social_center_to_eventsListFragment,bundle);
         }
         if (v.getId() == R.id.volunteerButton) {
-            bundle.putBoolean(IS_HELP_EVENT, true);
+            bundle.putBoolean(ConstantValues.IS_HELP_EVENT, true);
             navController.navigate(R.id.action_nav_social_center_to_eventsListFragment,bundle);
         }
         if(v.getId() == R.id.bonusAreaButton){

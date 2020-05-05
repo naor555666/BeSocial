@@ -1,10 +1,6 @@
 package com.example.besocial.data;
 
-import com.example.besocial.LatLng;
-import com.google.firebase.database.Exclude;
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Event {
