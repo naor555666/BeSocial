@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.besocial.ConstantValues;
+import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.R;
 import com.example.besocial.data.Event;
 import com.example.besocial.databinding.FragmentAllEventsTabBinding;
@@ -32,17 +32,14 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Objects;
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AllEventsTabFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class AllEventsTabFragment extends Fragment implements  AdapterView.OnItemSelectedListener {
     //    private final String TAG = getClass().getName();
     private static final String TAG = "AllEventsTabFragment";
     private FragmentAllEventsTabBinding binding;
@@ -142,9 +139,6 @@ public class AllEventsTabFragment extends Fragment implements View.OnClickListen
     }
 
 
-    @Override
-    public void onClick(View v) {
-    }
 
     public static class EventsViewHolder extends RecyclerView.ViewHolder {
         Event eventNode;
@@ -164,9 +158,12 @@ public class AllEventsTabFragment extends Fragment implements View.OnClickListen
     public void onItemSelected(final AdapterView<?> parent, View view, int position, long id) {
         strEventCategory = (String) parent.getItemAtPosition(position);
         Log.d(TAG, "eventCategory is " + strEventCategory);
-        eventsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.EVENTS).orderByChild(ConstantValues.EVENT_HOST_UID);
+        eventsRef = FirebaseDatabase.getInstance().getReference()
+                .child(ConstantValues.EVENTS);
         if (!strEventCategory.equals(ConstantValues.GENERAL)) {
-            eventsRef = eventsRef.orderByChild(ConstantValues.CATEGORY).equalTo(strEventCategory);
+            eventsRef = eventsRef
+                    .orderByChild(ConstantValues.CATEGORY)
+                    .equalTo(strEventCategory);
         }
         eventsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

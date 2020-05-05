@@ -38,7 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
  * A simple {@link Fragment} subclass.
  */
 //public class EventsListFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
-public class EventsListFragment extends Fragment{
+public class EventsListFragment extends Fragment {
 
     public static final String TAG = "EventsListFragment";
 
@@ -95,9 +95,9 @@ public class EventsListFragment extends Fragment{
 
         tabLayout = view.findViewById(R.id.events_list_tab_layout);
         eventsListViewPager = view.findViewById(R.id.events_list_view_pager);
-
+        addEventFab = view.findViewById(R.id.events_list_floatingActionButton);
         //binding.eventsListViewPager.setAdapter(eventsListPageAdapter);
-        eventsListPageAdapter = new EventsListPageAdapter(getChildFragmentManager(),tabLayout.getTabCount());
+        eventsListPageAdapter = new EventsListPageAdapter(getChildFragmentManager(), tabLayout.getTabCount());
         eventsListViewPager.setAdapter(eventsListPageAdapter);
 
         //initializing the spinner list of categories
@@ -117,7 +117,7 @@ public class EventsListFragment extends Fragment{
 
         setListeners();
 
-        //addEventFab.setOnClickListener(this);
+
     }
 
     @Override
@@ -156,6 +156,13 @@ public class EventsListFragment extends Fragment{
         //binding.eventsListViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(binding.eventsListTabLayout));
         eventsListViewPager.setOffscreenPageLimit(2);
         eventsListViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        addEventFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                MainActivity.getNavController().navigate(R.id.createEventFragment,bundle);
+            }
+        });
     }
 
 /*    private void displayEventsList() {

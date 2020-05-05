@@ -4,11 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.mainactivity.socialcenter.AttendingEventsTabFragment">
+    tools:context=".ui.mainactivity.socialcenter.AttendingEventsTabFragment"
+    android:id="@+id/linearLayout">
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="attending"
+        tools:layout_conversion_absoluteHeight="731dp"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_conversion_absoluteWidth="411dp" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/attending_events_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="attending" />
+        android:layout_height="match_parent" />
+
 
 </LinearLayout>

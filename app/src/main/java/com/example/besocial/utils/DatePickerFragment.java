@@ -2,18 +2,27 @@ package com.example.besocial.utils;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.graphics.Paint;
+import android.icu.util.LocaleData;
+import android.icu.util.TimeZone;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.DatePicker;
 
 import androidx.fragment.app.DialogFragment;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
+    private static final String TAG = "DatePickerFragment";
     protected String strChosenDate;
 
     public DatePickerFragment() {
@@ -34,7 +43,20 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
+        //original 2 lines
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         strChosenDate = "" + day + "/" + (month + 1) + "/" + year;
+
+        //parse to format like : April 20, 2020
+/*
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy",Locale.US);
+        strChosenDate ="" + day + "/" + (month + 1) + "/" + year;
+        try {
+            Log.d(TAG, "Chosen date: " + DateFormat.getDateInstance(1,Locale.US).format(df.parse(strChosenDate)));
+            strChosenDate = DateFormat.getDateInstance(1,Locale.US).format(df.parse(strChosenDate));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+*/
     }
 }

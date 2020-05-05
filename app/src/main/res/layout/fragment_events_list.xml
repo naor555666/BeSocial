@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutDirection="ltr"
     android:orientation="vertical"
-    android:padding="15dp"
     tools:context=".ui.mainactivity.socialcenter.EventsListFragment">
 
     <TextView
         android:id="@+id/events_list_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FCF8F8"
+        android:background="@color/colorPrimary"
         android:textAlignment="center"
         android:textColor="#E20F0F0F"
         android:textSize="30sp"
@@ -22,7 +22,9 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/events_list_tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        app:tabTextColor="#FDFDFD">
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/events_list_tab_all"
@@ -43,13 +45,37 @@
             android:text="Attending" />
     </com.google.android.material.tabs.TabLayout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/events_list_view_pager"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="20dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
 
-<!--    <Spinner
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/events_list_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+        </androidx.viewpager.widget.ViewPager>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/events_list_floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:src="@drawable/ic_add_circle_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--    <Spinner
         android:id="@+id/events_list_categorySpinner"
         android:layout_width="150dp"
         android:layout_height="wrap_content"

@@ -32,7 +32,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Play music:"
+                    android:text="Check in!:"
                     android:textColor="#030303"
                     android:textSize="12sp"
                     android:textStyle="bold|italic" />
@@ -44,22 +44,15 @@
                     android:layoutDirection="ltr"
                     android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/play_music"
+                    <ImageButton
+                        android:id="@+id/app_bar_activate_location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/round_button_shape"
                         android:onClick="clickHandler"
-                        app:srcCompat="@drawable/ic_play_arrow_green_24dp"></androidx.appcompat.widget.AppCompatImageView>
+                        app:srcCompat="@drawable/ic_my_location_black_24dp"></ImageButton>
 
-                    <ImageButton
-                        android:id="@+id/stop_music"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/round_button_shape"
-                        android:onClick="clickHandler"
-                        app:srcCompat="@drawable/ic_stop_red_24dp" />
                 </LinearLayout>
             </LinearLayout>
 

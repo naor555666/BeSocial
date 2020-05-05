@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.besocial.ConstantValues;
+import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.R;
 import com.example.besocial.data.RedeemableBenefit;
 import com.example.besocial.data.User;
@@ -36,8 +36,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 /**
@@ -195,6 +193,10 @@ public class BonusAreaFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         socialCenterViewModel = ViewModelProviders.of(getActivity()).get(SocialCenterViewModel.class);
+
+        //
+  /*      MainActivity.getNavController().navigate();
+        NavDestination*/
 
     }
 

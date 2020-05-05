@@ -44,7 +44,7 @@ public class TimePickerFragment extends DialogFragment
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        String strChosenTime = "" + checkDigit(hourOfDay) + ":" + checkDigit(minute);
+        String strChosenTime = new StringBuilder().append("").append(checkDigit(hourOfDay)).append(":").append(checkDigit(minute)).toString();
         String strStartDate, strEndDate;
 
         strStartDate = startDate.getText().toString();

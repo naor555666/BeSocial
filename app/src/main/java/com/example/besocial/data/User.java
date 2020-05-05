@@ -1,7 +1,5 @@
 package com.example.besocial.data;
 
-import com.example.besocial.LatLng;
-
 
 public class User {
     private String userId;

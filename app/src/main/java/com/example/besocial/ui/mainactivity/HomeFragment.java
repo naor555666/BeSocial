@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.besocial.R;
 import com.example.besocial.data.Post;
-import com.example.besocial.ui.PostsAdapter;
 
 import java.util.ArrayList;
 

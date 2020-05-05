@@ -1,4 +1,4 @@
-package com.example.besocial;
+package com.example.besocial.data;
 
 public class LatLng {
     private Double latitude;
