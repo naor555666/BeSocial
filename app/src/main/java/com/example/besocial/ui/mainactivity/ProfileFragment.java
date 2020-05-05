@@ -297,16 +297,22 @@ public class ProfileFragment extends Fragment {
         newChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String sendFrom,sendTo,sendFromId,sendToId,chatId;
+                String sendFrom,sendTo,sendFromId,sendToId,chatId1,chatId2;
                 sendTo=profileFullName.getText().toString();
                 sendToId=userData.getUserId();
                 sendFrom=loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName();
                 sendFromId= loggedUser.getUserId();
-                chatId=generateChatId(sendFromId,sendToId);
-                ChatConversation newChatConversation=new ChatConversation
-                        (sendFrom,sendTo,chatId,userData.getProfileImage());
-                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(chatId);
-                chatRef.setValue(newChatConversation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                chatId1=sendFromId+sendToId;
+                chatId2=sendToId+sendFromId;
+                ChatConversation newChatConversation1=new ChatConversation
+                        (sendFrom,sendTo,chatId1,userData.getProfileImage());
+                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(chatId1);
+                chatRef.setValue(newChatConversation1);
+
+                ChatConversation newChatConversation2=new ChatConversation
+                        (sendTo,sendFrom,chatId2,loggedUser.getProfileImage());
+                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(chatId2);
+                chatRef.setValue(newChatConversation2).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
@@ -316,17 +322,6 @@ public class ProfileFragment extends Fragment {
                 });
             }
         });
-    }
-
-    String generateChatId(String sendFromId,String sendToId){
-        String id;
-        if(sendFromId.compareTo(sendToId)>=0){   // if sendFromId is greater, then it is first in chatId
-            id=sendFromId+sendToId;
-        }
-        else{
-            id=sendToId+sendFromId;
-        }
-        return id;
     }
 }
 
