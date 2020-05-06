@@ -22,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
-import com.example.besocial.ConstantValues;
+import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.R;
 import com.example.besocial.data.User;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -58,7 +58,6 @@ public class SearchUsersFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
     }
 
     @Override

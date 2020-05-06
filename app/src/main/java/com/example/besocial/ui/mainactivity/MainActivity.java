@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide;
 import com.example.besocial.ui.login.RegisterFragment;
 import com.example.besocial.ui.mainactivity.mainmenu.LogoutDialog;
 import com.example.besocial.utils.MyBroadcastReceiver;
-import com.example.besocial.utils.MyMusicPlayerForegroundService;
 import com.example.besocial.R;
 import com.example.besocial.data.Post;
 import com.example.besocial.data.User;
@@ -88,7 +87,8 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class MainActivity extends AppCompatActivity implements TextWatcher {
+//public class MainActivity extends AppCompatActivity implements TextWatcher {
+public class MainActivity extends AppCompatActivity {
     private static final long EXPIRATION_DURATION = 15 * ConstantValues.MINUTE;
     private final String IS_LOCATION_ACTIVATED = "isLocationActivated";
     private static User loggedUser;

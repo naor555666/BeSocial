@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.besocial.ConstantValues;
+import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.R;
 import com.example.besocial.data.ChatConversation;
 import com.example.besocial.data.ChatMessage;
