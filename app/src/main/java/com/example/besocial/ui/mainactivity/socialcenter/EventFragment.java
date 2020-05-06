@@ -206,7 +206,11 @@ public class EventFragment extends Fragment {
     private void setEventDetails() {
         Glide.with(getContext()).load(chosenEvent.getStrEventPhotoUrl()).placeholder(R.drawable.social_event0).centerCrop().into(binding.fragmentEventPhoto);
         binding.fragmentEventTitle.setText(chosenEvent.getTitle());
-        binding.fragmentEventHostFullName.setText("Hosted by: " + chosenEvent.getEventCreatorUserName());
+        if (chosenEvent.getEventCreatorUid().equals(MainActivity.getLoggedUser().getUserId())) {
+            binding.fragmentEventHostFullName.setText("You are the host");
+        } else {
+            binding.fragmentEventHostFullName.setText("Hosted by: " + chosenEvent.getEventCreatorUserName());
+        }
         binding.fragmentEventDateTime.setText(chosenEvent.getBeginDate() + "," + chosenEvent.getBeginTime()
                 + "-" + chosenEvent.getFinishDate() + "," + chosenEvent.getFinishTime());
         binding.fragmentEventLocation.setText("Location: " + chosenEvent.getLocationTitle());

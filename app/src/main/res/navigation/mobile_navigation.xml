@@ -145,6 +145,11 @@
             android:id="@+id/action_searchUsersFragment_to_nav_my_profile"
             app:destination="@id/nav_my_profile" />
     </fragment>
+    <fragment
+        android:id="@+id/volunteerFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.VolunteerFragment"
+        android:label="fragment_volunteer"
+        tools:layout="@layout/fragment_volunteer" />
 
 
 </navigation>

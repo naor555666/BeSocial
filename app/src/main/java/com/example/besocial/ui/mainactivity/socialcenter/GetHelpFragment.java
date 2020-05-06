@@ -47,7 +47,7 @@ public class GetHelpFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding =FragmentGetHelpBinding.inflate(inflater, container, false);
+        binding = FragmentGetHelpBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -59,28 +59,30 @@ public class GetHelpFragment extends Fragment {
     }
 
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setListeners();
         prepareDatabaseQuery();
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         socialCenterViewModel = ViewModelProviders.of(getActivity()).get(SocialCenterViewModel.class);
     }
+
     private void setListeners() {
         binding.fragmentGetHelpAskHelpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putBoolean(ConstantValues.IS_HELP_EVENT, true);
-                MainActivity.getNavController().navigate(R.id.createEventFragment,bundle);
+                MainActivity.getNavController().navigate(R.id.createEventFragment, bundle);
             }
         });
     }
+
     private void prepareDatabaseQuery() {
         final Query eventsRef = FirebaseDatabase.getInstance().getReference()
                 .child(ConstantValues.HELP_ME)
@@ -122,11 +124,17 @@ public class GetHelpFragment extends Fragment {
 
             @Override
             protected void onBindViewHolder(@NonNull EventsViewHolder holder, int position, @NonNull final Event model) {
+
                 holder.eventNode = model;
                 Glide.with(getActivity()).load(model.getStrEventPhotoUrl()).placeholder(R.drawable.social_event0).into(holder.eventPhoto);
-                holder.eventDateAndTime.setText(model.getBeginDate() + " at " + model.getBeginTime());
+                holder.eventDateAndTime.setText(String.format("%s at %s", model.getBeginDate(), model.getBeginTime()));
                 holder.eventTitle.setText(model.getTitle());
                 holder.eventLocation.setText(model.getLocationTitle());
+                if (model.getEventCreatorUid().equals(MainActivity.getLoggedUser().getUserId())) {
+                    holder.host.setText(String.format("You are the host"));
+                } else {
+                    holder.host.setText(String.format("Host: %s", model.getEventCreatorUserName()));
+                }
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -135,15 +143,17 @@ public class GetHelpFragment extends Fragment {
                     }
                 });
             }
+
         };
         eventsRecyclerView.setAdapter(firebaseRecyclerAdapter);
 
         firebaseRecyclerAdapter.startListening();
     }
+
     public static class EventsViewHolder extends RecyclerView.ViewHolder {
         Event eventNode;
         ImageView eventPhoto;
-        TextView eventDateAndTime, eventTitle, eventLocation;
+        TextView eventDateAndTime, eventTitle, eventLocation, host;
 
         public EventsViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -151,13 +161,17 @@ public class GetHelpFragment extends Fragment {
             eventDateAndTime = itemView.findViewById(R.id.event_node_eventDateAndTime);
             eventTitle = itemView.findViewById(R.id.event_node_EventTitle);
             eventLocation = itemView.findViewById(R.id.event_node_eventLocation);
+            host = itemView.findViewById(R.id.event_node_host);
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        binding=null;
-        firebaseRecyclerAdapter.stopListening();
+        binding = null;
+        if (firebaseRecyclerAdapter != null) {
+            firebaseRecyclerAdapter.stopListening();
+        }
+
     }
 }

@@ -90,6 +90,11 @@ public class HostingEventsTabFragment extends Fragment {
                 holder.eventDateAndTime.setText(model.getBeginDate() + " at " + model.getBeginTime());
                 holder.eventTitle.setText(model.getTitle());
                 holder.eventLocation.setText(model.getLocationTitle());
+                if (model.getEventCreatorUid().equals(MainActivity.getLoggedUser().getUserId())) {
+                    holder.host.setText(String.format("You are the host"));
+                } else {
+                    holder.host.setText(String.format("Host: %s", model.getEventCreatorUserName()));
+                }
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

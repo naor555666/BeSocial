@@ -64,8 +64,8 @@ public class SocialCenterFragment extends Fragment implements View.OnClickListen
             navController.navigate(R.id.action_nav_social_center_to_eventsListFragment,bundle);
         }
         if (v.getId() == R.id.volunteerButton) {
-            bundle.putBoolean(ConstantValues.IS_HELP_EVENT, true);
-            navController.navigate(R.id.action_nav_social_center_to_eventsListFragment,bundle);
+            //bundle.putBoolean(ConstantValues.IS_HELP_EVENT, true);
+            navController.navigate(R.id.volunteerFragment,bundle);
         }
         if(v.getId() == R.id.bonusAreaButton){
             navController.navigate(R.id.action_nav_social_center_to_nav_bonus_area);
