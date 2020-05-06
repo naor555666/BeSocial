@@ -407,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
                 .setCircularRegion(
                         event.getLocation().getLatitude().doubleValue(),
                         event.getLocation().getLongitude().doubleValue(),
-                        30
+                        ConstantValues.GEOFENCE_RADIUS
                 )
                 .setExpirationDuration(EXPIRATION_DURATION)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
