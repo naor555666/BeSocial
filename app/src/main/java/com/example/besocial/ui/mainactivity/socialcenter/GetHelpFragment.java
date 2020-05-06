@@ -92,7 +92,7 @@ public class GetHelpFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.hasChildren()) {
                     Toast.makeText(getContext(), "No events to display in this category.", Toast.LENGTH_LONG).show();
-                    firebaseRecyclerAdapter.stopListening();
+                    //firebaseRecyclerAdapter.stopListening();
                 } else {
                     displayEventsList(binding.fragmentGetHelpRecyclerView, eventsRef);
                 }

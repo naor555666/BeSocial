@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="15dp"
         android:text="Your help requests:"
         android:textColor="#008EFF"
         android:textSize="23sp"

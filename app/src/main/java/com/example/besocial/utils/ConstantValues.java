@@ -36,4 +36,5 @@ public interface ConstantValues {
     int HOUR= 3600*1000;
 
     String IS_HELP_EVENT = "isHelpEvent";
+    float GEOFENCE_RADIUS = 70;
 }
