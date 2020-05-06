@@ -559,17 +559,24 @@ public class MainActivity extends AppCompatActivity {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             //Toast.makeText(getParent(), "Searching users1", Toast.LENGTH_SHORT).show();
 
-            if (isSearching == true) {
-                //HomeFragment homeFragment=new HomeFragment();
-                //homeFragment.changeToSearchFragment();
-                isSearching=false;
-                navController.navigate(R.id.searchUsersFragment);
-            }
+
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+            //if (isSearching == true) {
+                //HomeFragment homeFragment=new HomeFragment();
+                //homeFragment.changeToSearchFragment();
+                //isSearching=false;
+                try {
+                    if (!navController.getCurrentDestination().getLabel().equals("search_users_fragment")) {
+                        Log.d("MainActivity", "navigate to search");
+                        navController.navigate(R.id.searchUsersFragment);
+                    }
+                    } catch (NullPointerException e) {
+                        Log.d("NullPointerException", "label was not found");
+                    }
+            //}
         }
 
         @Override

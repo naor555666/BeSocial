@@ -77,10 +77,15 @@ public class SearchUsersFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        Log.d("SearchUsersFragment","On Stop");
+        if(firebaseRecyclerAdapter!=null){
+            firebaseRecyclerAdapter.stopListening();
+        }
         MainActivity.setSearching(true);
     }
 
     void setBarListener() {
+        Log.d("SearchUsersFragment","Set Bar Listener");
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -89,6 +94,9 @@ public class SearchUsersFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(firebaseRecyclerAdapter!=null){
+                    firebaseRecyclerAdapter.stopListening();
+                }
                 query = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS)
                             .orderByChild("userFirstName").startAt(s.toString()).endAt(s.toString() + "\uf8ff");
 
@@ -181,6 +189,9 @@ public class SearchUsersFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        firebaseRecyclerAdapter.stopListening();
+        Log.d("SearchUsersFragment","On Destroy");
+        if(firebaseRecyclerAdapter!=null){
+            firebaseRecyclerAdapter.stopListening();
+        }
     }
 }
