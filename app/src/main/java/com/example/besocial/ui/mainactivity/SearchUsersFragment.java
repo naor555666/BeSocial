@@ -2,6 +2,7 @@ package com.example.besocial.ui.mainactivity;
 
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -65,13 +67,13 @@ public class SearchUsersFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mViewModel = ViewModelProviders.of(getActivity()).get(UsersViewModel.class);
         searchedUsersRecycler=view.findViewById(R.id.searched_users_recycler);
-        searchBar= MainActivity.getSearch();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         searchedUsersRecycler.setLayoutManager(linearLayoutManager);
+        searchBar=view.findViewById(R.id.search_bar);
         setBarListener();
-        searchBar.setText(searchBar.getText().toString());
+        searchBar.setText("");
     }
 
     @Override
@@ -81,7 +83,6 @@ public class SearchUsersFragment extends Fragment {
         if(firebaseRecyclerAdapter!=null){
             firebaseRecyclerAdapter.stopListening();
         }
-        MainActivity.setSearching(true);
     }
 
     void setBarListener() {
@@ -94,35 +95,39 @@ public class SearchUsersFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(firebaseRecyclerAdapter!=null){
-                    firebaseRecyclerAdapter.stopListening();
-                }
-                query = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS)
-                            .orderByChild("userFirstName").startAt(s.toString()).endAt(s.toString() + "\uf8ff");
 
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(!dataSnapshot.hasChildren()){
-                            //Toast.makeText(getActivity(), "no matches were found", Toast.LENGTH_SHORT).show();
-                        }
-                        else{
-                            setSearchedUsersList(query);
-
-                            //Toast.makeText(getActivity(), query.getRef().get, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                if(!(s.toString().equals(""))){
+
+                    if(firebaseRecyclerAdapter!=null){
+                        firebaseRecyclerAdapter.stopListening();
+                    }
+                    query = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS)
+                            .orderByChild("userFirstName").startAt(s.toString()).endAt(s.toString() + "\uf8ff");
+
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(!dataSnapshot.hasChildren()){
+                                //Toast.makeText(getActivity(), "no matches were found", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                setSearchedUsersList(query);
+
+                                //Toast.makeText(getActivity(), query.getRef().get, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
 
             }
         });
@@ -163,12 +168,13 @@ public class SearchUsersFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         mViewModel.setUser(model);
+                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(searchBar.getWindowToken(), 0);   // removes focus from keyboard
                         MainActivity.getNavController().navigate(R.id.action_searchUsersFragment_to_nav_my_profile);
                     }
                 });
             }
         };
-        //Toast.makeText(getActivity(), "start listening", Toast.LENGTH_SHORT).show();
         searchedUsersRecycler.setAdapter(firebaseRecyclerAdapter);
 
         firebaseRecyclerAdapter.startListening();
@@ -194,4 +200,6 @@ public class SearchUsersFragment extends Fragment {
             firebaseRecyclerAdapter.stopListening();
         }
     }
+
+
 }

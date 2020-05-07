@@ -144,6 +144,9 @@
         <action
             android:id="@+id/action_searchUsersFragment_to_nav_my_profile"
             app:destination="@id/nav_my_profile" />
+        <action
+            android:id="@+id/action_searchUsersFragment_to_nav_home"
+            app:destination="@id/nav_home" />
     </fragment>
 
 

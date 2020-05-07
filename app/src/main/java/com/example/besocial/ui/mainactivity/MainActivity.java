@@ -97,8 +97,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private TextView nav_header_user_email, nav_header_user_full_name;
-    private static boolean isSearching;
-    private static EditText search;
+    private static ImageButton searchButton;
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private static NavController navController;
@@ -131,12 +130,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        isSearching=true;
         mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
         Log.d(TAG,"Main activity On create");
 
         geofenceList = new ArrayList<>();
-
+        searchButton=findViewById(R.id.search_button);
+        setSearchListener();
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
         //  get user token (if he is logged in)
@@ -155,8 +154,6 @@ public class MainActivity extends AppCompatActivity {
 
         //
 
-        search=findViewById(R.id.app_bar_search);
-        setSearchListener();
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -177,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(myBroadcastReceiver, intentFilter);
-        //search.addTextChangedListener(new RegisterTextWatcher(search.getId()));
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sharedPref.edit();
@@ -545,55 +541,19 @@ public class MainActivity extends AppCompatActivity {
         return currentUserDatabaseRef;
     }
 
+
+
+
+    public static ImageButton getSearch() {
+        return searchButton;
+    }
+
     void setSearchListener(){
-        search.addTextChangedListener(new RegisterTextWatcher(search.getId()));
-    }
-
-    public class RegisterTextWatcher implements android.text.TextWatcher{
-        private int chosenEditText;
-        public RegisterTextWatcher(int chosenEditText){
-            super();
-            this.chosenEditText=chosenEditText;
-        }
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            //Toast.makeText(getParent(), "Searching users1", Toast.LENGTH_SHORT).show();
-
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            //if (isSearching == true) {
-                //HomeFragment homeFragment=new HomeFragment();
-                //homeFragment.changeToSearchFragment();
-                //isSearching=false;
-                try {
-                    if (!navController.getCurrentDestination().getLabel().equals("search_users_fragment")) {
-                        Log.d("MainActivity", "navigate to search");
-                        navController.navigate(R.id.searchUsersFragment);
-                    }
-                    } catch (NullPointerException e) {
-                        Log.d("NullPointerException", "label was not found");
-                    }
-            //}
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-        }
-    }
-
-    public static boolean isSearching() {
-        return isSearching;
-    }
-
-    public static void setSearching(boolean searching) {
-        isSearching = searching;
-    }
-
-    public static EditText getSearch() {
-        return search;
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navController.navigate(R.id.searchUsersFragment);
+            }
+        });
     }
 }
