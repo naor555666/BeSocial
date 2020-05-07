@@ -56,23 +56,20 @@
                 </LinearLayout>
             </LinearLayout>
 
-
-            <ImageButton
-                android:id="@+id/imageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/round_button_shape"
-                app:srcCompat="@drawable/ic_menu_search" />
-
-
-            <EditText
-                android:id="@+id/app_bar_search"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layoutDirection="ltr"
-                android:textDirection="ltr"
-                android:hint="@string/search_person_here"
-                android:inputType="text" />
+                android:layout_height="match_parent">
+
+                <ImageButton
+                    android:id="@+id/search_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="#8CCFD3CF"
+                    android:src="@drawable/ic_menu_search">
+
+                </ImageButton>
+            </LinearLayout>
 
 
         </androidx.appcompat.widget.Toolbar>
