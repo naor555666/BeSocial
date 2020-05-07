@@ -153,6 +153,11 @@
         android:name="com.example.besocial.ui.mainactivity.socialcenter.VolunteerFragment"
         android:label="fragment_volunteer"
         tools:layout="@layout/fragment_volunteer" />
+    <fragment
+        android:id="@+id/eventAttendantsFragment"
+        android:name="com.example.besocial.ui.mainactivity.socialcenter.EventAttendantsFragment"
+        android:label="fragment_event_attendants"
+        tools:layout="@layout/fragment_event_attendants" />
 
 
 </navigation>

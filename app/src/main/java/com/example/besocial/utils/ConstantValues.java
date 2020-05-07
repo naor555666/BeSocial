@@ -39,4 +39,5 @@ public interface ConstantValues {
 
     String IS_HELP_EVENT = "isHelpEvent";
     float GEOFENCE_RADIUS = 70;
+    String IS_COMPANY_EVENT = "isCompanyEvent";
 }

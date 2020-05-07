@@ -140,6 +140,7 @@ public class EventFragment extends Fragment {
     }
 
     private void viewAttendants() {
+        MainActivity.getNavController().navigate(R.id.eventAttendantsFragment);
     }
 
     private void handleEventAttendBtn() {

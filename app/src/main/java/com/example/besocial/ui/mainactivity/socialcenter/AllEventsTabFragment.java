@@ -40,20 +40,14 @@ import com.google.firebase.database.ValueEventListener;
  * A simple {@link Fragment} subclass.
  */
 public class AllEventsTabFragment extends Fragment implements  AdapterView.OnItemSelectedListener {
-    //    private final String TAG = getClass().getName();
     private static final String TAG = "AllEventsTabFragment";
+
     private FragmentAllEventsTabBinding binding;
-
     static SocialCenterViewModel socialCenterViewModel;
-
-
-    //    private DatabaseReference eventsRef;
     private Query eventsRef;
-    private String strEventCategory;
-    private boolean isHelpEvent;
     static FirebaseRecyclerAdapter<Event, EventsViewHolder> firebaseRecyclerAdapter;
-    private static FragmentActivity mActivity;
 
+    private String strEventCategory;
     public AllEventsTabFragment() {
         // Required empty public constructor
     }

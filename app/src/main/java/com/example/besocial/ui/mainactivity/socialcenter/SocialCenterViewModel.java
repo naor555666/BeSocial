@@ -10,6 +10,7 @@ import com.example.besocial.data.RedeemableBenefit;
 public class SocialCenterViewModel extends ViewModel {
     private MutableLiveData<Event> event = new MutableLiveData<>();
     private MutableLiveData<RedeemableBenefit> benefit= new MutableLiveData<>();
+    
     public LiveData<Event> getEvent() {
         return this.event;
     }
