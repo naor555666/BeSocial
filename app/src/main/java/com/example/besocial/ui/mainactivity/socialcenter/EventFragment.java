@@ -131,6 +131,15 @@ public class EventFragment extends Fragment {
                 startActivity(mapsIntent);
             }
         });
+        binding.fragmentEventViewAttendantsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewAttendants();
+            }
+        });
+    }
+
+    private void viewAttendants() {
     }
 
     private void handleEventAttendBtn() {
