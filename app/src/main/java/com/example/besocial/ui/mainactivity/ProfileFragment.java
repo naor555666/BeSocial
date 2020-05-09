@@ -48,7 +48,9 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -297,21 +299,25 @@ public class ProfileFragment extends Fragment {
         newChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String sendFrom,sendTo,sendFromId,sendToId,chatId1,chatId2;
+                String sendFrom,sendTo,sendFromId,sendToId,chatId;
                 sendTo=profileFullName.getText().toString();
                 sendToId=userData.getUserId();
                 sendFrom=loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName();
                 sendFromId= loggedUser.getUserId();
-                chatId1=sendFromId+sendToId;
-                chatId2=sendToId+sendFromId;
+
+                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(sendFromId);
+                if(chatRef!=null) {
+                    
+                    chatRef = chatRef.push();
+                }
+                chatId=chatRef.getKey();
                 ChatConversation newChatConversation1=new ChatConversation
-                        (sendFrom,sendTo,chatId1,userData.getProfileImage());
-                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(chatId1);
+                        (sendFrom,sendTo,chatId,userData.getProfileImage());
                 chatRef.setValue(newChatConversation1);
 
+                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(sendToId).child(chatId);
                 ChatConversation newChatConversation2=new ChatConversation
-                        (sendTo,sendFrom,chatId2,loggedUser.getProfileImage());
-                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(chatId2);
+                        (sendTo,sendFrom,chatId,loggedUser.getProfileImage());
                 chatRef.setValue(newChatConversation2).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -322,6 +328,15 @@ public class ProfileFragment extends Fragment {
                 });
             }
         });
+    }
+
+
+    public String generateRandomId() {
+        byte[] array = new byte[20]; // length is bounded by 7
+        new Random().nextBytes(array);
+        String generatedId = new String(array, Charset.forName("UTF-8"));
+        return generatedId;
+
     }
 }
 
