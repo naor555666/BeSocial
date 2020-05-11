@@ -22,11 +22,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import com.bumptech.glide.Glide;
+import com.example.besocial.ui.chatactivity.ChatActivity;
 import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.R;
 import com.example.besocial.data.ChatConversation;
@@ -36,16 +33,11 @@ import com.example.besocial.utils.BitmapUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
-import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -59,6 +51,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * A simple {@link Fragment} subclass.
  */
 public class ProfileFragment extends Fragment {
+    private FragmentProfileBinding binding;
+
+
     private CircleImageView profileProfilePicture;
     private TextView profilePageUsername;
     private EditText profileFullName, profileEmail, profileCity, profileAddress, profileBirthday, profileSocialLevel, profileSocialPoints;
@@ -74,8 +69,7 @@ public class ProfileFragment extends Fragment {
     private static UsersViewModel mViewModel;
 
 
-    // an instance of the layout
-    private FragmentProfileBinding binding;
+
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -96,7 +90,7 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
         profileProfilePicture = view.findViewById(R.id.profile_user_profile_picture);
-        newChatButton=view.findViewById(R.id.new_chat_conversation_button);
+        newChatButton=view.findViewById(R.id.profile_open_chat_conversation);
         newChatButton.setVisibility(View.INVISIBLE);
         profileChangeProfilePicture = view.findViewById(R.id.profile_change_profile_picture);
         profilePageUsername = view.findViewById(R.id.profile_page_username);
@@ -130,20 +124,26 @@ public class ProfileFragment extends Fragment {
             profileChangeProfilePicture.setVisibility(View.INVISIBLE);
             profileEditProfileDetails.setVisibility(View.INVISIBLE);
             profileMyPictures.setText("UPLOADED PHOTOS");
+
             profileFollowList.setText("FOLLOW LIST");
             newChatButton.setVisibility(View.VISIBLE);
         }
         userRef = MainActivity.getCurrentUserDatabaseRef();
         Glide.with(getContext()).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(profileProfilePicture);
-        setNewChatListener();
+        setListeners();
+//        setNewChatListener();
 
+
+
+    }
+
+    private void setListeners() {
         profileMyPictures.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 navController.navigate(R.id.action_nav_my_profile_to_photosListFragment);
             }
         });
-
 
         profileEditProfileDetails.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,13 +199,23 @@ public class ProfileFragment extends Fragment {
                 Intent galleryIntent = new Intent();
                 galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                 galleryIntent.setType("image/*");
-                //CropImage.activity()
-                //  .start(getView().getContext(), this);
-
                 startActivityForResult(galleryIntent, galleryPick);
             }
         });
 
+        binding.profileOpenChatConversation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openChatConversation();
+            }
+        });
+    }
+
+    private void openChatConversation() {
+        Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
+        chatIntent.putExtra(ConstantValues.LOGGED_USER_ID,MainActivity.getLoggedUser().getUserId());
+        chatIntent.putExtra("chosenUid",userData.getUserId());
+        startActivity(chatIntent);
     }
 
 
@@ -216,26 +226,6 @@ public class ProfileFragment extends Fragment {
         if (requestCode == galleryPick && resultCode == Activity.RESULT_OK && data != null) {
             uploadImageToStorage(data);
         }
-
-        //userPicturesRef.child("profilePicture"+".jpg");
-            /*
-            userPicturesRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-
-                    if(task.isSuccessful()){
-                        final String downloadUrl=task.getResult().getUploadSessionUri().toString();
-                        userRef.child("profileImage").setValue(downloadUrl);
-                        Toast.makeText(getActivity(), "Profile picture changed", Toast.LENGTH_LONG).show();
-                    }
-
-                }
-            });
-
-             */
-        // CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1,1).start(getActivity());
-        //profileProfilePicture.setImageURI(imageUri);
-
     }
 
     private void uploadImageToStorage(Intent data) {
@@ -295,7 +285,7 @@ public class ProfileFragment extends Fragment {
         mViewModel.setUser(loggedUser);
     }
 
-    void setNewChatListener(){
+   /* void setNewChatListener(){
         newChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -328,7 +318,7 @@ public class ProfileFragment extends Fragment {
                 });
             }
         });
-    }
+    }*/
 
 
     public String generateRandomId() {

@@ -88,4 +88,9 @@ public class DateUtils {
     public static String checkDigit(int number) {
         return number <= 9 ? "0" + number : String.valueOf(number);
     }
+    public static String getCurrentTimeString(){
+        Date date = new Date(); // This object contains the current date value
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        return formatter.format(date);
+    }
 }

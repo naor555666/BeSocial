@@ -5,44 +5,21 @@ import android.graphics.drawable.Drawable;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatConversation {
-    private String sentFrom,sentTo;
     private String chatId;
-    private String sentToProfilePicture;
-
+    private String sender,receiver;
+    private String receiverProfilePicture;
+    private boolean isApproved;
 
     public ChatConversation(){
 
     }
 
-    public ChatConversation(String sentFrom, String sentTo,String chatId, String sentToProfilePicture) {
-        this.sentFrom = sentFrom;
-        this.sentTo = sentTo;
-        this.chatId=chatId;
-        this.sentToProfilePicture = sentToProfilePicture;
-    }
-
-    public String getSentFrom() {
-        return sentFrom;
-    }
-
-    public void setSentFrom(String sentFrom) {
-        this.sentFrom = sentFrom;
-    }
-
-    public String getSentTo() {
-        return sentTo;
-    }
-
-    public void setSentTo(String sentTo) {
-        this.sentTo = sentTo;
-    }
-
-    public String getSentToProfilePicture() {
-        return sentToProfilePicture;
-    }
-
-    public void setSentToProfilePicture(String sentToProfilePicture) {
-        this.sentToProfilePicture = sentToProfilePicture;
+    public ChatConversation(String chatId, String sender, String receiver, String sentToProfilePicture, boolean isApproved) {
+        this.chatId = chatId;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.receiverProfilePicture = sentToProfilePicture;
+        this.isApproved = isApproved;
     }
 
     public String getChatId() {
@@ -53,6 +30,37 @@ public class ChatConversation {
         this.chatId = chatId;
     }
 
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    public String getReceiverProfilePicture() {
+        return receiverProfilePicture;
+    }
+
+    public void setReceiverProfilePicture(String receiverProfilePicture) {
+        this.receiverProfilePicture = receiverProfilePicture;
+    }
+
+    public boolean isApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(boolean approved) {
+        isApproved = approved;
+    }
 }
 
 

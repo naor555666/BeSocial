@@ -266,7 +266,9 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
             eventsRef=eventsRef.child(ConstantValues.HELP_ME).push();
         }
 
-//        eventsRef.child("Events").child(loggedUser.getUserId() + eventRandomName)
+        //
+
+//
         eventRandomName = eventsRef.getKey();
         Event newEvent = new Event(eventRandomName, strEventPhotoUrl, strEventCategory, strEventTitle, strStartDate, strEndDate, strStartTime
                 , strEndTime, new com.example.besocial.data.LatLng(eventLocation.latitude, eventLocation.longitude), strLocationName, strDescription, loggedUser.getUserId()

@@ -107,11 +107,15 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         Map<String, Object> childUpdates = new HashMap<>();
 
-        childUpdates.put("/" + ConstantValues.USERS_ATTENDING_TO_EVENTS
-                + "/" + uid + "/" + chosenEvent.getEventId() + "/" + ConstantValues.IS_CHECKED_IN, true);
+        childUpdates.put(String.format("/%s/%s/%s/%s", ConstantValues.USERS_ATTENDING_TO_EVENTS,
+                uid,
+                chosenEvent.getEventId(),
+                ConstantValues.IS_CHECKED_IN), true);
 
-        childUpdates.put("/" + ConstantValues.EVENTS_WITH_ATTENDINGS
-                + "/" + chosenEvent.getEventId() + "/" + uid +"/"+ ConstantValues.IS_CHECKED_IN, true);
+        childUpdates.put(String.format("/%s/%s/%s/%s", ConstantValues.EVENTS_WITH_ATTENDINGS,
+                chosenEvent.getEventId(),
+                uid,
+                ConstantValues.IS_CHECKED_IN), true);
 
         databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

@@ -230,6 +230,7 @@ public class AllEventsTabFragment extends Fragment implements  AdapterView.OnIte
     public void onDestroyView() {
         super.onDestroyView();
         Log.d(TAG,"onDestroyView");
+        binding = null;
     }
 
     @Override
@@ -237,6 +238,6 @@ public class AllEventsTabFragment extends Fragment implements  AdapterView.OnIte
         super.onDestroy();
         Log.d(TAG,"onDestroy");
         firebaseRecyclerAdapter.stopListening();
-        binding = null;
+
     }
 }

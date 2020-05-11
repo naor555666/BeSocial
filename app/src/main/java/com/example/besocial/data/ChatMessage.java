@@ -1,70 +1,51 @@
 package com.example.besocial.data;
 
-import android.graphics.drawable.Drawable;
+
 
 public class ChatMessage {
 
-    private String msgBody,sentFrom,sentTo,msgDate,msgTime;
-    private Drawable senderProfileImage;
+    private String textMessage, senderId, receiverId, timeStamp;
 
-    public ChatMessage(){
+    public ChatMessage() {
 
     }
 
-    public ChatMessage(String msgBody, String sentFrom, String sentTo, String msgDate, String msgTime, Drawable senderProfileImage) {
-        this.msgBody = msgBody;
-        this.sentFrom = sentFrom;
-        this.sentTo = sentTo;
-        this.msgDate = msgDate;
-        this.msgTime = msgTime;
-        this.senderProfileImage = senderProfileImage;
+    public ChatMessage(String textMessage, String senderId, String receiverId, String timeStamp) {
+        this.textMessage = textMessage;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.timeStamp = timeStamp;
     }
 
-    public String getMsgBody() {
-        return msgBody;
+    public String getTextMessage() {
+        return textMessage;
     }
 
-    public void setMsgBody(String msgBody) {
-        this.msgBody = msgBody;
+    public void setTextMessage(String textMessage) {
+        this.textMessage = textMessage;
     }
 
-    public String getSentFrom() {
-        return sentFrom;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setSentFrom(String sentFrom) {
-        this.sentFrom = sentFrom;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
-    public String getSentTo() {
-        return sentTo;
+    public String getReceiverId() {
+        return receiverId;
     }
 
-    public void setSentTo(String sentTo) {
-        this.sentTo = sentTo;
+    public void setReceiverId(String receiverId) {
+        this.receiverId = receiverId;
     }
 
-    public String getMsgDate() {
-        return msgDate;
+    public String getTimeStamp() {
+        return timeStamp;
     }
 
-    public void setMsgDate(String msgDate) {
-        this.msgDate = msgDate;
-    }
-
-    public String getMsgTime() {
-        return msgTime;
-    }
-
-    public void setMsgTime(String msgTime) {
-        this.msgTime = msgTime;
-    }
-
-    public Drawable getSenderProfileImage() {
-        return senderProfileImage;
-    }
-
-    public void setSenderProfileImage(Drawable senderProfileImage) {
-        this.senderProfileImage = senderProfileImage;
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

@@ -120,7 +120,7 @@ public class EventAttendantsFragment extends Fragment {
                 holder.userNode = model;
                 Glide.with(getActivity()).load(model.getUserProfileImage()).placeholder(R.drawable.empty_profile_image).into(holder.userPhoto);
                 holder.userName.setText(String.format("%s %s", model.getUserFirstName(), model.getUserLastName()));
-                if (!model.getUserId().equals(MainActivity.getLoggedUser().getUserId())) {
+                if (!model.getUserId().equals(chosenEvent.getEventCreatorUid())) {
                     holder.giveCreditsbtn.setVisibility(View.VISIBLE);
                     holder.giveCreditsbtn.setOnClickListener(new View.OnClickListener() {
                         @Override

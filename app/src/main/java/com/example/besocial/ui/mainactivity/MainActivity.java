@@ -11,33 +11,16 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.bumptech.glide.Glide;
-import com.example.besocial.ui.login.RegisterFragment;
-import com.example.besocial.ui.mainactivity.mainmenu.LogoutDialog;
-import com.example.besocial.utils.MyBroadcastReceiver;
-import com.example.besocial.R;
-import com.example.besocial.data.Post;
-import com.example.besocial.data.User;
-import com.example.besocial.ui.login.LoginActivity;
-
-import android.os.PersistableBundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -51,15 +34,15 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
-import com.example.besocial.utils.ConstantValues;
-import com.example.besocial.utils.GeofenceBroadcastReceiver;
 import com.example.besocial.R;
 import com.example.besocial.data.Event;
 import com.example.besocial.data.Post;
 import com.example.besocial.data.User;
 import com.example.besocial.ui.login.LoginActivity;
 import com.example.besocial.ui.mainactivity.mainmenu.LogoutDialog;
+import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.utils.DateUtils;
+import com.example.besocial.utils.GeofenceBroadcastReceiver;
 import com.example.besocial.utils.LocationUpdatesService;
 import com.example.besocial.utils.MyBroadcastReceiver;
 import com.google.android.gms.location.Geofence;
@@ -69,9 +52,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
-
-import androidx.preference.PreferenceManager;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -82,7 +62,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -108,12 +88,10 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth fireBaseAuth;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
-    private List<String> usersList;
     static UsersViewModel mViewModel;
 
     private static Toolbar toolbar;
     private GeofencingClient geofencingClient;
-    private ArrayList<Geofence> geofenceList;
     private PendingIntent geofencePendingIntent;
 
     private int background_location_permission_request_code = 5;
@@ -123,18 +101,16 @@ public class MainActivity extends AppCompatActivity {
     private ValueEventListener userDetailsListener;
     private ChildEventListener attendingEventsListener;
     private DatabaseReference attendingEventsRef;
-    ;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Main activity On create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
-        Log.d(TAG,"Main activity On create");
 
-        geofenceList = new ArrayList<>();
-        searchButton=findViewById(R.id.search_button);
+        searchButton = findViewById(R.id.search_button);
         setSearchListener();
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
@@ -144,14 +120,12 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
-        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(),getResources().getDrawable(R.drawable.naor_profile_picture),
-                "Naor Ohana", "12.1.20", "Hi everyone !","General", getResources().getDrawable(R.drawable.naor_profile_picture)));
-        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(),getResources().getDrawable(R.drawable.besociallogo),
-                "BeSocial", "12.1.20", "Hello !","General", null));
-        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(),getResources().getDrawable(R.drawable.or_profile),
-                "Or Magogi", "12.1.20", "I am here too","General", null));
-
-
+        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(), getResources().getDrawable(R.drawable.naor_profile_picture),
+                "Naor Ohana", "12.1.20", "Hi everyone !", "General", getResources().getDrawable(R.drawable.naor_profile_picture)));
+        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(), getResources().getDrawable(R.drawable.besociallogo),
+                "BeSocial", "12.1.20", "Hello !", "General", null));
+        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(), getResources().getDrawable(R.drawable.or_profile),
+                "Or Magogi", "12.1.20", "I am here too", "General", null));
         //
 
         drawer = findViewById(R.id.drawer_layout);
@@ -168,9 +142,9 @@ public class MainActivity extends AppCompatActivity {
 
         //get reference to the header of the navigation view and its components
         View header = navigationView.getHeaderView(0);
-        nav_header_user_email = (TextView) header.findViewById(R.id.nav_header_user_email);
-        nav_header_user_full_name = (TextView) header.findViewById(R.id.nav_header_user_full_name);
-        nav_header_user_profile_picture = (CircleImageView) header.findViewById(R.id.nav_header_user_profile_picture);
+        nav_header_user_email = header.findViewById(R.id.nav_header_user_email);
+        nav_header_user_full_name = header.findViewById(R.id.nav_header_user_full_name);
+        nav_header_user_profile_picture = header.findViewById(R.id.nav_header_user_profile_picture);
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(myBroadcastReceiver, intentFilter);
@@ -210,9 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     MainActivity.loggedUser = dataSnapshot.getValue(User.class);
                     mViewModel.setUser(loggedUser);
-                    //nav_header_user_email.setText(MainActivity.loggedUser.getUserEmail());
-                    //nav_header_user_full_name.setText(MainActivity.loggedUser.getUserFirstName()+" "+ MainActivity.loggedUser.getUserLastName());
-                    String myProfileImage=loggedUser.getProfileImage();
+                    String myProfileImage = loggedUser.getProfileImage();
                     loggedUser = dataSnapshot.getValue(User.class);
                     activateLocation.setEnabled(true);
                     nav_header_user_email.setText(loggedUser.getUserEmail());
@@ -376,22 +348,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveRelevantEvents(DataSnapshot ds) {
-        Log.d(TAG, "ds.eventID is: " + (String) ds.child(ConstantValues.EVENT_ID).getValue());
+        Log.d(TAG, "ds.eventID is: " + ds.child(ConstantValues.EVENT_ID).getValue());
         if (DateUtils.isEventCurrentlyOccurring(ds.child(ConstantValues.BEGIN_DATE).getValue().toString()
                 , ds.child(ConstantValues.FINISH_DATE).getValue().toString()
                 , ds.child(ConstantValues.BEGIN_TIME).getValue().toString()
                 , ds.child(ConstantValues.FINISH_TIME).getValue().toString())) {
-            Log.d(TAG, "this event is suitable for geofencing: " + (String) ds.child(ConstantValues.EVENT_TITLE).getValue());
+            Log.d(TAG, "this event is suitable for geofencing: " + ds.child(ConstantValues.EVENT_TITLE).getValue());
             currentOccuringEvents.add(ds.getValue(Event.class));
             handleGeofencingEvents(ds.getValue(Event.class));
         } else {
-            Log.d(TAG, "this event is not suitable for geofencing: " + (String) ds.child(ConstantValues.EVENT_TITLE).getValue());
+            Log.d(TAG, "this event is not suitable for geofencing: " + ds.child(ConstantValues.EVENT_TITLE).getValue());
         }
     }
 
 
     private void handleGeofencingEvents(Event event) {
-        //geofenceList = new ArrayList<>();
         //
         geofencingClient = LocationServices.getGeofencingClient(this);
         Log.d(TAG, "creating geofence with id: " + event.getEventId());
@@ -469,11 +440,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        }
-        return true;
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     public void requestPermissions() {
@@ -507,7 +474,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "inside on Stop");
-        currentUserDatabaseRef.removeEventListener(userDetailsListener);
+        if (currentUserDatabaseRef != null && userDetailsListener!=null) {
+            currentUserDatabaseRef.removeEventListener(userDetailsListener);
+        }
     }
 
     @Override
@@ -542,13 +511,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     public static ImageButton getSearch() {
         return searchButton;
     }
 
-    void setSearchListener(){
+    void setSearchListener() {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
