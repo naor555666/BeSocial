@@ -7,6 +7,7 @@ public interface ConstantValues {
     String USERS_ATTENDING_TO_EVENTS = "UsersAttendingToEvents";
     String BENEFITS = "Benefits";
     String USERS_LIST = "UsersList";
+    String USER_PHOTOS = "UserPhotos";
 
     //categories
     String CATEGORY= "eventCategory";

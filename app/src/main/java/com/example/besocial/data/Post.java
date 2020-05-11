@@ -1,18 +1,17 @@
 package com.example.besocial.data;
 
-import android.graphics.drawable.Drawable;
 
 public class Post {
-    private Drawable userProfilePicture;
+    private String userProfilePicture;
     private String postUserName, postDate, postDescription,category,userId;
     private Long numberOfLikes;
-    private Drawable postImage;
+    private String postImage;
 
 
     public Post(){
 
     }
-    public Post(String userId, Drawable userProfilePicture, String postUserName, String postDate, String postDescription, String category, Drawable postImage) {
+    public Post(String userId, String userProfilePicture, String postUserName, String postDate, String postDescription, String category, String postImage) {
         this.userId=userId;
         this.userProfilePicture = userProfilePicture;
         this.postUserName = postUserName;
@@ -23,11 +22,11 @@ public class Post {
         this.numberOfLikes.valueOf(0);
     }
 
-    public Drawable getUserProfilePicture() {
+    public String getUserProfilePicture() {
         return userProfilePicture;
     }
 
-    public void setUserProfilePicture(Drawable userProfilePicture) {
+    public void setUserProfilePicture(String userProfilePicture) {
         this.userProfilePicture = userProfilePicture;
     }
 
@@ -71,11 +70,11 @@ public class Post {
         this.numberOfLikes = numberOfLikes;
     }
 
-    public Drawable getPostImage() {
+    public String getPostImage() {
         return postImage;
     }
 
-    public void setPostImage(Drawable postImage) {
+    public void setPostImage(String postImage) {
         this.postImage = postImage;
     }
 
