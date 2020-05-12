@@ -34,8 +34,11 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/chat_conversation_receiver_photo"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/empty_profile_image"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

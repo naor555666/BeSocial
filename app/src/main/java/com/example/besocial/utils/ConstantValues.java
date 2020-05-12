@@ -51,6 +51,6 @@ public interface ConstantValues {
     String IS_COMPANY_EVENT = "isCompanyEvent";
     String LOGGED_USER_ID = "loggedUserId";
 
-
-
+    //chats
+    String CHAT_ID = "chatId";
 }
