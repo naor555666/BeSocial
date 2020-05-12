@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.besocial.data.ChatConversation;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 public class ChatViewModel extends ViewModel {
     private MutableLiveData<ChatConversation> chosenChatConversation = new MutableLiveData<>();

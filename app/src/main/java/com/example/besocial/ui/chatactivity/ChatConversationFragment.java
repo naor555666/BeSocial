@@ -63,6 +63,7 @@ public class ChatConversationFragment extends Fragment {
     private FirebaseRecyclerAdapter<ChatMessage, ChatMessageViewHolder> firebaseRecyclerAdapter;
     private boolean isConversationExists;
     String conversationId;
+
     public ChatConversationFragment() {
         // Required empty public constructor
     }
@@ -88,8 +89,8 @@ public class ChatConversationFragment extends Fragment {
         NavigationUI.setupWithNavController(binding.chatToolbar, navController, appBarConfiguration);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-
         binding.chatConversationRecyclerview.setLayoutManager(linearLayoutManager);
+
         setListeners();
     }
 
@@ -107,6 +108,7 @@ public class ChatConversationFragment extends Fragment {
 
         //conversation was chosen from main activity
         if (bundle != null) {
+            Log.d(TAG, "getConversationDetails: bundel is not null");
             chosenUid = bundle.getString("chosenUid", null);
 
             dbRef = FirebaseDatabase.getInstance().getReference();
@@ -130,9 +132,11 @@ public class ChatConversationFragment extends Fragment {
             });
             //conversation was chosen from conversations list, the view model is initialized
         } else {
+            Log.d(TAG, "getConversationDetails: bundel is null");
             chosenChatConversation = chatViewModel.getChosenChatConversation().getValue();
-            conversationId= chosenChatConversation.getChatId();
-            userName = chosenChatConversation.getReceiver();
+            chosenUid = chosenChatConversation.getChosenUid();
+            conversationId = chosenChatConversation.getChatId();
+            userName = chosenChatConversation.getUserName();
             photoUrl = chosenChatConversation.getReceiverProfilePicture();
             initToolBar();
             prepareDatabaseQuery();
@@ -146,9 +150,9 @@ public class ChatConversationFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.hasChild(chosenUid)) {
-                    isConversationExists=false;
+                    isConversationExists = false;
                 } else {
-                    isConversationExists=true;
+                    isConversationExists = true;
                     conversationId = (String) dataSnapshot.child(chosenUid).child(ConstantValues.CHAT_ID).getValue();
                     prepareDatabaseQuery();
                 }
@@ -225,9 +229,9 @@ public class ChatConversationFragment extends Fragment {
                 }
             });*/
 
-            if(!isConversationExists){
+            if (!isConversationExists) {
                 createNewConversationInDB(childUpdates, textMessage);
-            }else {
+            } else {
                 addMessage(textMessage, conversationId);
             }
         } else {
@@ -243,42 +247,45 @@ public class ChatConversationFragment extends Fragment {
         DatabaseReference messageRef = dbRef.child(ConstantValues.CHAT_MESSAGES).child(conversationId).push();
 
         messageRef.setValue(chatMessage);
+        binding.chatConversationRecyclerview.scrollToPosition(firebaseRecyclerAdapter.getItemCount() - 1);
     }
 
     private void createNewConversationInDB(final Map<String, Object> childUpdates, String textMessage) {
         dbRef = FirebaseDatabase.getInstance().getReference();
-        final String conversationId = dbRef.child(ConstantValues.CHAT_MESSAGES).push().getKey();
+        conversationId = dbRef.child(ConstantValues.CHAT_MESSAGES).push().getKey();
         String newMessageId = dbRef.child(ConstantValues.CHAT_MESSAGES).child(conversationId).push().getKey();
 
         ChatMessage chatMessage = new ChatMessage(textMessage,
                 MainActivity.getLoggedUser().getUserId(),
                 chosenUid,
                 DateUtils.getCurrentTimeString());
-
+        String userName = String.format("%s %s", MainActivity.getLoggedUser().getUserFirstName(), MainActivity.getLoggedUser().getUserLastName());
         final ChatConversation chatConversation = new ChatConversation(conversationId,
                 MainActivity.getLoggedUser().getUserId(),
                 chosenUid,
-                MainActivity.getLoggedUser().getProfileImage(), false);
+                MainActivity.getLoggedUser().getProfileImage(), false, userName, MainActivity.getCurrentUser().getUid());
         chatViewModel.setChosenChatConversation(chatConversation);
 
         childUpdates.put(String.format("/%s/%s/%s", ConstantValues.CHAT_MESSAGES, conversationId, newMessageId), chatMessage);
-        childUpdates.put(String.format("/%s/%s/%s", ConstantValues.CHAT_CONVERSATIONS, MainActivity.getCurrentUser().getUid(), chosenUid), chatConversation);
+        childUpdates.put(String.format("/%s/%s/%s", ConstantValues.CHAT_CONVERSATIONS, chosenUid, MainActivity.getCurrentUser().getUid()), chatConversation);
         DatabaseReference userPhotoRef = dbRef
                 .child(ConstantValues.USERS)
-                .child(chosenUid)
-                .child(ConstantValues.PROFILE_PHOTO);
+                .child(chosenUid);
         userPhotoRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String photoUrl = (String) dataSnapshot.getValue();
+                String photoUrl = (String) dataSnapshot.child(ConstantValues.PROFILE_PHOTO).getValue();
+                String userName = String.format("%s %s", dataSnapshot.child(ConstantValues.USER_FIRST_NAME).getValue(), dataSnapshot.child(ConstantValues.USER_LAST_NAME).getValue());
+
                 ChatConversation chatConversation = new ChatConversation(conversationId,
                         MainActivity.getLoggedUser().getUserId(),
                         chosenUid,
-                        photoUrl, false);
+                        photoUrl, false, userName, chosenUid);
                 childUpdates.put(String.format("/%s/%s/%s",
-                        ConstantValues.CHAT_CONVERSATIONS,
-                        chosenUid,
-                        MainActivity.getCurrentUser().getUid()), chatConversation);
+                        ConstantValues.CHAT_CONVERSATIONS
+                        , MainActivity.getCurrentUser().getUid()
+                        , chosenUid)
+                        , chatConversation);
                 dbRef.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -340,10 +347,10 @@ public class ChatConversationFragment extends Fragment {
                 holder.textMessage.setText(model.getTextMessage());
                 Drawable background;
                 if (model.getSenderId().equals(MainActivity.getLoggedUser().getUserId())) {
-                    background=getResources().getDrawable(R.drawable.message_form_blue) ;
+                    background = getResources().getDrawable(R.drawable.message_form_blue);
                     holder.textMessage.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
                 } else {
-                    background=getResources().getDrawable(R.drawable.message_form_grey) ;
+                    background = getResources().getDrawable(R.drawable.message_form_grey);
                     holder.textMessage.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
                 }
                 holder.textMessage.setBackground(background);
@@ -353,6 +360,7 @@ public class ChatConversationFragment extends Fragment {
         chatMessagesRecyclerView.setAdapter(firebaseRecyclerAdapter);
 
         firebaseRecyclerAdapter.startListening();
+        chatMessagesRecyclerView.scrollToPosition(firebaseRecyclerAdapter.getItemCount() - 1);
     }
 
     public static class ChatMessageViewHolder extends RecyclerView.ViewHolder {
@@ -370,7 +378,7 @@ public class ChatConversationFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if(firebaseRecyclerAdapter!=null)
+        if (firebaseRecyclerAdapter != null)
             firebaseRecyclerAdapter.stopListening();
         binding = null;
     }
