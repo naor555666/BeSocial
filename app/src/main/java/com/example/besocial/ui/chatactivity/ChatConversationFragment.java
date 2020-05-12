@@ -35,6 +35,7 @@ import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.utils.DateUtils;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -278,7 +279,12 @@ public class ChatConversationFragment extends Fragment {
                         ConstantValues.CHAT_CONVERSATIONS,
                         chosenUid,
                         MainActivity.getCurrentUser().getUid()), chatConversation);
-                dbRef.updateChildren(childUpdates);
+                dbRef.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        prepareDatabaseQuery();
+                    }
+                });
             }
 
             @Override
@@ -364,6 +370,8 @@ public class ChatConversationFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if(firebaseRecyclerAdapter!=null)
+            firebaseRecyclerAdapter.stopListening();
         binding = null;
     }
 }
