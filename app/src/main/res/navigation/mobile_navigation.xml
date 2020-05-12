@@ -18,20 +18,12 @@
         <action
             android:id="@+id/action_nav_my_profile_to_photosListFragment"
             app:destination="@id/photosListFragment" />
-        <action
-            android:id="@+id/action_nav_my_profile_to_nav_chat"
-            app:destination="@id/nav_chat" />
     </fragment>
     <fragment
         android:id="@+id/nav_notifications"
         android:name="com.example.besocial.ui.mainactivity.NotificationsFragment"
         android:label="fragment_notifications"
         tools:layout="@layout/fragment_notifications" />
-    <fragment
-        android:id="@+id/nav_chat"
-        android:name="com.example.besocial.ui.chatactivity.ChatListFragment"
-        android:label="fragment_chat_list"
-        tools:layout="@layout/fragment_chat_list" />
     <fragment
         android:id="@+id/nav_social_center"
         android:name="com.example.besocial.ui.mainactivity.socialcenter.SocialCenterFragment"
@@ -158,6 +150,11 @@
         android:name="com.example.besocial.ui.mainactivity.socialcenter.EventAttendantsFragment"
         android:label="fragment_event_attendants"
         tools:layout="@layout/fragment_event_attendants" />
+    <activity
+        android:id="@+id/chatActivity"
+        android:name="com.example.besocial.ui.chatactivity.ChatActivity"
+        android:label="activity_chat"
+        tools:layout="@layout/activity_chat" />
 
 
 </navigation>
