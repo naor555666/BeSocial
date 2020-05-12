@@ -175,5 +175,6 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
                 progressDialog.dismiss();
             }
         });
+        MainActivity.getNavController().popBackStack();
     }
 }
