@@ -120,12 +120,14 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
-        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(), getResources().getDrawable(R.drawable.naor_profile_picture),
-                "Naor Ohana", "12.1.20", "Hi everyone !", "General", getResources().getDrawable(R.drawable.naor_profile_picture)));
-        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(), getResources().getDrawable(R.drawable.besociallogo),
-                "BeSocial", "12.1.20", "Hello !", "General", null));
-        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(), getResources().getDrawable(R.drawable.or_profile),
-                "Or Magogi", "12.1.20", "I am here too", "General", null));
+/*        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(),getResources().getDrawable(R.drawable.naor_profile_picture),
+                "Naor Ohana", "12.1.20", "Hi everyone !","General", getResources().getDrawable(R.drawable.naor_profile_picture)));
+        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(),getResources().getDrawable(R.drawable.besociallogo),
+                "BeSocial", "12.1.20", "Hello !","General", null));
+        HomeFragment.getPosts().add(new Post(loggedUser.getUserId(),getResources().getDrawable(R.drawable.or_profile),
+                "Or Magogi", "12.1.20", "I am here too","General", null));*/
+
+
         //
 
         drawer = findViewById(R.id.drawer_layout);
@@ -515,7 +517,7 @@ public class MainActivity extends AppCompatActivity {
         return searchButton;
     }
 
-    void setSearchListener() {
+    void setSearchListener(){
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

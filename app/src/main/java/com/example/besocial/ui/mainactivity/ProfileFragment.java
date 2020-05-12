@@ -297,7 +297,7 @@ public class ProfileFragment extends Fragment {
 
                 chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(sendFromId);
                 if(chatRef!=null) {
-                    
+
                     chatRef = chatRef.push();
                 }
                 chatId=chatRef.getKey();

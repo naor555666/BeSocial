@@ -8,6 +8,8 @@ public interface ConstantValues {
     String USERS_ATTENDING_TO_EVENTS = "UsersAttendingToEvents";
     String BENEFITS = "Benefits";
     String USERS_LIST = "UsersList";
+    String USER_PHOTOS = "UserPhotos";
+    String POSTS = "Posts";
     String CHAT_CONVERSATIONS = "ChatConversations";
     String CHAT_MESSAGES = "ChatMessages";
 
