@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,17 +55,13 @@ public class HomeFragment extends Fragment{
         displayPosts();
 
 
-        createNewPost.setOnClickListener(new View.OnClickListener() {
-            @Override
+        createNewPost.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_nav_home_to_createNewPostFragment, null));
+/*            @Override
             public void onClick(View v) {
-                getFragmentManager().beginTransaction().
-                        replace(R.id.nav_host_fragment,  CreateNewPostFragment.getInstance()).//add on top of the static fragment
-                        addToBackStack("").//cause the back button scrolling through the loaded fragments
-                        commit();
-                getFragmentManager().executePendingTransactions();
+
 
             }
-        });
+        });*/
     }
 
     public static ArrayList<Post> getPosts(){
