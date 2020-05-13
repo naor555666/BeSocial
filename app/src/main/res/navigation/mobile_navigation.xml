@@ -9,7 +9,11 @@
         android:id="@+id/nav_home"
         android:name="com.example.besocial.ui.mainactivity.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_createNewPostFragment"
+            app:destination="@id/createNewPostFragment" />
+    </fragment>
     <fragment
         android:id="@+id/nav_my_profile"
         android:name="com.example.besocial.ui.mainactivity.ProfileFragment"
@@ -155,6 +159,10 @@
         android:name="com.example.besocial.ui.chatactivity.ChatActivity"
         android:label="activity_chat"
         tools:layout="@layout/activity_chat" />
+    <fragment
+        android:id="@+id/createNewPostFragment"
+        android:name="com.example.besocial.ui.mainactivity.CreateNewPostFragment"
+        android:label="CreateNewPostFragment" />
 
 
 </navigation>
