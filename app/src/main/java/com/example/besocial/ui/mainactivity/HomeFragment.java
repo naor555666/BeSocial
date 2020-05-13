@@ -1,5 +1,6 @@
 package com.example.besocial.ui.mainactivity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,7 @@ public class HomeFragment extends Fragment{
     private static RecyclerView postsRecyclerView;
     private ImageButton createNewPost,refreshPosts;
     private DatabaseReference postsRef;
+    private ProgressDialog progressDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -49,7 +51,15 @@ public class HomeFragment extends Fragment{
         createNewPost=view.findViewById(R.id.create_new_post_button);
         postsRecyclerView = view.findViewById(R.id.posts_list_recycler_view);
         postsRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+
+        progressDialog=new ProgressDialog(getActivity());
+        //progressDialog.setTitle("Loading... Please wait");
+        //progressDialog.show();
+
+        //RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setStackFromEnd(true);
+        layoutManager.setReverseLayout(true);
         postsRecyclerView.setLayoutManager(layoutManager);
         displayPosts();
 
@@ -57,11 +67,12 @@ public class HomeFragment extends Fragment{
         createNewPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().beginTransaction().
+/*                getFragmentManager().beginTransaction().
                         replace(R.id.nav_host_fragment,  CreateNewPostFragment.getInstance()).//add on top of the static fragment
                         addToBackStack("").//cause the back button scrolling through the loaded fragments
                         commit();
-                getFragmentManager().executePendingTransactions();
+                getFragmentManager().executePendingTransactions();*/
+                //MainActivity.getNavController().navigate();
 
             }
         });
