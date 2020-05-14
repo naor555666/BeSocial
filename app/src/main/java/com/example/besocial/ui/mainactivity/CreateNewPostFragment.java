@@ -30,6 +30,7 @@ import com.example.besocial.utils.ConstantValues;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -47,11 +48,12 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
     private User loggedUser=MainActivity.getLoggedUser();
     private TextView newPostUsername,newPostDate;
     private final static int galleryPick = 1;
+    private FloatingActionButton uploadPhotoButton;
     private ImageView postPhoto;
     private static CreateNewPostFragment createNewPostFragment=new CreateNewPostFragment();
     private Spinner categories;
     private StorageReference userPicturesRef;
-    private Button postButton,uploadPhotoButton;
+    private Button postButton;
     private Calendar calendar;
     private CircleImageView newPostUserProfilePicture;
     private Post newPost;
@@ -174,6 +176,8 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
             postsRef.setValue(userImage);
         }
         postsRef = FirebaseDatabase.getInstance().getReference().child("Posts").push();
+        String postKey=postsRef.getKey();
+        newPost.setPostId(postKey);
         postsRef.setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

@@ -6,6 +6,7 @@ public class Post {
     private String postUserName, postDate, postDescription,category,userId;
     private Long numberOfLikes;
     private String postImage;
+    private String postId;
 
 
     public Post(){
@@ -85,5 +86,13 @@ public class Post {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 }

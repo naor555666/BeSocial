@@ -67,7 +67,7 @@ public class ProfileFragment extends Fragment {
     private StorageReference userPicturesRef;
     private NavController navController;
     private static UsersViewModel mViewModel;
-
+    private TextView myProfileTextView;
 
 
 
@@ -92,6 +92,7 @@ public class ProfileFragment extends Fragment {
         profileProfilePicture = view.findViewById(R.id.profile_user_profile_picture);
         newChatButton=view.findViewById(R.id.profile_open_chat_conversation);
         newChatButton.setVisibility(View.INVISIBLE);
+        myProfileTextView=view.findViewById(R.id.profile_my_profile_text_view);
         profileChangeProfilePicture = view.findViewById(R.id.profile_change_profile_picture);
         profilePageUsername = view.findViewById(R.id.profile_page_username);
         profileFullName = view.findViewById(R.id.profile_full_name);
@@ -124,6 +125,7 @@ public class ProfileFragment extends Fragment {
             profileChangeProfilePicture.setVisibility(View.INVISIBLE);
             profileEditProfileDetails.setVisibility(View.INVISIBLE);
             profileMyPictures.setText("UPLOADED PHOTOS");
+            myProfileTextView.setVisibility(View.INVISIBLE);
 
             profileFollowList.setText("FOLLOW LIST");
             newChatButton.setVisibility(View.VISIBLE);
@@ -132,7 +134,6 @@ public class ProfileFragment extends Fragment {
         Glide.with(getContext()).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(profileProfilePicture);
         setListeners();
 //        setNewChatListener();
-
 
 
     }

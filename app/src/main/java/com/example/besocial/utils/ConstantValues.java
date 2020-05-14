@@ -55,4 +55,5 @@ public interface ConstantValues {
 
     //chats
     String CHAT_ID = "chatId";
+    String LIKES = "Likes";
 }
