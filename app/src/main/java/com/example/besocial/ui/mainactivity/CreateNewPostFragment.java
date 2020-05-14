@@ -30,6 +30,7 @@ import com.example.besocial.utils.ConstantValues;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -41,16 +42,20 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class CreateNewPostFragment extends Fragment implements View.OnClickListener {
     private User loggedUser=MainActivity.getLoggedUser();
     private TextView newPostUsername,newPostDate;
     private final static int galleryPick = 1;
+    private FloatingActionButton uploadPhotoButton;
     private ImageView postPhoto;
     private static CreateNewPostFragment createNewPostFragment=new CreateNewPostFragment();
     private Spinner categories;
     private StorageReference userPicturesRef;
-    private Button postButton,uploadPhotoButton;
+    private Button postButton;
     private Calendar calendar;
+    private CircleImageView newPostUserProfilePicture;
     private Post newPost;
     private ProgressDialog progressDialog;
     private EditText postDescription;
@@ -70,6 +75,7 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
         userPicturesRef = FirebaseStorage.getInstance().getReference().child(MainActivity.getCurrentUser().getUid());
         newPostDate=view.findViewById(R.id.new_post_date);
         newPostUsername=view.findViewById(R.id.new_post_username);
+        newPostUserProfilePicture=view.findViewById(R.id.new_post_user_image);
         categories=view.findViewById(R.id.new_post_category_list);
         uploadPhotoButton=view.findViewById(R.id.new_post_upload_photo_button);
         postPhoto=view.findViewById(R.id.new_post_photo);
@@ -77,12 +83,13 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
         ArrayAdapter<CharSequence> arrayAdapter= ArrayAdapter.createFromResource(getContext(),R.array.list_of_categories,R.layout.support_simple_spinner_dropdown_item);
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         categories.setAdapter(arrayAdapter);
+        categories.setEnabled(false);
         postButton=view.findViewById(R.id.post_new_post_button);
         calendar=Calendar.getInstance();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("dd-MMM-yyyy");
         SimpleDateFormat simpleTimeFormat=new SimpleDateFormat("hh:mm");
         uploadedImageUri=null;
-
+        Glide.with(getContext()).load(loggedUser.getProfileImage()).placeholder(R.drawable.social_event0).into(newPostUserProfilePicture);
         currentDate= simpleDateFormat.format(calendar.getTime());
         currentTime=simpleTimeFormat.format(calendar.getTime());
         newPostUsername.setText(loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName());
@@ -169,6 +176,8 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
             postsRef.setValue(userImage);
         }
         postsRef = FirebaseDatabase.getInstance().getReference().child("Posts").push();
+        String postKey=postsRef.getKey();
+        newPost.setPostId(postKey);
         postsRef.setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
