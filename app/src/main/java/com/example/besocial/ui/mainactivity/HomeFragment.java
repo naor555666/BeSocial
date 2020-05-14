@@ -2,6 +2,7 @@ package com.example.besocial.ui.mainactivity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeFragment extends Fragment{
 
+    private static final String TAG = "HomeFragment";
     private static ArrayList<Post> posts= new ArrayList<Post>();
     private static RecyclerView postsRecyclerView;
     private ImageButton createNewPost,refreshPosts;
@@ -69,8 +71,16 @@ public class HomeFragment extends Fragment{
         createNewPost.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_nav_home_to_createNewPostFragment));
 
 
-        displayPosts();
 
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        likesRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.LIKES);
+        postsRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.POSTS);
+        displayPosts();
     }
 
     public static ArrayList<Post> getPosts(){
@@ -81,8 +91,7 @@ public class HomeFragment extends Fragment{
     }
 
     public void displayPosts(){
-        likesRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.LIKES);
-        postsRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.POSTS);
+
 
         postsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -105,7 +114,7 @@ public class HomeFragment extends Fragment{
                         }
 
                         @Override
-                        protected void onBindViewHolder(@NonNull HomeFragment.PostsViewHolder holder, int position, @NonNull final Post model) {
+                        protected void onBindViewHolder(@NonNull final HomeFragment.PostsViewHolder holder, int position, @NonNull final Post model) {
                             //holder.benefitNode = model;
                             Glide.with(getContext()).load(model.getUserProfilePicture()).placeholder(R.drawable.social_event0).into(holder.postProfilePicture);
                             if(!(model.getPostImage()==null)){
@@ -117,7 +126,12 @@ public class HomeFragment extends Fragment{
                             holder.postUserName.setText(model.getPostUserName());
                             holder.postDescription.setText(model.getPostDescription());
                             holder.postDate.setText(model.getPostDate());
-                            setLikeButtonListener(holder.likeButton,dataSnapshot,model);
+                            holder.likeButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    likeButton(holder.likeButton,model);
+                                }
+                            });
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -162,27 +176,25 @@ public class HomeFragment extends Fragment{
         return postsRecyclerView;
     }
 
-    void setLikeButtonListener(final ImageButton likeButton, DataSnapshot dataSnapshot, final Post selectedPost){
-        likeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    void likeButton(final ImageButton likeButton,  final Post selectedPost){
+
                 wasLikeClicked=true;
 
                 likesRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(wasLikeClicked.equals(true)){
-                            if(dataSnapshot.child(selectedPost.getPostId()).hasChild(loggedUser.getUserId())){
+                            DataSnapshot ds=dataSnapshot.child(selectedPost.getPostId());
+                            String postId=selectedPost.getPostId();
+                            if(ds.hasChild(MainActivity.getLoggedUser().getUserId())){
 
-                                likesRef.child(selectedPost.getPostId()).child(loggedUser.getUserId()).removeValue();
+                                likesRef.child(selectedPost.getPostId()).child(MainActivity.getLoggedUser().getUserId()).removeValue();
                                 wasLikeClicked=false;
-                                //Toast.makeText(getContext(),"post UNLIKED",Toast.LENGTH_SHORT).show();
                                 likeButton.setImageResource(R.drawable.empty_like_button);
                             }
                             else {
                                 likeButton.setImageResource(R.drawable.full_like_button);
-                                likesRef.child(selectedPost.getPostId()).child(loggedUser.getUserId()).setValue(true);
-                                //Toast.makeText(getContext(),"post LIKED",Toast.LENGTH_SHORT).show();
+                                likesRef.child(postId).child(MainActivity.getLoggedUser().getUserId()).setValue(true);
                                 wasLikeClicked=false;
                             }
                         }
@@ -194,6 +206,4 @@ public class HomeFragment extends Fragment{
                     }
                 });
             }
-        });
-    }
 }
