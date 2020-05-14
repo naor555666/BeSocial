@@ -111,7 +111,7 @@ public class HomeFragment extends Fragment{
                                 Glide.with(getContext()).load(model.getPostImage()).placeholder(R.drawable.social_event0).into(holder.postPhoto);
                             }
                             else{
-                                holder.postPhoto.setVisibility(View.INVISIBLE);
+                                holder.postPhoto.setVisibility(View.GONE);
                             }
                             holder.postUserName.setText(model.getPostUserName());
                             holder.postDescription.setText(model.getPostDescription());
