@@ -295,7 +295,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "permission was granted");
                 Intent intent = new Intent(this, LocationUpdatesService.class);
                 if (isLocationActive) {
-                    attendingEventsRef.removeEventListener(attendingEventsListener);
+                    if (attendingEventsRef != null) {
+                        attendingEventsRef.removeEventListener(attendingEventsListener);
+                    }
                     isLocationActive = false;
                     stopService(intent);
                     Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into((ImageButton) view);
@@ -476,7 +478,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "inside on Stop");
-        if (currentUserDatabaseRef != null && userDetailsListener!=null) {
+        if (currentUserDatabaseRef != null && userDetailsListener != null) {
             currentUserDatabaseRef.removeEventListener(userDetailsListener);
         }
     }
@@ -517,7 +519,7 @@ public class MainActivity extends AppCompatActivity {
         return searchButton;
     }
 
-    void setSearchListener(){
+    void setSearchListener() {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

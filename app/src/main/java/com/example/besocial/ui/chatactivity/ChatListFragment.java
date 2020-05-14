@@ -100,8 +100,6 @@ public class ChatListFragment extends Fragment {
             showChatConversation(bundle);
         }else prepareDatabaseQuery();
 
-
-        //setChatList();
     }
 
     @Override

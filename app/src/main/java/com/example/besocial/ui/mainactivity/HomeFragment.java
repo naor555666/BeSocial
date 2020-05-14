@@ -52,16 +52,11 @@ public class HomeFragment extends Fragment{
         postsRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         postsRecyclerView.setLayoutManager(layoutManager);
+        createNewPost.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_nav_home_to_createNewPostFragment));
+
+
         displayPosts();
 
-
-        createNewPost.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_nav_home_to_createNewPostFragment, null));
-/*            @Override
-            public void onClick(View v) {
-
-
-            }
-        });*/
     }
 
     public static ArrayList<Post> getPosts(){

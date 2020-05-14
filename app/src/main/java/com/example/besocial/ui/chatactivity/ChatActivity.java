@@ -31,16 +31,9 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(view);
         callingIntent=getIntent();
 
-        //set the toolbar
-//        setSupportActionBar(binding.chatToolbar);
-
-        //handle navigation components
         navController = Navigation.findNavController(this, R.id.chat_nav_host_fragment);
         AppBarConfiguration appBarConfiguration =
                 new AppBarConfiguration.Builder(navController.getGraph()).build();
-//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-
 
     }
 
