@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.example.besocial.utils.ConstantValues;
@@ -131,16 +132,8 @@ public class EventFragment extends Fragment {
                 startActivity(mapsIntent);
             }
         });
-        binding.fragmentEventViewAttendantsLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewAttendants();
-            }
-        });
-    }
 
-    private void viewAttendants() {
-        MainActivity.getNavController().navigate(R.id.eventAttendantsFragment);
+        binding.fragmentEventViewAttendantsLayout.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.eventAttendantsFragment));
     }
 
     private void handleEventAttendBtn() {

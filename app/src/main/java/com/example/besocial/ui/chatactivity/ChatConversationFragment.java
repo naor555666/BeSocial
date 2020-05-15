@@ -105,13 +105,13 @@ public class ChatConversationFragment extends Fragment {
     private void getConversationDetails() {
         Bundle bundle;
         bundle = getArguments();
-
+        dbRef = FirebaseDatabase.getInstance().getReference();
         //conversation was chosen from main activity
         if (bundle != null) {
             Log.d(TAG, "getConversationDetails: bundel is not null");
             chosenUid = bundle.getString("chosenUid", null);
 
-            dbRef = FirebaseDatabase.getInstance().getReference();
+
             DatabaseReference userPhotoRef = dbRef
                     .child(ConstantValues.USERS)
                     .child(chosenUid);
