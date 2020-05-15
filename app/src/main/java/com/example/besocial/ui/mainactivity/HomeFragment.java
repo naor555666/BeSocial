@@ -104,8 +104,9 @@ public class HomeFragment extends Fragment{
                         }
 
                         @Override
-                        protected void onBindViewHolder(@NonNull HomeFragment.PostsViewHolder holder, int position, @NonNull final Post model) {
+                        protected void onBindViewHolder(@NonNull final HomeFragment.PostsViewHolder holder, int position, @NonNull final Post model) {
                             //holder.benefitNode = model;
+                            //long numberOfLikes=model.getNumberOfLikes().longValue();
                             Glide.with(getContext()).load(model.getUserProfilePicture()).placeholder(R.drawable.social_event0).into(holder.postProfilePicture);
                             if(!(model.getPostImage()==null)){
                                 Glide.with(getContext()).load(model.getPostImage()).placeholder(R.drawable.social_event0).into(holder.postPhoto);
@@ -116,7 +117,40 @@ public class HomeFragment extends Fragment{
                             holder.postUserName.setText(model.getPostUserName());
                             holder.postDescription.setText(model.getPostDescription());
                             holder.postDate.setText(model.getPostDate());
-                            setLikeButtonListener(holder.likeButton,dataSnapshot,model);
+                            holder.likeButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    wasLikeClicked=true;
+
+                                    likesRef.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if(wasLikeClicked.equals(true)){
+                                                //Toast.makeText(getContext(),"datasnapshot Path: "+dataSnapshot.getRef().toString(),Toast.LENGTH_SHORT).show();
+                                                if(dataSnapshot.child(model.getPostId()).hasChild(loggedUser.getUserId())){
+
+                                                    likesRef.child(model.getPostId()).child(loggedUser.getUserId()).removeValue();
+                                                    wasLikeClicked=false;
+                                                    //Toast.makeText(getContext(),"post UNLIKED",Toast.LENGTH_SHORT).show();
+                                                    holder.likeButton.setImageResource(R.drawable.empty_like_button);
+                                                }
+                                                else {
+                                                    holder.likeButton.setImageResource(R.drawable.full_like_button);
+                                                    likesRef.child(model.getPostId()).child(loggedUser.getUserId()).setValue(true);
+                                                    //Toast.makeText(getContext(),"post LIKED",Toast.LENGTH_SHORT).show();
+                                                    wasLikeClicked=false;
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+                            });
+                            //setLikeButtonListener(holder.likeButton,dataSnapshot,model);
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -144,10 +178,12 @@ public class HomeFragment extends Fragment{
         Post postNode;
         ImageButton likeButton;
         ImageView postPhoto;
+        TextView numberOfLikes;
         CircleImageView postProfilePicture;
         TextView postUserName, postDate, postDescription;
         public PostsViewHolder(@NonNull View itemView) {
             super(itemView);
+            numberOfLikes=itemView.findViewById(R.id.post_in_recycler_number_of_likes);
             likeButton=itemView.findViewById(R.id.post_in_recycler_like_button);
             postProfilePicture=itemView.findViewById(R.id.post_user_profile_image);
             postDate= itemView.findViewById(R.id.post_date);
@@ -161,38 +197,5 @@ public class HomeFragment extends Fragment{
         return postsRecyclerView;
     }
 
-    void setLikeButtonListener(final ImageButton likeButton, DataSnapshot dataSnapshot, final Post selectedPost){
-        likeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                wasLikeClicked=true;
 
-                likesRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(wasLikeClicked.equals(true)){
-                            if(dataSnapshot.child(selectedPost.getPostId()).hasChild(loggedUser.getUserId())){
-
-                                likesRef.child(selectedPost.getPostId()).child(loggedUser.getUserId()).removeValue();
-                                wasLikeClicked=false;
-                                //Toast.makeText(getContext(),"post UNLIKED",Toast.LENGTH_SHORT).show();
-                                likeButton.setImageResource(R.drawable.empty_like_button);
-                            }
-                            else {
-                                likeButton.setImageResource(R.drawable.full_like_button);
-                                likesRef.child(selectedPost.getPostId()).child(loggedUser.getUserId()).setValue(true);
-                                //Toast.makeText(getContext(),"post LIKED",Toast.LENGTH_SHORT).show();
-                                wasLikeClicked=false;
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        });
-    }
 }
