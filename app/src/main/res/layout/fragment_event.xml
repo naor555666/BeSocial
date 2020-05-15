@@ -56,24 +56,25 @@
                 android:layout_toEndOf="@id/event_chat_ic"
                 android:inputType="textMultiLine"
                 android:text="Hosted by: Firstname Lastname "
-                android:textColor="#0A0A0A"
+                android:textColor="#2196F3"
                 android:textSize="15sp" />
         </RelativeLayout>
-
 
 
         <RelativeLayout
             android:id="@+id/fragment_event_view_attendants_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp">
+
             <TextView
                 android:id="@+id/fragment_event_view_attendants"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textColor="#0A0A0A"
                 android:layout_toEndOf="@id/fragment_event_people_ic"
-                android:text="View participants" />
+                android:text="View participants"
+                android:textColor="#0A0A0A"
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/fragment_event_people_ic"
