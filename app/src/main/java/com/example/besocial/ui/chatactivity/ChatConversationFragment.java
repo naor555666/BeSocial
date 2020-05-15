@@ -209,26 +209,6 @@ public class ChatConversationFragment extends Fragment {
 
         final Map<String, Object> childUpdates = new HashMap<>();
         if (chosenChatConversation == null) {
-/*            final DatabaseReference userConversationRef = FirebaseDatabase.getInstance().getReference()
-                    .child(ConstantValues.CHAT_CONVERSATIONS).child(MainActivity.getLoggedUser().getUserId());
-            userConversationRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (!dataSnapshot.hasChild(chosenUid)) {
-                        createNewConversationInDB(childUpdates, textMessage);
-                    } else {
-                        String conversationId = (String) dataSnapshot.child(chosenUid).child(ConstantValues.CHAT_ID).getValue();
-                        addMessage(textMessage, conversationId);
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });*/
-
             if (!isConversationExists) {
                 createNewConversationInDB(childUpdates, textMessage);
             } else {

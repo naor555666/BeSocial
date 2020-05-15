@@ -2,6 +2,7 @@ package com.example.besocial.ui.mainactivity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeFragment extends Fragment{
 
+    private static final String TAG = "HomeFragment";
     private static ArrayList<Post> posts= new ArrayList<Post>();
     private static RecyclerView postsRecyclerView;
     private ImageButton createNewPost,refreshPosts;
@@ -70,6 +72,18 @@ public class HomeFragment extends Fragment{
 
 
         createNewPost.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_nav_home_to_createNewPostFragment));
+
+
+
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        likesRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.LIKES);
+        postsRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.POSTS);
+        displayPosts();
     }
 
     public static ArrayList<Post> getPosts(){
@@ -120,37 +134,9 @@ public class HomeFragment extends Fragment{
                             holder.likeButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    wasLikeClicked=true;
-
-                                    likesRef.addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            if(wasLikeClicked.equals(true)){
-                                                //Toast.makeText(getContext(),"datasnapshot Path: "+dataSnapshot.getRef().toString(),Toast.LENGTH_SHORT).show();
-                                                if(dataSnapshot.child(model.getPostId()).hasChild(loggedUser.getUserId())){
-
-                                                    likesRef.child(model.getPostId()).child(loggedUser.getUserId()).removeValue();
-                                                    wasLikeClicked=false;
-                                                    //Toast.makeText(getContext(),"post UNLIKED",Toast.LENGTH_SHORT).show();
-                                                    holder.likeButton.setImageResource(R.drawable.empty_like_button);
-                                                }
-                                                else {
-                                                    holder.likeButton.setImageResource(R.drawable.full_like_button);
-                                                    likesRef.child(model.getPostId()).child(loggedUser.getUserId()).setValue(true);
-                                                    //Toast.makeText(getContext(),"post LIKED",Toast.LENGTH_SHORT).show();
-                                                    wasLikeClicked=false;
-                                                }
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                        }
-                                    });
+                                    likeButton(holder.likeButton,model);
                                 }
                             });
-                            //setLikeButtonListener(holder.likeButton,dataSnapshot,model);
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -197,5 +183,34 @@ public class HomeFragment extends Fragment{
         return postsRecyclerView;
     }
 
+    void likeButton(final ImageButton likeButton,  final Post selectedPost){
 
+                wasLikeClicked=true;
+
+                likesRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(wasLikeClicked.equals(true)){
+                            DataSnapshot ds=dataSnapshot.child(selectedPost.getPostId());
+                            String postId=selectedPost.getPostId();
+                            if(ds.hasChild(MainActivity.getLoggedUser().getUserId())){
+
+                                likesRef.child(selectedPost.getPostId()).child(MainActivity.getLoggedUser().getUserId()).removeValue();
+                                wasLikeClicked=false;
+                                likeButton.setImageResource(R.drawable.empty_like_button);
+                            }
+                            else {
+                                likeButton.setImageResource(R.drawable.full_like_button);
+                                likesRef.child(postId).child(MainActivity.getLoggedUser().getUserId()).setValue(true);
+                                wasLikeClicked=false;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
 }
