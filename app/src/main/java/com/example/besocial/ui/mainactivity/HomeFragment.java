@@ -29,6 +29,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -197,10 +199,12 @@ public class HomeFragment extends Fragment{
 
                                 likesRef.child(selectedPost.getPostId()).child(MainActivity.getLoggedUser().getUserId()).removeValue();
                                 wasLikeClicked=false;
+                                updateNumberOfLikesTransaction(postId,-1);
                                 likeButton.setImageResource(R.drawable.empty_like_button);
                             }
                             else {
                                 likeButton.setImageResource(R.drawable.full_like_button);
+                                updateNumberOfLikesTransaction(postId,1);
                                 likesRef.child(postId).child(MainActivity.getLoggedUser().getUserId()).setValue(true);
                                 wasLikeClicked=false;
                             }
@@ -209,6 +213,33 @@ public class HomeFragment extends Fragment{
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            void updateNumberOfLikesTransaction(final String postId, final long numberOfLikesToAdd){
+                postsRef.runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull final MutableData mutableData) {
+                        postsRef.child(postId).child("numberOfLikes").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                Long oldNumberOfLikes = dataSnapshot.getValue(Long.class);
+                                postsRef.child(postId).child("numberOfLikes").setValue(Long.valueOf(oldNumberOfLikes.longValue()+numberOfLikesToAdd));
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        return null;
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
 
                     }
                 });

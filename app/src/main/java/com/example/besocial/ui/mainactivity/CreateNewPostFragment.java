@@ -57,6 +57,7 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
     private Calendar calendar;
     private CircleImageView newPostUserProfilePicture;
     private Post newPost;
+    private static Intent loadedPostImage;
     private ProgressDialog progressDialog;
     private EditText postDescription;
     private String currentDate,currentTime,uploadedImageUri;
@@ -84,6 +85,7 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         categories.setAdapter(arrayAdapter);
         categories.setEnabled(false);
+        loadedPostImage=null;
         postButton=view.findViewById(R.id.post_new_post_button);
         calendar=Calendar.getInstance();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("dd-MMM-yyyy");
@@ -94,6 +96,7 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
         currentTime=simpleTimeFormat.format(calendar.getTime());
         newPostUsername.setText(loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName());
         newPostDate.setText(currentTime+"  "+currentDate);
+        postPhoto.setVisibility(View.GONE);
         /**
          * on click method for posting new post
          */
@@ -109,7 +112,8 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
             progressDialog=new ProgressDialog(getActivity());
             progressDialog.setTitle("Loading... Please wait");
             progressDialog.show();
-            newPost=new Post(loggedUser.getUserId(),loggedUser.getProfileImage(),loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName(),currentTime+"  "+currentDate,postDescription.getText().toString(),postCategory,null);
+            newPost=new Post(loggedUser.getUserId(),loggedUser.getProfileImage(),loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName(),
+                    currentTime+"  "+currentDate,postDescription.getText().toString(),postCategory,null,0);
             //HomeFragment.addPost(newPost);
             post();
             //Toast.makeText(getActivity(), "post created successfuly", Toast.LENGTH_LONG).show();
@@ -127,7 +131,9 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == galleryPick && resultCode == Activity.RESULT_OK && data != null) {
-            uploadImageToStorage(data);
+            postPhoto.setVisibility(View.VISIBLE);
+            Glide.with(getContext()).load(data.getData().toString()).placeholder(R.drawable.empty_profile_image).into(postPhoto);
+            loadedPostImage=data;
         }
     }
 
@@ -153,7 +159,7 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
                         //imageStore.setValue(uri.toString());
                         //Toast.makeText(getContext(), "Image was uploaded successfully.", Toast.LENGTH_SHORT).show();
                         uploadedImageUri=uri.toString();
-                        Glide.with(getContext()).load(uri).placeholder(R.drawable.empty_profile_image).into(postPhoto);
+                        savePostDetails();
                     }
                 });
             }
@@ -166,15 +172,23 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
     }
 
     void post(){
-        DatabaseReference postsRef;
-        if(uploadedImageUri!=null){
-            HashMap<String,String> userImage= new HashMap<>();
-            userImage.put("userId",loggedUser.getUserId());
-            userImage.put("uploadedImage",uploadedImageUri);
-            newPost.setPostImage(uploadedImageUri);
-            postsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USER_PHOTOS).push();
-            postsRef.setValue(userImage);
+        if(loadedPostImage!=null){
+            uploadImageToStorage(loadedPostImage);
         }
+        else savePostDetails();
+
+    }
+
+    void savePostDetails(){
+        DatabaseReference postsRef;
+
+        HashMap<String,String> userImage= new HashMap<>();
+        userImage.put("userId",loggedUser.getUserId());
+        userImage.put("uploadedImage",uploadedImageUri);
+        newPost.setPostImage(uploadedImageUri);
+        postsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USER_PHOTOS).push();
+        postsRef.setValue(userImage);
+
         postsRef = FirebaseDatabase.getInstance().getReference().child("Posts").push();
         String postKey=postsRef.getKey();
         newPost.setPostId(postKey);
