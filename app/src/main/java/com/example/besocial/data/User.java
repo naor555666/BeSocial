@@ -10,7 +10,7 @@ public class User {
     private String userCity;
     private String birthday;
     private String socialLevel;
-   private Long socialPoints;
+    private Long socialPoints;
     private Long socialStoreCredits;
     private Boolean isManager;
     private String profileImage;

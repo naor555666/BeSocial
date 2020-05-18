@@ -66,16 +66,16 @@ public class EventAttendantsFragment extends Fragment {
     }
 
 
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         socialCenterViewModel = ViewModelProviders.of(getActivity()).get(SocialCenterViewModel.class);
-        chosenEvent=socialCenterViewModel.getEvent().getValue();
+        chosenEvent = socialCenterViewModel.getEvent().getValue();
         prepareDatabaseQuery();
     }
+
     private void prepareDatabaseQuery() {
-        attendantsRef= FirebaseDatabase.getInstance().getReference()
+        attendantsRef = FirebaseDatabase.getInstance().getReference()
                 .child(ConstantValues.EVENTS_WITH_ATTENDINGS)
                 .child(chosenEvent.getEventId());
 
@@ -119,8 +119,12 @@ public class EventAttendantsFragment extends Fragment {
 
                 holder.userNode = model;
                 Glide.with(getActivity()).load(model.getUserProfileImage()).placeholder(R.drawable.empty_profile_image).into(holder.userPhoto);
-                holder.userName.setText(String.format("%s %s", model.getUserFirstName(), model.getUserLastName()));
-                if (!model.getUserId().equals(chosenEvent.getEventCreatorUid())) {
+                if (MainActivity.getLoggedUser().getUserId().equals(model.getUserId())) {
+                    holder.userName.setText(String.format("You"));
+                } else {
+                    holder.userName.setText(String.format("%s %s", model.getUserFirstName(), model.getUserLastName()));
+                }
+                if (MainActivity.getLoggedUser().getUserId().equals(chosenEvent.getEventCreatorUid())) {
                     holder.giveCreditsbtn.setVisibility(View.VISIBLE);
                     holder.giveCreditsbtn.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -158,7 +162,7 @@ public class EventAttendantsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (firebaseRecyclerAdapter != null){
+        if (firebaseRecyclerAdapter != null) {
             firebaseRecyclerAdapter.stopListening();
         }
     }

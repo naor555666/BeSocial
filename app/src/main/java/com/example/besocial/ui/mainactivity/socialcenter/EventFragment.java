@@ -14,8 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
+import com.example.besocial.data.User;
 import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.R;
 import com.example.besocial.data.Event;
@@ -131,16 +133,28 @@ public class EventFragment extends Fragment {
                 startActivity(mapsIntent);
             }
         });
-        binding.fragmentEventViewAttendantsLayout.setOnClickListener(new View.OnClickListener() {
+
+        binding.fragmentEventViewAttendantsLayout.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.eventAttendantsFragment));
+        binding.fragmentEventHostFullName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewAttendants();
+
+                DatabaseReference userRef=FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS).child(chosenEvent.getEventCreatorUid());
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User chosenUser = dataSnapshot.getValue(User.class);
+                        MainActivity.getmViewModel().setUser(chosenUser);
+                        MainActivity.getNavController().navigate(R.id.nav_my_profile);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
-    }
-
-    private void viewAttendants() {
-        MainActivity.getNavController().navigate(R.id.eventAttendantsFragment);
     }
 
     private void handleEventAttendBtn() {
