@@ -10,9 +10,9 @@ public class User {
     private String userCity;
     private String birthday;
     private String socialLevel;
-   private Long socialPoints;
+    private Long socialPoints;
     private Long socialStoreCredits;
-    private boolean isManager = false;
+    private boolean isManager;
     private String profileImage;
     private LatLng userCurrentPosition;
 
