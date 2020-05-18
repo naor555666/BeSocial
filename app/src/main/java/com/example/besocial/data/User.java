@@ -23,7 +23,7 @@ public class User {
     public User(String userId, String userFirstName, String userLastName,
                 String userEmail, String userAddress, String userCity,
                 String birthday, Long socialPoints, String socialLevel,
-                Long socialStoreCredits, boolean isManager, String profileImage) {
+                Long socialStoreCredits, Boolean isManager, String profileImage) {
         this.userId = userId;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;

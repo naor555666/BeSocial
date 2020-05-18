@@ -189,14 +189,12 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     MainActivity.loggedUser = dataSnapshot.getValue(User.class);
                     mViewModel.setUser(loggedUser);
-                    Log.d(TAG, "onDataChange: loggedUser isManager: "+loggedUser.getIsManager());
                     String myProfileImage = loggedUser.getProfileImage();
                     loggedUser = dataSnapshot.getValue(User.class);
                     activateLocation.setEnabled(true);
                     nav_header_user_email.setText(loggedUser.getUserEmail());
                     nav_header_user_full_name.setText(new StringBuilder().append(loggedUser.getUserFirstName())
                             .append(" ").append(loggedUser.getUserLastName()).toString());
-                    //String myProfileImage = loggedUser.getProfileImage();
                     Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
                 }
 

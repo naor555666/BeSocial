@@ -84,7 +84,6 @@ public class BonusAreaFragment extends Fragment {
         addNewRedeemableBonus=view.findViewById(R.id.new_redeemable_bonus_button);
         navController= MainActivity.getNavController();
        // benefitsRef = FirebaseDatabase.getInstance().getReference();
-        Log.d(TAG, "onViewCreated: isManager: "+MainActivity.getLoggedUser().getIsManager());
         if(MainActivity.getLoggedUser().getIsManager().booleanValue()==false){
             addNewRedeemableBonus.setVisibility(View.INVISIBLE);
         }
