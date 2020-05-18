@@ -7,7 +7,7 @@ public class RedeemableBenefit {
     private String description;
     private String category;
     private Long cost;
-////    private String minimumSocialLevel;
+    private String minimumSocialLevel;
     private String benefitPhoto;
 
     public RedeemableBenefit() {
@@ -60,5 +60,13 @@ public class RedeemableBenefit {
 
     public void setBenefitPhoto(String benefitPhoto) {
         this.benefitPhoto = benefitPhoto;
+    }
+
+    public String getMinimumSocialLevel() {
+        return minimumSocialLevel;
+    }
+
+    public void setMinimumSocialLevel(String minimumSocialLevel) {
+        this.minimumSocialLevel = minimumSocialLevel;
     }
 }

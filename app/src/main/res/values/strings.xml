@@ -55,7 +55,6 @@
         <item>Sports</item>
         <item>Games</item>
         <item>Social</item>
-        <item>TPain</item>
         <item>Environment</item>
     </string-array>
     <string-array name="list_of_bonus_area_categories">
@@ -64,6 +63,14 @@
         <item>Fun</item>
         <item>Sport</item>
         <item>Shopping</item>
+    </string-array>
+    <string-array name="list_of_social_levels">
+        <item> </item>
+        <item>Shy Socializer</item>
+        <item>Out Of The Shell Socializer</item>
+        <item>Academic Socializer</item>
+        <item>Socialized Ninja Turtle</item>
+        <item>Socialozaurus</item>
     </string-array>
     <string name="title_activity_maps">Map</string>
     <string name="social_level">Social Level:</string>

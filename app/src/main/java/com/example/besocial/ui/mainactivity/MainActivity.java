@@ -179,13 +179,17 @@ public class MainActivity extends AppCompatActivity {
         }
         //
         else {
+            //currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid()).child("manager");
+            //currentUserDatabaseRef.setValue(true);
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
+
 //            currentUserDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
             userDetailsListener = currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     MainActivity.loggedUser = dataSnapshot.getValue(User.class);
                     mViewModel.setUser(loggedUser);
+                    Log.d(TAG, "onDataChange: loggedUser isManager: "+loggedUser.getIsManager());
                     String myProfileImage = loggedUser.getProfileImage();
                     loggedUser = dataSnapshot.getValue(User.class);
                     activateLocation.setEnabled(true);

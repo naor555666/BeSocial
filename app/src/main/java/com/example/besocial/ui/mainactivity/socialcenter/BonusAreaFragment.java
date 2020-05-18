@@ -3,6 +3,7 @@ package com.example.besocial.ui.mainactivity.socialcenter;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,7 +84,10 @@ public class BonusAreaFragment extends Fragment {
         addNewRedeemableBonus=view.findViewById(R.id.new_redeemable_bonus_button);
         navController= MainActivity.getNavController();
        // benefitsRef = FirebaseDatabase.getInstance().getReference();
-
+        Log.d(TAG, "onViewCreated: isManager: "+MainActivity.getLoggedUser().getIsManager());
+        if(MainActivity.getLoggedUser().getIsManager().booleanValue()==false){
+            addNewRedeemableBonus.setVisibility(View.INVISIBLE);
+        }
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);

@@ -12,7 +12,7 @@ public class User {
     private String socialLevel;
    private Long socialPoints;
     private Long socialStoreCredits;
-    private boolean isManager = false;
+    private Boolean isManager;
     private String profileImage;
     private LatLng userCurrentPosition;
 
@@ -118,11 +118,11 @@ public class User {
         this.userCity = userCity;
     }
 
-    public boolean isManager() {
+    public Boolean getIsManager() {
         return isManager;
     }
 
-    public void setManager(boolean manager) {
+    public void setIsManager(Boolean manager) {
         isManager = manager;
     }
 

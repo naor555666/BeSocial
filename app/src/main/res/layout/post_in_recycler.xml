@@ -63,8 +63,9 @@
             android:layout_alignParentEnd="true"
             android:background="#FFFFFF"
             android:layoutDirection="rtl"
-            android:scaleType="centerCrop"
-            android:src="@drawable/empty_like_button" />
+            android:scaleType="centerCrop">
+
+        </ImageButton>
 
     </RelativeLayout>
 
