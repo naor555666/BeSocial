@@ -74,8 +74,10 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
         benefitsPicturesRef = FirebaseStorage.getInstance().getReference().child(ConstantValues.BENEFITS);
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.list_of_bonus_area_categories, R.layout.support_simple_spinner_dropdown_item);
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-//        listOfCategories.setAdapter(arrayAdapter);
         binding.newBenefitCategories.setAdapter((arrayAdapter));
+        arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.list_of_social_levels, R.layout.support_simple_spinner_dropdown_item);
+        arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        binding.newBenefitSocialLevelRequired.setAdapter(arrayAdapter);
         loadingBar = new ProgressDialog(getContext());
         photoSet = false;
         setListeners();

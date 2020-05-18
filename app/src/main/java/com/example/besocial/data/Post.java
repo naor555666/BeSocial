@@ -4,15 +4,16 @@ package com.example.besocial.data;
 public class Post {
     private String userProfilePicture;
     private String postUserName, postDate, postDescription,category,userId;
-    private Long numberOfLikes;
     private String postImage;
     private String postId;
+    private Long numberOfLikes;
 
 
     public Post(){
 
     }
-    public Post(String userId, String userProfilePicture, String postUserName, String postDate, String postDescription, String category, String postImage) {
+    public Post(String userId, String userProfilePicture, String postUserName, String postDate,
+                String postDescription, String category, String postImage, long numberOfLikes) {
         this.userId=userId;
         this.userProfilePicture = userProfilePicture;
         this.postUserName = postUserName;
@@ -20,7 +21,7 @@ public class Post {
         this.postDescription = postDescription;
         this.category = category;
         this.postImage = postImage;
-        this.numberOfLikes.valueOf(0);
+        this.numberOfLikes = Long.valueOf(numberOfLikes);
     }
 
     public String getUserProfilePicture() {
@@ -95,4 +96,6 @@ public class Post {
     public void setPostId(String postId) {
         this.postId = postId;
     }
+
+
 }

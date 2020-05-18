@@ -12,7 +12,7 @@ public class User {
     private String socialLevel;
     private Long socialPoints;
     private Long socialStoreCredits;
-    private boolean isManager;
+    private Boolean isManager;
     private String profileImage;
     private LatLng userCurrentPosition;
 
@@ -23,7 +23,7 @@ public class User {
     public User(String userId, String userFirstName, String userLastName,
                 String userEmail, String userAddress, String userCity,
                 String birthday, Long socialPoints, String socialLevel,
-                Long socialStoreCredits, boolean isManager, String profileImage) {
+                Long socialStoreCredits, Boolean isManager, String profileImage) {
         this.userId = userId;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
@@ -118,11 +118,11 @@ public class User {
         this.userCity = userCity;
     }
 
-    public boolean isManager() {
+    public Boolean getIsManager() {
         return isManager;
     }
 
-    public void setManager(boolean manager) {
+    public void setIsManager(Boolean manager) {
         isManager = manager;
     }
 

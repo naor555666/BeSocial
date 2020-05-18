@@ -117,7 +117,7 @@ public class RegisterFragment extends Fragment {
         lastNameString=lastName.getText().toString();
         emailString=email.getText().toString();
 
-        User newUser=new User(userID,firstNameString,lastNameString,emailString,"","","",Long.valueOf(0),ConstantValues.USER_LEVEL_1,Long.valueOf(0),false,"");
+        User newUser=new User(userID,firstNameString,lastNameString,emailString,"","","",Long.valueOf(0),ConstantValues.USER_LEVEL_1,Long.valueOf(0),Boolean.valueOf(false),"");
         userRef.setValue(newUser).addOnCompleteListener(new OnCompleteListener() {
 
         @Override

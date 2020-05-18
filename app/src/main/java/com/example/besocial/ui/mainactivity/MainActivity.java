@@ -169,7 +169,10 @@ public class MainActivity extends AppCompatActivity {
         }
         //
         else {
+            //currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid()).child("manager");
+            //currentUserDatabaseRef.setValue(true);
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
+
 //            currentUserDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
             userDetailsListener = currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -182,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
                     nav_header_user_email.setText(loggedUser.getUserEmail());
                     nav_header_user_full_name.setText(new StringBuilder().append(loggedUser.getUserFirstName())
                             .append(" ").append(loggedUser.getUserLastName()).toString());
-                    //String myProfileImage = loggedUser.getProfileImage();
                     Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
                 }
 

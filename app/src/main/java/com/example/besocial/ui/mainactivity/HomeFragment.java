@@ -29,6 +29,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -45,6 +47,8 @@ public class HomeFragment extends Fragment{
     private ProgressDialog progressDialog;
     private Boolean wasLikeClicked;
     private User loggedUser;
+    private Boolean arePostsShown;
+    private FirebaseRecyclerAdapter<Post, HomeFragment.PostsViewHolder> firebaseRecyclerAdapter;
     //private String postKey;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -68,6 +72,10 @@ public class HomeFragment extends Fragment{
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         postsRecyclerView.setLayoutManager(layoutManager);
+        arePostsShown=false;
+        displayPosts();
+
+
         createNewPost.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_nav_home_to_createNewPostFragment));
 
 
@@ -80,7 +88,7 @@ public class HomeFragment extends Fragment{
         super.onActivityCreated(savedInstanceState);
         likesRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.LIKES);
         postsRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.POSTS);
-        displayPosts();
+        //displayPosts();
     }
 
     public static ArrayList<Post> getPosts(){
@@ -91,59 +99,17 @@ public class HomeFragment extends Fragment{
     }
 
     public void displayPosts(){
-
+        likesRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.LIKES);
+        postsRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.POSTS);
 
         postsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                 if(!dataSnapshot.hasChildren()){
                     Toast.makeText(getContext(),"No posts to display",Toast.LENGTH_LONG).show();
-                }else{
-                    FirebaseRecyclerOptions<Post> options = new FirebaseRecyclerOptions
-                            .Builder<Post>()
-                            .setQuery(postsRef, Post.class)
-                            .build();
-                    FirebaseRecyclerAdapter<Post, HomeFragment.PostsViewHolder> firebaseRecyclerAdapter
-                            = new FirebaseRecyclerAdapter<Post, HomeFragment.PostsViewHolder>(options) {
-                        @NonNull
-                        @Override
-                        public HomeFragment.PostsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_in_recycler, parent, false);
-                            HomeFragment.PostsViewHolder viewHolder = new HomeFragment.PostsViewHolder(view);
-                            return viewHolder;
-                        }
-
-                        @Override
-                        protected void onBindViewHolder(@NonNull final HomeFragment.PostsViewHolder holder, int position, @NonNull final Post model) {
-                            //holder.benefitNode = model;
-                            Glide.with(getContext()).load(model.getUserProfilePicture()).placeholder(R.drawable.social_event0).into(holder.postProfilePicture);
-                            if(!(model.getPostImage()==null)){
-                                Glide.with(getContext()).load(model.getPostImage()).placeholder(R.drawable.social_event0).into(holder.postPhoto);
-                            }
-                            else{
-                                holder.postPhoto.setVisibility(View.GONE);
-                            }
-                            holder.postUserName.setText(model.getPostUserName());
-                            holder.postDescription.setText(model.getPostDescription());
-                            holder.postDate.setText(model.getPostDate());
-                            holder.likeButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    likeButton(holder.likeButton,model);
-                                }
-                            });
-                            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    //socialCenterViewModel.setBenefit(model);
-                                    //MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
-                                }
-                            });
-                        }
-                    };
-                    RecyclerView newPostRecyclerView= HomeFragment.getPostsRecyclerView();
-                    newPostRecyclerView.setAdapter(firebaseRecyclerAdapter);
-                    firebaseRecyclerAdapter.startListening();
+                }else if(arePostsShown.equals(false)){
+                    arePostsShown=true;
+                    showPosts();
                 }
             }
 
@@ -154,15 +120,68 @@ public class HomeFragment extends Fragment{
         });
     }
 
+    void showPosts(){
+        FirebaseRecyclerOptions<Post> options = new FirebaseRecyclerOptions
+                .Builder<Post>()
+                .setQuery(postsRef, Post.class)
+                .build();
+        //FirebaseRecyclerAdapter<Post, HomeFragment.PostsViewHolder> firebaseRecyclerAdapter
+            firebaseRecyclerAdapter   = new FirebaseRecyclerAdapter<Post, HomeFragment.PostsViewHolder>(options) {
+            @NonNull
+            @Override
+            public HomeFragment.PostsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_in_recycler, parent, false);
+                HomeFragment.PostsViewHolder viewHolder = new HomeFragment.PostsViewHolder(view);
+                return viewHolder;
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull final HomeFragment.PostsViewHolder holder, int position, @NonNull final Post model) {
+                //holder.benefitNode = model;
+                //long numberOfLikes=model.getNumberOfLikes().longValue();
+                Glide.with(getContext()).load(model.getUserProfilePicture()).placeholder(R.drawable.social_event0).into(holder.postProfilePicture);
+                if(!(model.getPostImage()==null)){
+                    Glide.with(getContext()).load(model.getPostImage()).placeholder(R.drawable.social_event0).into(holder.postPhoto);
+                }
+                else{
+                    holder.postPhoto.setVisibility(View.GONE);
+                }
+
+                holder.postUserName.setText(model.getPostUserName());
+                holder.postDescription.setText(model.getPostDescription());
+                holder.postDate.setText(model.getPostDate());
+                holder.likeButton.setImageResource(R.drawable.empty_like_button);
+                holder.likeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        likeButton(holder.likeButton,model);
+                    }
+                });
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //socialCenterViewModel.setBenefit(model);
+                        //MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
+                    }
+                });
+            }
+        };
+        RecyclerView newPostRecyclerView= HomeFragment.getPostsRecyclerView();
+        newPostRecyclerView.setAdapter(firebaseRecyclerAdapter);
+        firebaseRecyclerAdapter.startListening();
+    }
+
 
     public static class PostsViewHolder extends RecyclerView.ViewHolder {
         Post postNode;
         ImageButton likeButton;
         ImageView postPhoto;
+        TextView numberOfLikes;
         CircleImageView postProfilePicture;
         TextView postUserName, postDate, postDescription;
         public PostsViewHolder(@NonNull View itemView) {
             super(itemView);
+            numberOfLikes=itemView.findViewById(R.id.post_in_recycler_number_of_likes);
             likeButton=itemView.findViewById(R.id.post_in_recycler_like_button);
             postProfilePicture=itemView.findViewById(R.id.post_user_profile_image);
             postDate= itemView.findViewById(R.id.post_date);
@@ -190,10 +209,12 @@ public class HomeFragment extends Fragment{
 
                                 likesRef.child(selectedPost.getPostId()).child(MainActivity.getLoggedUser().getUserId()).removeValue();
                                 wasLikeClicked=false;
+                                updateNumberOfLikesTransaction(postId,-1);
                                 likeButton.setImageResource(R.drawable.empty_like_button);
                             }
                             else {
                                 likeButton.setImageResource(R.drawable.full_like_button);
+                                updateNumberOfLikesTransaction(postId,1);
                                 likesRef.child(postId).child(MainActivity.getLoggedUser().getUserId()).setValue(true);
                                 wasLikeClicked=false;
                             }
@@ -206,4 +227,40 @@ public class HomeFragment extends Fragment{
                     }
                 });
             }
+
+            void updateNumberOfLikesTransaction(final String postId, final long numberOfLikesToAdd){
+                postsRef.runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull final MutableData mutableData) {
+                        postsRef.child(postId).child("numberOfLikes").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                Long oldNumberOfLikes = dataSnapshot.getValue(Long.class);
+                                postsRef.child(postId).child("numberOfLikes").setValue(Long.valueOf(oldNumberOfLikes.longValue()+numberOfLikesToAdd));
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        return null;
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                    }
+                });
+            }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if( firebaseRecyclerAdapter!=null){
+            firebaseRecyclerAdapter.stopListening();
+        }
+
+    }
 }
