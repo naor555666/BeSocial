@@ -94,12 +94,13 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
     boolean checkFields(String name, String description, String costString) {
         boolean isOk = true;
         long cost = 0;
-        int categoryPosition = 0;
+        int categoryPosition = 0,socialLevelPosition=0;
+        socialLevelPosition=binding.newBenefitSocialLevelRequired.getSelectedItemPosition();
         categoryPosition =binding.newBenefitCategories.getSelectedItemPosition();
         if (costString.equals(""))
             name = "";
         else cost = Long.parseLong(costString);
-        if (categoryPosition == 0 || name.equals("") || description.equals("") || cost < 1) {
+        if (categoryPosition == 0 || socialLevelPosition==0|| name.equals("") || description.equals("") || cost < 1) {
             isOk = false;
             Toast.makeText(getActivity(), "Incorrect Fields", Toast.LENGTH_SHORT).show();
         } else if (photoSet == false) {
