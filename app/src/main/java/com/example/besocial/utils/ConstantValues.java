@@ -41,7 +41,7 @@ public interface ConstantValues {
     String USER_LEVEL_2 = "Out Of The Shell Socializer";
     String USER_LEVEL_3 = "Academic Socializer";
     String USER_LEVEL_4 = "Socialized Ninja Turtle";
-    String USER_LEVEL_5 = "Socialozaurus";
+    String USER_LEVEL_5 = "Socialosaurus";
 
     //times in milliseconds
     int SECOND = 1000;
