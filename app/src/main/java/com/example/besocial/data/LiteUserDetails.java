@@ -5,6 +5,9 @@ public class LiteUserDetails {
     private String userId;
     private String userFirstName;
     private String userLastName;
+    //for event check-in
+    private String eventCategory;
+    private Boolean companyManagmentEvent;
 
     public LiteUserDetails() {
     }
@@ -46,6 +49,22 @@ public class LiteUserDetails {
 
     public void setUserLastName(String userLastName) {
         this.userLastName = userLastName;
+    }
+
+    public String getEventCategory() {
+        return eventCategory;
+    }
+
+    public void setEventCategory(String eventCategory) {
+        this.eventCategory = eventCategory;
+    }
+
+    public Boolean getCompanyManagmentEvent() {
+        return companyManagmentEvent;
+    }
+
+    public void setCompanyManagmentEvent(Boolean companyManagmentEvent) {
+        this.companyManagmentEvent = companyManagmentEvent;
     }
 }
 

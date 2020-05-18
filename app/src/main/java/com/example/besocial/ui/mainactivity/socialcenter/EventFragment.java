@@ -167,20 +167,30 @@ public class EventFragment extends Fragment {
 
 
     private void attendToEvent() {
+        String userAttendingToEventPath= String.format("/%s/%s/%s", ConstantValues.USERS_ATTENDING_TO_EVENTS
+                , MainActivity.getLoggedUser().getUserId()
+                , chosenEvent.getEventId());
+
+
+        String eventsWithAttendingsPath= String.format("/%s/%s/%s", ConstantValues.EVENTS_WITH_ATTENDINGS
+                , chosenEvent.getEventId()
+                , MainActivity.getLoggedUser().getUserId());
+
         binding.fragmentEventAttendBtn.setEnabled(false);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         LiteUserDetails user = new LiteUserDetails(MainActivity.getLoggedUser().getProfileImage()
                 , MainActivity.getLoggedUser().getUserId()
                 , MainActivity.getLoggedUser().getUserFirstName()
                 , MainActivity.getLoggedUser().getUserLastName());
+        user.setEventCategory(chosenEvent.getEventCategory());
+        user.setCompanyManagmentEvent(chosenEvent.getCompanyManagmentEvent());
 
         Map<String, Object> childUpdates = new HashMap<>();
 
-        childUpdates.put("/" + ConstantValues.USERS_ATTENDING_TO_EVENTS
-                + "/" + MainActivity.getLoggedUser().getUserId() + "/" + chosenEvent.getEventId(), chosenEvent);
+        childUpdates.put(userAttendingToEventPath, chosenEvent);
 
-        childUpdates.put("/" + ConstantValues.EVENTS_WITH_ATTENDINGS
-                + "/" + chosenEvent.getEventId() + "/" + MainActivity.getLoggedUser().getUserId(), user);
+        childUpdates.put(eventsWithAttendingsPath, user);
+
 
         databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

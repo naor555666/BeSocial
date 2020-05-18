@@ -344,11 +344,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveRelevantEvents(DataSnapshot ds) {
-        Log.d(TAG, "ds.eventID is: " + ds.child(ConstantValues.EVENT_ID).getValue());
+        Boolean isCheckedIn=false;
+        if(ds.hasChild(ConstantValues.IS_CHECKED_IN)) isCheckedIn = true;
+        
         if (DateUtils.isEventCurrentlyOccurring(ds.child(ConstantValues.BEGIN_DATE).getValue().toString()
                 , ds.child(ConstantValues.FINISH_DATE).getValue().toString()
                 , ds.child(ConstantValues.BEGIN_TIME).getValue().toString()
-                , ds.child(ConstantValues.FINISH_TIME).getValue().toString())) {
+                , ds.child(ConstantValues.FINISH_TIME).getValue().toString())
+                && !((Boolean) ds.child(ConstantValues.IS_FINISHED).getValue())
+        && !isCheckedIn) {
             Log.d(TAG, "this event is suitable for geofencing: " + ds.child(ConstantValues.EVENT_TITLE).getValue());
             currentOccuringEvents.add(ds.getValue(Event.class));
             handleGeofencingEvents(ds.getValue(Event.class));
