@@ -17,16 +17,17 @@ public class Event {
     private String description;
     private String eventCreatorUid;
     private String eventCreatorUserName;
-    private boolean isCompanyManagmentEvent = false;
-    private boolean isFinished = false;
+    private Boolean isCompanyManagmentEvent = false;
+    private Boolean isFinished = false;
 
     public Event() {
     }
 
-    public Event(String eventId, String strEventPhotoUrl, String eventCategory, String title, String beginDate
-            , String finishDate, String beginTime, String finishTime, LatLng location
-            , String locationTitle, String description, String eventCreatorUid
-            , String eventCreatorUserName, boolean isCompanyManagmentEvent) {
+    public Event(String eventId, String strEventPhotoUrl, String eventCategory
+            , String title, String beginDate, String finishDate, String beginTime
+            , String finishTime, LatLng location, String locationTitle
+            , String description, String eventCreatorUid, String eventCreatorUserName
+            , Boolean isCompanyManagmentEvent, Boolean isFinished) {
         this.eventId = eventId;
         this.strEventPhotoUrl = strEventPhotoUrl;
         this.eventCategory = eventCategory;
@@ -41,48 +42,23 @@ public class Event {
         this.eventCreatorUid = eventCreatorUid;
         this.eventCreatorUserName = eventCreatorUserName;
         this.isCompanyManagmentEvent = isCompanyManagmentEvent;
+        this.isFinished = isFinished;
     }
 
-
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("strEventPhotoUrl", strEventPhotoUrl);
-        result.put("eventCategory", eventCategory);
-        result.put("title", title);
-        result.put("beginDate", beginDate);
-        result.put("finishDate", finishDate);
-        result.put("beginTime", beginTime);
-        result.put("finishTime", finishTime);
-        result.put("location", location);
-        result.put("locationTitle", locationTitle);
-        result.put("description", description);
-        result.put("eventCreatorUid", eventCreatorUid);
-        result.put("eventCreatorUserName", eventCreatorUserName);
-        result.put("isCompanyManagmentEvent", isCompanyManagmentEvent);
-
-        return result;
+    public String getEventId() {
+        return eventId;
     }
 
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
 
-    @Override
-    public String toString() {
-        return "Event{" +
-                "eventId='" + eventId + '\'' +
-                ", strEventPhotoUrl='" + strEventPhotoUrl + '\'' +
-                ", eventCategory='" + eventCategory + '\'' +
-                ", title='" + title + '\'' +
-                ", beginDate='" + beginDate + '\'' +
-                ", finishDate='" + finishDate + '\'' +
-                ", beginTime='" + beginTime + '\'' +
-                ", finishTime='" + finishTime + '\'' +
-                ", location=" + location +
-                ", locationTitle='" + locationTitle + '\'' +
-                ", description='" + description + '\'' +
-                ", eventCreatorUid='" + eventCreatorUid + '\'' +
-                ", eventCreatorUserName='" + eventCreatorUserName + '\'' +
-                ", isCompanyManagmentEvent=" + isCompanyManagmentEvent +
-                ", isFinished=" + isFinished +
-                '}';
+    public String getStrEventPhotoUrl() {
+        return strEventPhotoUrl;
+    }
+
+    public void setStrEventPhotoUrl(String strEventPhotoUrl) {
+        this.strEventPhotoUrl = strEventPhotoUrl;
     }
 
     public String getEventCategory() {
@@ -173,35 +149,19 @@ public class Event {
         this.eventCreatorUserName = eventCreatorUserName;
     }
 
-    public boolean isCompanyManagmentEvent() {
+    public Boolean getCompanyManagmentEvent() {
         return isCompanyManagmentEvent;
     }
 
-    public void setCompanyManagmentEvent(boolean companyManagmentEvent) {
+    public void setCompanyManagmentEvent(Boolean companyManagmentEvent) {
         isCompanyManagmentEvent = companyManagmentEvent;
     }
 
-    public String getStrEventPhotoUrl() {
-        return strEventPhotoUrl;
-    }
-
-    public void setStrEventPhotoUrl(String strEventPhotoUrl) {
-        this.strEventPhotoUrl = strEventPhotoUrl;
-    }
-
-    public String getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
-    }
-
-    public boolean isFinished() {
+    public Boolean getFinished() {
         return isFinished;
     }
 
-    public void setFinished(boolean finished) {
+    public void setFinished(Boolean finished) {
         isFinished = finished;
     }
 }

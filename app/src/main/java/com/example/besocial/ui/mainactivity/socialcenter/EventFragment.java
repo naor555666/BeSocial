@@ -239,6 +239,5 @@ public class EventFragment extends Fragment {
                 + "-" + chosenEvent.getFinishDate() + "," + chosenEvent.getFinishTime());
         binding.fragmentEventLocation.setText("Location: " + chosenEvent.getLocationTitle());
         binding.fragmentEventDescription.setText(chosenEvent.getDescription());
-        Log.d(TAG, "setEventDetails: isManagement: "+chosenEvent.isCompanyManagmentEvent());
     }
 }
