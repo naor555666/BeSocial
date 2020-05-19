@@ -1,6 +1,7 @@
 package com.example.besocial.ui.mainactivity;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +36,7 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -43,10 +46,11 @@ public class HomeFragment extends Fragment{
     private static ArrayList<Post> posts= new ArrayList<Post>();
     private static RecyclerView postsRecyclerView;
     private ImageButton createNewPost,refreshPosts;
-    private static DatabaseReference postsRef,likesRef;
+    private static DatabaseReference postsRef,likesRef,postLikesRef;
     private ProgressDialog progressDialog;
     private Boolean wasLikeClicked;
     private User loggedUser;
+    private List<String> displayedPostsId;
     private Boolean arePostsShown;
     private FirebaseRecyclerAdapter<Post, HomeFragment.PostsViewHolder> firebaseRecyclerAdapter;
     //private String postKey;
@@ -59,9 +63,12 @@ public class HomeFragment extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        displayedPostsId=new ArrayList<String>();
         createNewPost=view.findViewById(R.id.create_new_post_button);
         postsRecyclerView = view.findViewById(R.id.posts_list_recycler_view);
         postsRecyclerView.setHasFixedSize(true);
+        //sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        //editor = sharedPref.edit();
         progressDialog=new ProgressDialog(getActivity());
         //progressDialog.setTitle("Loading... Please wait");
         //progressDialog.show();
@@ -86,8 +93,8 @@ public class HomeFragment extends Fragment{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        likesRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.LIKES);
-        postsRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.POSTS);
+        //likesRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.LIKES);
+        //postsRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.POSTS);
         //displayPosts();
     }
 
@@ -109,7 +116,7 @@ public class HomeFragment extends Fragment{
                     Toast.makeText(getContext(),"No posts to display",Toast.LENGTH_LONG).show();
                 }else if(arePostsShown.equals(false)){
                     arePostsShown=true;
-                    showPosts();
+                    showPosts(dataSnapshot.getChildrenCount());
                 }
             }
 
@@ -120,7 +127,7 @@ public class HomeFragment extends Fragment{
         });
     }
 
-    void showPosts(){
+    void showPosts(final long numberOfPosts){
         FirebaseRecyclerOptions<Post> options = new FirebaseRecyclerOptions
                 .Builder<Post>()
                 .setQuery(postsRef, Post.class)
@@ -150,20 +157,50 @@ public class HomeFragment extends Fragment{
                 holder.postUserName.setText(model.getPostUserName());
                 holder.postDescription.setText(model.getPostDescription());
                 holder.postDate.setText(model.getPostDate());
-                holder.likeButton.setImageResource(R.drawable.empty_like_button);
+                postLikesRef=likesRef.child(model.getPostId());
+                postLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.hasChild(MainActivity.getLoggedUser().getUserId())){
+                            Toast.makeText(getContext(),"liked the post",Toast.LENGTH_LONG).show();
+
+                        }
+                        else
+                            Toast.makeText(getContext(),"DIDNT like the post",Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                likesRef=likesRef.child(model.getPostId()).child(MainActivity.getLoggedUser().getUserId());
+                if(likesRef!=null){
+                    holder.likeButton.setImageResource(R.drawable.full_like_button);
+                }
+                else{
+                    holder.likeButton.setImageResource(R.drawable.empty_like_button);
+                }
                 holder.likeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         likeButton(holder.likeButton,model);
                     }
                 });
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
+
+/*                holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //socialCenterViewModel.setBenefit(model);
                         //MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
                     }
-                });
+                });*/
+                displayedPostsId.add(model.getPostId());
+/*                if(numberOfPosts==(position-1)){
+                    Toast.makeText(getContext(),"stop listen",Toast.LENGTH_LONG).show();
+                    firebaseRecyclerAdapter.stopListening();
+                }*/
             }
         };
         RecyclerView newPostRecyclerView= HomeFragment.getPostsRecyclerView();
@@ -210,10 +247,10 @@ public class HomeFragment extends Fragment{
                                 likesRef.child(selectedPost.getPostId()).child(MainActivity.getLoggedUser().getUserId()).removeValue();
                                 wasLikeClicked=false;
                                 updateNumberOfLikesTransaction(postId,-1);
-                                likeButton.setImageResource(R.drawable.empty_like_button);
+                                //likeButton.setImageResource(R.drawable.empty_like_button);
                             }
                             else {
-                                likeButton.setImageResource(R.drawable.full_like_button);
+                                //likeButton.setImageResource(R.drawable.full_like_button);
                                 updateNumberOfLikesTransaction(postId,1);
                                 likesRef.child(postId).child(MainActivity.getLoggedUser().getUserId()).setValue(true);
                                 wasLikeClicked=false;
@@ -255,12 +292,12 @@ public class HomeFragment extends Fragment{
                 });
             }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+/*    @Override
+    public void onStop() {
+        super.onStop();
         if( firebaseRecyclerAdapter!=null){
             firebaseRecyclerAdapter.stopListening();
         }
 
-    }
+    }*/
 }

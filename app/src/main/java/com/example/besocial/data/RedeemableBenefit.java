@@ -14,10 +14,11 @@ public class RedeemableBenefit {
 
     }
 
-    public RedeemableBenefit(String name, String description, String category, Long cost, String benefitPhoto) {
+    public RedeemableBenefit(String name, String description, String category, String minimumSocialLevel, Long cost, String benefitPhoto) {
         this.name = name;
         this.description = description;
         this.category = category;
+        this.minimumSocialLevel=minimumSocialLevel;
         this.cost = cost;
         this.benefitPhoto = benefitPhoto;
     }

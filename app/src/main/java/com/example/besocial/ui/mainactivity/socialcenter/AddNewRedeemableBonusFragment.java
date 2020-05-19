@@ -94,12 +94,13 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
     boolean checkFields(String name, String description, String costString) {
         boolean isOk = true;
         long cost = 0;
-        int categoryPosition = 0;
+        int categoryPosition = 0,socialLevelPosition=0;
+        socialLevelPosition=binding.newBenefitSocialLevelRequired.getSelectedItemPosition();
         categoryPosition =binding.newBenefitCategories.getSelectedItemPosition();
         if (costString.equals(""))
             name = "";
         else cost = Long.parseLong(costString);
-        if (categoryPosition == 0 || name.equals("") || description.equals("") || cost < 1) {
+        if (categoryPosition == 0 || socialLevelPosition==0|| name.equals("") || description.equals("") || cost < 1) {
             isOk = false;
             Toast.makeText(getActivity(), "Incorrect Fields", Toast.LENGTH_SHORT).show();
         } else if (photoSet == false) {
@@ -163,7 +164,7 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
         category = binding.newBenefitCategories.getSelectedItem().toString();
         if (checkFields(name, description, costString) == true) {
             DatabaseReference benefitsRef = FirebaseDatabase.getInstance().getReference();
-            newRedeemableBenefit = new RedeemableBenefit(name, description, category, Long.parseLong(costString), imageUri.toString());
+            newRedeemableBenefit = new RedeemableBenefit(name, description, category, binding.newBenefitSocialLevelRequired.getSelectedItem().toString(),Long.parseLong(costString), imageUri.toString());
             benefitsRef.child(ConstantValues.BENEFITS).child(category).child(name)
                     .setValue(newRedeemableBenefit).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
