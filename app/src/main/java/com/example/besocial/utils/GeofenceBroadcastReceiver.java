@@ -117,6 +117,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                 uid,
                 ConstantValues.IS_CHECKED_IN), true);
 
+
         databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
