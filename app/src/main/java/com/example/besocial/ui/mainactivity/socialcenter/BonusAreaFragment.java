@@ -51,6 +51,7 @@ public class BonusAreaFragment extends Fragment {
     private ImageButton addNewRedeemableBonus;
     private NavController navController;
     private DatabaseReference benefitsRef;
+    //private ImageView benefitLock;
     private SocialCenterViewModel socialCenterViewModel;
 
     public BonusAreaFragment() {
@@ -148,14 +149,23 @@ public class BonusAreaFragment extends Fragment {
                             //holder.benefitNode = model;
                             Glide.with(getContext()).load(model.getBenefitPhoto()).placeholder(R.drawable.social_event0).into(holder.benefitPhoto);
                             holder.benefitName.setText(model.getName());
+                            if(getSocialLevelValue(MainActivity.getLoggedUser().getSocialLevel())>=getSocialLevelValue(model.getMinimumSocialLevel())){
+                                holder.benefitLock.setVisibility(View.GONE);
+                            }
                             //holder.benefitDescription.setText(model.getDescription());
                             //holder.benefitCategory.setText(model.getCategory());
                             //holder.benefitCost.setText(model.getCost().toString());
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    socialCenterViewModel.setBenefit(model);
-                                    MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
+                                    if(getSocialLevelValue(MainActivity.getLoggedUser().getSocialLevel())>=getSocialLevelValue(model.getMinimumSocialLevel())) {
+                                        socialCenterViewModel.setBenefit(model);
+                                        MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
+                                    }
+                                    else{
+                                        Toast.makeText(getContext(),"Need minimum level of: \""+model.getMinimumSocialLevel()+"\"",Toast.LENGTH_LONG).show();
+                                    }
+
                                 }
                             });
                         }
@@ -182,9 +192,11 @@ public class BonusAreaFragment extends Fragment {
     public static class BenefitsViewHolder extends RecyclerView.ViewHolder {
         RedeemableBenefit benefitNode;
         ImageView benefitPhoto;
+        ImageView benefitLock;
         TextView benefitCost, benefitName, benefitDescription,benefitCategory;
         public BenefitsViewHolder(@NonNull View itemView) {
             super(itemView);
+            benefitLock=itemView.findViewById(R.id.benefit_lock);
             benefitCost= itemView.findViewById(R.id.benefit_benefit_cost);
             benefitDescription= itemView.findViewById(R.id.benefit_benefit_description);
             benefitName= itemView.findViewById(R.id.recycler_benefit_name);
@@ -201,6 +213,22 @@ public class BonusAreaFragment extends Fragment {
   /*      MainActivity.getNavController().navigate();
         NavDestination*/
 
+    }
+
+    int getSocialLevelValue(String level){
+        int value=0;
+        if(level.equals(ConstantValues.USER_LEVEL_1))
+            value=1;
+        else if(level.equals(ConstantValues.USER_LEVEL_2))
+            value=2;
+        else if(level.equals(ConstantValues.USER_LEVEL_3))
+            value=3;
+        else if(level.equals(ConstantValues.USER_LEVEL_4))
+            value=4;
+        else if(level.equals(ConstantValues.USER_LEVEL_5))
+            value=5;
+
+        return value;
     }
 
 }

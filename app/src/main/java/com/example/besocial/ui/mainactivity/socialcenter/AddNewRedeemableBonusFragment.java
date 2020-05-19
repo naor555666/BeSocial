@@ -164,7 +164,7 @@ public class AddNewRedeemableBonusFragment extends Fragment implements View.OnCl
         category = binding.newBenefitCategories.getSelectedItem().toString();
         if (checkFields(name, description, costString) == true) {
             DatabaseReference benefitsRef = FirebaseDatabase.getInstance().getReference();
-            newRedeemableBenefit = new RedeemableBenefit(name, description, category, Long.parseLong(costString), imageUri.toString());
+            newRedeemableBenefit = new RedeemableBenefit(name, description, category, binding.newBenefitSocialLevelRequired.getSelectedItem().toString(),Long.parseLong(costString), imageUri.toString());
             benefitsRef.child(ConstantValues.BENEFITS).child(category).child(name)
                     .setValue(newRedeemableBenefit).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
