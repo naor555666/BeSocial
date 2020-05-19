@@ -24,6 +24,7 @@ import com.example.besocial.data.Event;
 import com.example.besocial.data.LiteUserDetails;
 import com.example.besocial.databinding.FragmentEventBinding;
 import com.example.besocial.ui.mainactivity.MainActivity;
+import com.example.besocial.utils.DateUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -46,6 +47,7 @@ public class EventFragment extends Fragment {
     private SocialCenterViewModel socialCenterViewModel;
     private boolean isUserAttending = false;
     private boolean isUserCheckedIn;
+    private boolean isEventOccuring;
 
     public EventFragment() {
         // Required empty public constructor
@@ -56,6 +58,7 @@ public class EventFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentEventBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+
         return view;
     }
 
@@ -67,7 +70,8 @@ public class EventFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        setEventDetails();
+
+
     }
 
     @Override
@@ -82,6 +86,7 @@ public class EventFragment extends Fragment {
         socialCenterViewModel = ViewModelProviders.of(getActivity()).get(SocialCenterViewModel.class);
         chosenEvent = socialCenterViewModel.getEvent().getValue();
         setListeners();
+        setEventDetails();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference.child(ConstantValues.USERS_ATTENDING_TO_EVENTS)
                 .child(MainActivity.getLoggedUser().getUserId())
@@ -90,11 +95,13 @@ public class EventFragment extends Fragment {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String path = "/" + chosenEvent.getEventId();
                         if (dataSnapshot.hasChild(path)) {
-                            isUserAttending = true;
-                            if (dataSnapshot.hasChild(path+"isCheckedIn")) {
-                                isUserCheckedIn = true;
-                            }
                             Log.d(TAG, "user attending");
+                            isUserAttending = true;
+                            if (dataSnapshot.hasChild(path + "/isCheckedIn")) {
+                                isUserCheckedIn = true;
+                                Log.d(TAG, "user is checked in");
+                            }
+
                         }
                         setAttendingButton();
                     }
@@ -106,23 +113,28 @@ public class EventFragment extends Fragment {
     }
 
     private void setAttendingButton() {
-        //if user is not the host
+        //if current user is not the host
         if (!chosenEvent.getEventCreatorUid().equals(MainActivity.getLoggedUser().getUserId())) {
             Log.d(TAG, "user is not the host");
             //check if user is attending
             if (isUserAttending) {
-                if (isUserCheckedIn) {
-                    binding.fragmentEventAttendBtn.setText("Checked-in!");
-                    binding.fragmentEventAttendBtn.setEnabled(false);
-                } else {
+                if (!isUserCheckedIn) {
                     Log.d(TAG, "set to cancel attending");
                     binding.fragmentEventAttendBtn.setText("Cancel attending");
+                }
+                //if user is checked-in disable the button
+                else {
+                    Log.d(TAG, "set button to checked in");
+                    binding.fragmentEventAttendBtn.setText("Checked-in!");
+                    binding.fragmentEventAttendBtn.setEnabled(false);
                 }
             }
             Log.d(TAG, "set to visible");
             binding.fragmentEventAttendBtn.setVisibility(View.VISIBLE);
         }
+
     }
+
 
     private void setListeners() {
         binding.fragmentEventAttendBtn.setOnClickListener(new View.OnClickListener() {
@@ -138,16 +150,23 @@ public class EventFragment extends Fragment {
                         .append(chosenEvent.getLocation().getLatitude()).append(",")
                         .append(chosenEvent.getLocation().getLongitude()).toString());
                 Intent mapsIntent = new Intent(Intent.ACTION_VIEW, locationURL);
-
                 startActivity(mapsIntent);
             }
         });
+        //view attendants list
+        binding.fragmentEventViewAttendantsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isEventOccuring", isEventOccuring);
+                MainActivity.getNavController().navigate(R.id.eventAttendantsFragment, bundle);
+            }
+        });
 
-        binding.fragmentEventViewAttendantsLayout.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.eventAttendantsFragment));
+        //navigate to host's profile page
         binding.fragmentEventHostFullName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS).child(chosenEvent.getEventCreatorUid());
                 userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -191,6 +210,8 @@ public class EventFragment extends Fragment {
                 , MainActivity.getLoggedUser().getUserId()
                 , MainActivity.getLoggedUser().getUserFirstName()
                 , MainActivity.getLoggedUser().getUserLastName());
+
+
         user.setEventCategory(chosenEvent.getEventCategory());
         user.setCompanyManagmentEvent(chosenEvent.getCompanyManagmentEvent());
 
@@ -258,5 +279,11 @@ public class EventFragment extends Fragment {
                 + "-" + chosenEvent.getFinishDate() + "," + chosenEvent.getFinishTime());
         binding.fragmentEventLocation.setText("Location: " + chosenEvent.getLocationTitle());
         binding.fragmentEventDescription.setText(chosenEvent.getDescription());
+        if (DateUtils.isEventCurrentlyOccurring(chosenEvent.getBeginDate()
+                , chosenEvent.getFinishDate()
+                , chosenEvent.getBeginTime()
+                , chosenEvent.getFinishTime())) {
+            isEventOccuring = true;
+        }
     }
 }

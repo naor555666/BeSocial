@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:text="Title"
                 android:textColor="#050505"
-                android:textSize="30sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
