@@ -45,6 +45,7 @@ public class EventFragment extends Fragment {
     private Event chosenEvent;
     private SocialCenterViewModel socialCenterViewModel;
     private boolean isUserAttending = false;
+    private boolean isUserCheckedIn;
 
     public EventFragment() {
         // Required empty public constructor
@@ -90,6 +91,9 @@ public class EventFragment extends Fragment {
                         String path = "/" + chosenEvent.getEventId();
                         if (dataSnapshot.hasChild(path)) {
                             isUserAttending = true;
+                            if (dataSnapshot.hasChild(path+"isCheckedIn")) {
+                                isUserCheckedIn = true;
+                            }
                             Log.d(TAG, "user attending");
                         }
                         setAttendingButton();
@@ -107,8 +111,13 @@ public class EventFragment extends Fragment {
             Log.d(TAG, "user is not the host");
             //check if user is attending
             if (isUserAttending) {
-                Log.d(TAG, "set to cancel attending");
-                binding.fragmentEventAttendBtn.setText("Cancel attending");
+                if (isUserCheckedIn) {
+                    binding.fragmentEventAttendBtn.setText("Checked-in!");
+                    binding.fragmentEventAttendBtn.setEnabled(false);
+                } else {
+                    Log.d(TAG, "set to cancel attending");
+                    binding.fragmentEventAttendBtn.setText("Cancel attending");
+                }
             }
             Log.d(TAG, "set to visible");
             binding.fragmentEventAttendBtn.setVisibility(View.VISIBLE);
@@ -139,7 +148,7 @@ public class EventFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                DatabaseReference userRef=FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS).child(chosenEvent.getEventCreatorUid());
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS).child(chosenEvent.getEventCreatorUid());
                 userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -167,12 +176,12 @@ public class EventFragment extends Fragment {
 
 
     private void attendToEvent() {
-        String userAttendingToEventPath= String.format("/%s/%s/%s", ConstantValues.USERS_ATTENDING_TO_EVENTS
+        String userAttendingToEventPath = String.format("/%s/%s/%s", ConstantValues.USERS_ATTENDING_TO_EVENTS
                 , MainActivity.getLoggedUser().getUserId()
                 , chosenEvent.getEventId());
 
 
-        String eventsWithAttendingsPath= String.format("/%s/%s/%s", ConstantValues.EVENTS_WITH_ATTENDINGS
+        String eventsWithAttendingsPath = String.format("/%s/%s/%s", ConstantValues.EVENTS_WITH_ATTENDINGS
                 , chosenEvent.getEventId()
                 , MainActivity.getLoggedUser().getUserId());
 

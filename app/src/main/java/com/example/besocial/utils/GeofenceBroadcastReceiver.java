@@ -26,6 +26,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +76,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         }*/
     }
 
-    private void handleGeofenceTransitionDetails(final Context context, int geofenceTransition, List<Geofence> triggeringGeofences,
+    private void handleGeofenceTransitionDetails(final Context context, int geofenceTransition, @NotNull List<Geofence> triggeringGeofences,
                                                  final PendingIntent geofencePendingIntent, final String uid) {
 
         final String transition;

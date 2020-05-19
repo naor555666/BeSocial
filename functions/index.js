@@ -26,14 +26,14 @@ exports.giveCredits = functions.database.ref('/EventsWithAttending/{eventId}/{us
     .onCreate((snapshot, context) => {
 
         var eventCategory, isManagamentEvent
-        admin.database().ref('/EventsWithAttending/' + context.params.eventId+"/"+context.params.userId).once('value').then(snapshot => {
+        admin.database().ref('/EventsWithAttending/' + context.params.eventId + "/" + context.params.userId).once('value').then(snapshot => {
             eventCategory = snapshot.child('eventCategory').val()
             isManagamentEvent = snapshot.child('companyManagmentEvent').val()
             return setUserSocialPoints(context, eventCategory, isManagamentEvent)
         }, () => {
             return 0
         }).catch();
-
+        return 1
     });
 
 
@@ -41,21 +41,19 @@ function checkForNewLevel(socialPoints) {
     var pendingSocialLevel
     if (socialPoints < lvl2) {
         pendingSocialLevel = strlvl1
-    } else if (socialPoints > lvl2 && socialPoints < lvl3) {
+    } else if (socialPoints >= lvl2 && socialPoints < lvl3) {
         pendingSocialLevel = strlvl2
-    } else if (socialPoints > lvl3 && socialPoints < lvl4) {
+    } else if (socialPoints >= lvl3 && socialPoints < lvl4) {
         pendingSocialLevel = strlvl3
-    } else if (socialPoints > lvl4 && socialPoints < lvl5) {
+    } else if (socialPoints >= lvl4 && socialPoints < lvl5) {
         pendingSocialLevel = strlvl4
-    } else if (socialPoints > lvl4) {
+    } else if (socialPoints >= lvl5) {
         pendingSocialLevel = strlvl5
     }
     return pendingSocialLevel
 }
-function setCreditAmountToGive(eventCategory, isManagamentEvent) {
-    console.log('event category: '+eventCategory);
-    console.log('isManagment: '+isManagamentEvent);
 
+function setCreditAmountToGive(eventCategory, isManagamentEvent) {
     var socialCreditsAmount
     if (eventCategory === HELP_ME) {
         if (isManagamentEvent === false) {
@@ -72,9 +70,9 @@ function setCreditAmountToGive(eventCategory, isManagamentEvent) {
         console.log('general managment');
 
     } else {
-         socialCreditsAmount = 0 
-         console.log('general non-managment');
-        }
+        socialCreditsAmount = 0
+        console.log('general non-managment');
+    }
     console.log('social credits to give: ' + socialCreditsAmount);
     return socialCreditsAmount
 }
@@ -88,6 +86,8 @@ function setUserSocialPoints(context, eventCategory, isManagamentEvent) {
         // console.log('social credits before: ' + socialStoreCredits);
         socialPoints = snapshot.child('socialPoints').val()
         socialLevel = snapshot.child('socialLevel').val()
+        console.log('current social level: ' + socialLevel);
+
         // console.log('social points before: ' + socialPoints);
         var creditAmountToGive = setCreditAmountToGive(eventCategory, isManagamentEvent)
         console.log('social credits to give: ' + creditAmountToGive);
@@ -95,6 +95,7 @@ function setUserSocialPoints(context, eventCategory, isManagamentEvent) {
         socialPoints += creditAmountToGive
 
         var pendingSocialLevel = checkForNewLevel(socialPoints)
+        console.log('pending social level: ' + pendingSocialLevel);
 
         // updates['/Notifications/' + context.params.userId + '/socialStoreCredits'] = socialStoreCredits;
 

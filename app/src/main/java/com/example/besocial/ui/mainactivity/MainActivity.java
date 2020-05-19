@@ -154,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
                 Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into(activateLocation);
             }
         }
-
     }
 
 
@@ -173,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
             //currentUserDatabaseRef.setValue(true);
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
 
-//            currentUserDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
             userDetailsListener = currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
