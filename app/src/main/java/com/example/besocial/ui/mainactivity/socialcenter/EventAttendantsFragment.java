@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -133,7 +134,13 @@ public class EventAttendantsFragment extends Fragment {
                 } else {
                     holder.userName.setText(String.format("%s %s", model.getUserFirstName(), model.getUserLastName()));
                 }
-                if (isEventOccuring && MainActivity.getLoggedUser().getUserId().equals(chosenEvent.getEventCreatorUid())) {
+                //if the event is currently active, the current user is the host
+                // and check-in ability isn't disabled
+                boolean necessaryEventCheckInCondition = isEventOccuring
+                        && MainActivity.getLoggedUser().getUserId().equals(chosenEvent.getEventCreatorUid())
+                        && !chosenEvent.getFinished();
+                if (necessaryEventCheckInCondition
+                        && (chosenEvent.getCompanyManagmentEvent() || chosenEvent.getEventCategory().equals(ConstantValues.HELP_ME))) {
 
                     Log.d(TAG, "onBindViewHolder: checkedIn= " + model.getisCheckedIn());
                     if (model.getisCheckedIn() != null) {
@@ -168,24 +175,53 @@ public class EventAttendantsFragment extends Fragment {
                 chosenEvent.getEventId(),
                 ConstantValues.IS_CHECKED_IN), true);
 
+
         childUpdates.put(String.format("/%s/%s/%s/%s", ConstantValues.EVENTS_WITH_ATTENDINGS,
                 chosenEvent.getEventId(),
                 userId,
                 ConstantValues.IS_CHECKED_IN), true);
+        //if user is not a manager, disable the abillity to check-in for this event after one user checked-in
+        if (!MainActivity.getLoggedUser().getIsManager()) {
+            String eventRootPath = chosenEvent.getEventCategory().equals(ConstantValues.HELP_ME) ? ConstantValues.HELP_ME : ConstantValues.EVENTS;
+            childUpdates.put(String.format("/%s/%s/%s", eventRootPath,
+                    chosenEvent.getEventId(),
+                    ConstantValues.IS_FINISHED), true);
+            childUpdates.put(String.format("/%s/%s/%s/%s", ConstantValues.USERS_ATTENDING_TO_EVENTS,
+                    userId,
+                    chosenEvent.getEventId(),
+                    ConstantValues.IS_FINISHED), true);
+            childUpdates.put(String.format("/%s/%s/%s/%s", ConstantValues.EVENTS_WITH_ATTENDINGS,
+                    chosenEvent.getEventId(),
+                    userId,
+                    ConstantValues.IS_FINISHED), true);
+            databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(getActivity(), String.format("credits sent to %s!", userFirstName), Toast.LENGTH_LONG).show();
+                    MainActivity.getNavController().popBackStack();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "onFailure: problem on checking user to event");
+                }
+            });
+        } else {
+
+            databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(getActivity(), String.format("credits sent to %s!", userFirstName), Toast.LENGTH_LONG).show();
 
 
-        databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(getActivity(), String.format("credits sent to %s!", userFirstName), Toast.LENGTH_LONG).show();
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "onFailure: problem on checking user to event");
-            }
-        });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "onFailure: problem on checking user to event");
+                }
+            });
+        }
     }
 
     public static class LiteUserDetailsViewHolder extends RecyclerView.ViewHolder {
