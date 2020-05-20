@@ -256,17 +256,7 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-/*        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == Activity.RESULT_OK) {
-                Uri resultUri = result.getUri();
-                Toast.makeText(getActivity(), "Change profile successfuly", Toast.LENGTH_LONG).show();
 
-                profileProfilePicture.setImageURI(resultUri);
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
-            }
-        }*/
 
 
     @Override
@@ -283,44 +273,13 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        mViewModel.setUser(loggedUser);
     }
 
-   /* void setNewChatListener(){
-        newChatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String sendFrom,sendTo,sendFromId,sendToId,chatId;
-                sendTo=profileFullName.getText().toString();
-                sendToId=userData.getUserId();
-                sendFrom=loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName();
-                sendFromId= loggedUser.getUserId();
-
-                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(sendFromId);
-                if(chatRef!=null) {
-
-                    chatRef = chatRef.push();
-                }
-                chatId=chatRef.getKey();
-                ChatConversation newChatConversation1=new ChatConversation
-                        (sendFrom,sendTo,chatId,userData.getProfileImage());
-                chatRef.setValue(newChatConversation1);
-
-                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(sendToId).child(chatId);
-                ChatConversation newChatConversation2=new ChatConversation
-                        (sendTo,sendFrom,chatId,loggedUser.getProfileImage());
-                chatRef.setValue(newChatConversation2).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            navController.navigate(R.id.action_nav_my_profile_to_nav_chat);
-                        }
-                    }
-                });
-            }
-        });
-    }*/
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+//        mViewModel.setUser(loggedUser);
+    }
 
     public String generateRandomId() {
         byte[] array = new byte[20]; // length is bounded by 7
