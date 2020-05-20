@@ -1,6 +1,7 @@
 package com.example.besocial.ui.login;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -47,7 +48,7 @@ public class RegisterFragment extends Fragment {
     private String confirmEmailString;
     private String passwordString;
     private String confirmPasswordString;
-
+    private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference userRef,usersListRef;
@@ -75,6 +76,8 @@ public class RegisterFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         usersList=new ArrayList<String>();
+        progressDialog=new ProgressDialog(getActivity());
+        progressDialog.setTitle("Creating account... Please wait");
         setListeners();
     }
 
@@ -92,6 +95,7 @@ public class RegisterFragment extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
+                                            progressDialog.show();
                                             String userID = task.getResult().getUser().getUid();
                                             saveUserDetails(userID);
                                         } else {
@@ -126,6 +130,7 @@ public class RegisterFragment extends Fragment {
                    // userRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS_LIST);
                   //  usersList.add(firstName.getText().toString());
                    // userRef.setValue(usersList);
+                    progressDialog.dismiss();
                     Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
                     getFragmentManager().popBackStack();
                 } else {
