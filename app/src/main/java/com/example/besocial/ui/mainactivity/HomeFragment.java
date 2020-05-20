@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -46,12 +48,14 @@ public class HomeFragment extends Fragment{
     private static ArrayList<Post> posts= new ArrayList<Post>();
     private static RecyclerView postsRecyclerView;
     private ImageButton createNewPost,refreshPosts;
-    private static DatabaseReference postsRef,likesRef,postLikesRef;
+    private static DatabaseReference postsRef,likesRef,postLikesRef,usersRef;
     private ProgressDialog progressDialog;
     private Boolean wasLikeClicked;
     private User loggedUser;
     private List<String> displayedPostsId;
     private Boolean arePostsShown;
+    private static UsersViewModel mViewModel;
+
     private FirebaseRecyclerAdapter<Post, HomeFragment.PostsViewHolder> firebaseRecyclerAdapter;
     //private String postKey;
 
@@ -67,6 +71,8 @@ public class HomeFragment extends Fragment{
         createNewPost=view.findViewById(R.id.create_new_post_button);
         postsRecyclerView = view.findViewById(R.id.posts_list_recycler_view);
         postsRecyclerView.setHasFixedSize(true);
+        mViewModel = ViewModelProviders.of(getActivity()).get(UsersViewModel.class);
+
         //sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         //editor = sharedPref.edit();
         progressDialog=new ProgressDialog(getActivity());
@@ -108,6 +114,8 @@ public class HomeFragment extends Fragment{
     public void displayPosts(){
         likesRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.LIKES);
         postsRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.POSTS);
+        usersRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS);
+
 
         postsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -157,6 +165,24 @@ public class HomeFragment extends Fragment{
                 holder.postUserName.setText(model.getPostUserName());
                 holder.postDescription.setText(model.getPostDescription());
                 holder.postDate.setText(model.getPostDate());
+                holder.postIdentityLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        usersRef.child(model.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                User user= dataSnapshot.getValue(User.class);
+                                mViewModel.setUser(user);
+                                MainActivity.getNavController().navigate(R.id.action_nav_home_to_nav_my_profile);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
                 postLikesRef=likesRef.child(model.getPostId());
                 postLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -212,6 +238,7 @@ public class HomeFragment extends Fragment{
     public static class PostsViewHolder extends RecyclerView.ViewHolder {
         Post postNode;
         ImageButton likeButton;
+        RelativeLayout postIdentityLayout;
         ImageView postPhoto;
         TextView numberOfLikes;
         CircleImageView postProfilePicture;
@@ -224,6 +251,7 @@ public class HomeFragment extends Fragment{
             postDate= itemView.findViewById(R.id.post_date);
             postDescription= itemView.findViewById(R.id.post_description);
             postUserName= itemView.findViewById(R.id.post_username);
+            postIdentityLayout=itemView.findViewById(R.id.post_identity_layout);
             postPhoto= itemView.findViewById(R.id.post_imageview);
         }
     }
@@ -300,4 +328,6 @@ public class HomeFragment extends Fragment{
         }
 
     }*/
+
+
 }

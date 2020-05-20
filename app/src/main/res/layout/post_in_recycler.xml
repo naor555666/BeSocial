@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
@@ -9,52 +10,61 @@
     android:padding="15dp">
 
 
-    <RelativeLayout
-        android:id="@+id/post_identity_layout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/post_user_profile_image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher">
-
-        </de.hdodenhof.circleimageview.CircleImageView>
-
-        <LinearLayout
-            android:id="@+id/post_username_and_date"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/post_identity_layout"
+            android:layout_width="298dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_toEndOf="@id/post_user_profile_image"
-            android:orientation="vertical">
+            android:layout_marginRight="30dp">
 
-            <TextView
-                android:id="@+id/post_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/username"
-                android:textColor="#D7000000"
-                android:textSize="20sp"
-                android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/post_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="post date"
-                android:textDirection="ltr"
-                android:textSize="20sp" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/post_user_profile_image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_launcher">
+
+            </de.hdodenhof.circleimageview.CircleImageView>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"></LinearLayout>
+                android:id="@+id/post_username_and_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_toEndOf="@id/post_user_profile_image"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/post_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/username"
+                    android:textColor="#D7000000"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/post_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="post date"
+                    android:textDirection="ltr"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"></LinearLayout>
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
 
         <ImageButton
             android:id="@+id/post_in_recycler_like_button"
@@ -63,11 +73,11 @@
             android:layout_alignParentEnd="true"
             android:background="#FFFFFF"
             android:layoutDirection="rtl"
-            android:scaleType="centerCrop">
+            android:scaleType="centerCrop"
+            android:src="@drawable/empty_like_button">
 
         </ImageButton>
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/post_description"
