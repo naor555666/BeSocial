@@ -17,9 +17,8 @@
 
         <RelativeLayout
             android:id="@+id/post_identity_layout"
-            android:layout_width="298dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="30dp">
+            android:layout_width="280dp"
+            android:layout_height="wrap_content">
 
 
             <de.hdodenhof.circleimageview.CircleImageView

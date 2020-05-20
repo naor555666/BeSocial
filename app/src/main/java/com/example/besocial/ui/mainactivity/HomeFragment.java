@@ -188,11 +188,12 @@ public class HomeFragment extends Fragment{
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.hasChild(MainActivity.getLoggedUser().getUserId())){
-                            Toast.makeText(getContext(),"liked the post",Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getContext(),"liked the post",Toast.LENGTH_LONG).show();
+                            holder.likeButton.setImageResource(R.drawable.full_like_button);
 
                         }
                         else
-                            Toast.makeText(getContext(),"DIDNT like the post",Toast.LENGTH_LONG).show();
+                            holder.likeButton.setImageResource(R.drawable.empty_like_button);
 
                     }
 
@@ -201,13 +202,7 @@ public class HomeFragment extends Fragment{
 
                     }
                 });
-                likesRef=likesRef.child(model.getPostId()).child(MainActivity.getLoggedUser().getUserId());
-                if(likesRef!=null){
-                    holder.likeButton.setImageResource(R.drawable.full_like_button);
-                }
-                else{
-                    holder.likeButton.setImageResource(R.drawable.empty_like_button);
-                }
+
                 holder.likeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -215,18 +210,9 @@ public class HomeFragment extends Fragment{
                     }
                 });
 
-/*                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //socialCenterViewModel.setBenefit(model);
-                        //MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
-                    }
-                });*/
+
                 displayedPostsId.add(model.getPostId());
-/*                if(numberOfPosts==(position-1)){
-                    Toast.makeText(getContext(),"stop listen",Toast.LENGTH_LONG).show();
-                    firebaseRecyclerAdapter.stopListening();
-                }*/
+
             }
         };
         RecyclerView newPostRecyclerView= HomeFragment.getPostsRecyclerView();
