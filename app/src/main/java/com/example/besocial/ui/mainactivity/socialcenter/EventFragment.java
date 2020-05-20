@@ -48,6 +48,8 @@ public class EventFragment extends Fragment {
     private boolean isUserAttending = false;
     private boolean isUserCheckedIn;
     private boolean isEventOccuring;
+    private ValueEventListener attendanceListener;
+    private DatabaseReference databaseReference;
 
     public EventFragment() {
         // Required empty public constructor
@@ -70,8 +72,36 @@ public class EventFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        attendanceListener = databaseReference.child(ConstantValues.USERS_ATTENDING_TO_EVENTS)
+                .child(MainActivity.getLoggedUser().getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String path = "/" + chosenEvent.getEventId();
+                        if (dataSnapshot.hasChild(path)) {
+                            Log.d(TAG, "user attending");
+                            isUserAttending = true;
+                            if (dataSnapshot.hasChild(path + "/isCheckedIn")) {
+                                isUserCheckedIn = true;
+                                Log.d(TAG, "user is checked in");
+                            }
+                        }
+                        setAttendingButton();
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (databaseReference != null && attendanceListener != null) {
+            databaseReference.removeEventListener(attendanceListener);
+        }
     }
 
     @Override
@@ -87,29 +117,7 @@ public class EventFragment extends Fragment {
         chosenEvent = socialCenterViewModel.getEvent().getValue();
         setListeners();
         setEventDetails();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child(ConstantValues.USERS_ATTENDING_TO_EVENTS)
-                .child(MainActivity.getLoggedUser().getUserId())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String path = "/" + chosenEvent.getEventId();
-                        if (dataSnapshot.hasChild(path)) {
-                            Log.d(TAG, "user attending");
-                            isUserAttending = true;
-                            if (dataSnapshot.hasChild(path + "/isCheckedIn")) {
-                                isUserCheckedIn = true;
-                                Log.d(TAG, "user is checked in");
-                            }
 
-                        }
-                        setAttendingButton();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
     }
 
     private void setAttendingButton() {

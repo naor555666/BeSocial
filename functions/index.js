@@ -83,12 +83,10 @@ function setUserSocialPoints(context, eventCategory, isManagamentEvent) {
 
     admin.database().ref('/users/' + context.params.userId).once('value').then(snapshot => {
         socialStoreCredits = snapshot.child('socialStoreCredits').val()
-        // console.log('social credits before: ' + socialStoreCredits);
         socialPoints = snapshot.child('socialPoints').val()
         socialLevel = snapshot.child('socialLevel').val()
         console.log('current social level: ' + socialLevel);
 
-        // console.log('social points before: ' + socialPoints);
         var creditAmountToGive = setCreditAmountToGive(eventCategory, isManagamentEvent)
         console.log('social credits to give: ' + creditAmountToGive);
         socialStoreCredits += creditAmountToGive

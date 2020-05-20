@@ -165,7 +165,6 @@ public class EventAttendantsFragment extends Fragment {
         firebaseRecyclerAdapter.startListening();
     }
 
-    // TODO: 19/05/2020 make user who is not manager give credits only once 
     private void giveUserCredits(String userId, final String userFirstName) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         Map<String, Object> childUpdates = new HashMap<>();
@@ -198,6 +197,7 @@ public class EventAttendantsFragment extends Fragment {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(getActivity(), String.format("credits sent to %s!", userFirstName), Toast.LENGTH_LONG).show();
+                    chosenEvent.setFinished(true);
                     MainActivity.getNavController().popBackStack();
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -212,8 +212,6 @@ public class EventAttendantsFragment extends Fragment {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(getActivity(), String.format("credits sent to %s!", userFirstName), Toast.LENGTH_LONG).show();
-
-
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
