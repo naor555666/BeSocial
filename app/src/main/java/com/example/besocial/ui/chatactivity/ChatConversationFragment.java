@@ -107,7 +107,8 @@ public class ChatConversationFragment extends Fragment {
         bundle = getArguments();
         dbRef = FirebaseDatabase.getInstance().getReference();
         //conversation was chosen from main activity
-        if (bundle != null) {
+//        if (bundle != null) {
+        if (bundle != null && chatViewModel.getChosenChatConversation().getValue()==null) {
             Log.d(TAG, "getConversationDetails: bundel is not null");
             chosenUid = bundle.getString("chosenUid", null);
 
@@ -175,12 +176,10 @@ public class ChatConversationFragment extends Fragment {
         binding.chatUserInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -210,8 +209,10 @@ public class ChatConversationFragment extends Fragment {
         final Map<String, Object> childUpdates = new HashMap<>();
         if (chosenChatConversation == null) {
             if (!isConversationExists) {
+                Log.d(TAG, "sendMessage: conversation does not exist");
                 createNewConversationInDB(childUpdates, textMessage);
             } else {
+                Log.d(TAG, "sendMessage: conversation exists");
                 addMessage(textMessage, conversationId);
             }
         } else {
@@ -240,14 +241,14 @@ public class ChatConversationFragment extends Fragment {
                 chosenUid,
                 DateUtils.getCurrentTimeString());
         String userName = String.format("%s %s", MainActivity.getLoggedUser().getUserFirstName(), MainActivity.getLoggedUser().getUserLastName());
-        final ChatConversation chatConversation = new ChatConversation(conversationId,
+        chosenChatConversation = new ChatConversation(conversationId,
                 MainActivity.getLoggedUser().getUserId(),
                 chosenUid,
                 MainActivity.getLoggedUser().getProfileImage(), false, userName, MainActivity.getCurrentUser().getUid());
-        chatViewModel.setChosenChatConversation(chatConversation);
-
+        chatViewModel.setChosenChatConversation(chosenChatConversation);
+        
         childUpdates.put(String.format("/%s/%s/%s", ConstantValues.CHAT_MESSAGES, conversationId, newMessageId), chatMessage);
-        childUpdates.put(String.format("/%s/%s/%s", ConstantValues.CHAT_CONVERSATIONS, chosenUid, MainActivity.getCurrentUser().getUid()), chatConversation);
+        childUpdates.put(String.format("/%s/%s/%s", ConstantValues.CHAT_CONVERSATIONS, chosenUid, MainActivity.getCurrentUser().getUid()), chosenChatConversation);
         DatabaseReference userPhotoRef = dbRef
                 .child(ConstantValues.USERS)
                 .child(chosenUid);
@@ -358,6 +359,7 @@ public class ChatConversationFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        chatViewModel.setChosenChatConversation(null);
         if (firebaseRecyclerAdapter != null)
             firebaseRecyclerAdapter.stopListening();
         binding = null;
