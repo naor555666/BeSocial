@@ -154,17 +154,18 @@ public class HomeFragment extends Fragment{
             protected void onBindViewHolder(@NonNull final HomeFragment.PostsViewHolder holder, int position, @NonNull final Post model) {
                 //holder.benefitNode = model;
                 //long numberOfLikes=model.getNumberOfLikes().longValue();
-                Glide.with(getContext()).load(model.getUserProfilePicture()).placeholder(R.drawable.social_event0).into(holder.postProfilePicture);
-                if(!(model.getPostImage()==null)){
-                    Glide.with(getContext()).load(model.getPostImage()).placeholder(R.drawable.social_event0).into(holder.postPhoto);
+                Glide.with(getContext()).load(model.getUserProfilePicture()).placeholder(R.drawable.empty_profile_image).into(holder.postProfilePicture);
+                if(model.getPostImage()==null){
+                    holder.postPhoto.setVisibility(View.GONE);
                 }
                 else{
-                    holder.postPhoto.setVisibility(View.GONE);
+                    Glide.with(getContext()).load(model.getPostImage()).placeholder(R.drawable.social_event0).into(holder.postPhoto);
                 }
 
                 holder.postUserName.setText(model.getPostUserName());
                 holder.postDescription.setText(model.getPostDescription());
                 holder.postDate.setText(model.getPostDate());
+                holder.numberOfLikes.setText("number of likes: "+model.getNumberOfLikes().longValue());
                 holder.postIdentityLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -172,6 +173,7 @@ public class HomeFragment extends Fragment{
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 User user= dataSnapshot.getValue(User.class);
+                                Log.d(TAG, "onDataChange: User: "+user.getUserFirstName()+" , status: "+user.getAccountStatus());
                                 mViewModel.setUser(user);
                                 MainActivity.getNavController().navigate(R.id.action_nav_home_to_nav_my_profile);
                             }

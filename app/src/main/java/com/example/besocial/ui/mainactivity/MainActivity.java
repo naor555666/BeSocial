@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -186,6 +187,12 @@ public class MainActivity extends AppCompatActivity {
                     nav_header_user_full_name.setText(new StringBuilder().append(loggedUser.getUserFirstName())
                             .append(" ").append(loggedUser.getUserLastName()).toString());
                     Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
+                    if( loggedUser!=null ){
+                        if(loggedUser.getAccountStatus().equals("Blocked")){
+                        sendUserToLogin();
+                        Toast.makeText(MainActivity.this,"Your account has been BLOCKED. Contact us for account retrieval", Toast.LENGTH_LONG).show();
+                        }
+                    }
                 }
 
                 @Override

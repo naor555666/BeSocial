@@ -91,7 +91,7 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("dd-MMM-yyyy");
         SimpleDateFormat simpleTimeFormat=new SimpleDateFormat("hh:mm");
         uploadedImageUri=null;
-        Glide.with(getContext()).load(loggedUser.getProfileImage()).placeholder(R.drawable.social_event0).into(newPostUserProfilePicture);
+        Glide.with(getContext()).load(loggedUser.getProfileImage()).placeholder(R.drawable.empty_profile_image).into(newPostUserProfilePicture);
         currentDate= simpleDateFormat.format(calendar.getTime());
         currentTime=simpleTimeFormat.format(calendar.getTime());
         newPostUsername.setText(loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName());

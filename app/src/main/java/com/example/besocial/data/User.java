@@ -15,6 +15,7 @@ public class User {
     private Boolean isManager;
     private String profileImage;
     private LatLng userCurrentPosition;
+    private String accountStatus;
 
 
     public User() {
@@ -23,7 +24,7 @@ public class User {
     public User(String userId, String userFirstName, String userLastName,
                 String userEmail, String userAddress, String userCity,
                 String birthday, Long socialPoints, String socialLevel,
-                Long socialStoreCredits, Boolean isManager, String profileImage) {
+                Long socialStoreCredits, Boolean isManager, String profileImage, String accountStatus) {
         this.userId = userId;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
@@ -36,6 +37,7 @@ public class User {
         this.socialStoreCredits = socialStoreCredits;
         this.isManager = isManager;
         this.profileImage = profileImage;
+        this.accountStatus=accountStatus;
     }
 
     public String getBirthday() {
@@ -140,5 +142,13 @@ public class User {
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public String getAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(String accountStatus) {
+        this.accountStatus = accountStatus;
     }
 }

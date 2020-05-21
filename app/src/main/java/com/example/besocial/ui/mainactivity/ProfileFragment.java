@@ -58,12 +58,12 @@ public class ProfileFragment extends Fragment {
     private TextView profilePageUsername;
     private EditText profileFullName, profileEmail, profileCity, profileAddress, profileBirthday, profileSocialLevel, profileSocialPoints;
     private User loggedUser,userData;
-    private Button profileSaveDetails, profileFollowList, profileMyPictures;
+    private Button profileSaveDetails, profileFollowList, profileMyPictures,blockUserButton;
     private final static int galleryPick = 1;
     private ImageButton profileChangeProfilePicture, profileEditProfileDetails;
     private ImageButton newChatButton;
     private FirebaseDatabase firebaseDatabase;
-    private static DatabaseReference userRef,chatRef;
+    private static DatabaseReference userRef,userDataRef;
     private StorageReference userPicturesRef;
     private NavController navController;
     private static UsersViewModel mViewModel;
@@ -101,6 +101,7 @@ public class ProfileFragment extends Fragment {
         profileSocialPoints = view.findViewById(R.id.profile_social_points);
         profileCity = view.findViewById(R.id.profile_city);
         profileEmail = view.findViewById(R.id.profile_email);
+        blockUserButton=view.findViewById(R.id.profile_block_user_button);
         profileBirthday = view.findViewById(R.id.profile_birthday);
         profileSaveDetails = view.findViewById(R.id.profile_save_new_details);
         profileEditProfileDetails = view.findViewById(R.id.profile_edit_profile_details);
@@ -121,14 +122,29 @@ public class ProfileFragment extends Fragment {
         profileSocialPoints.setText(userData.getSocialPoints().toString());
         profileBirthday.setText(userData.getBirthday());
         String myProfileImage = userData.getProfileImage();
+
         if(!loggedUser.getUserId().equals(userData.getUserId())){
+            myProfileTextView.setVisibility(View.INVISIBLE);
             profileChangeProfilePicture.setVisibility(View.INVISIBLE);
             profileEditProfileDetails.setVisibility(View.INVISIBLE);
             profileMyPictures.setText("UPLOADED PHOTOS");
             myProfileTextView.setVisibility(View.INVISIBLE);
-
             profileFollowList.setText("FOLLOW LIST");
             newChatButton.setVisibility(View.VISIBLE);
+            String status,name="";
+            if(MainActivity.getLoggedUser().getIsManager().booleanValue()==true )
+                name=userData.getUserFirstName();
+                status = userData.getAccountStatus();
+                if(name.equals("Or")&&userData.getAccountStatus().equals("Blocked")){
+                    blockUserButton.setText("RETRIEVE USER");
+                    blockUserButton.setBackgroundColor(getResources().getColor(R.color.greenRetrieveUserButton));
+                }
+                else if(userData.getAccountStatus().equals("Active")){
+                    blockUserButton.setText("BLOCK USER");
+                    blockUserButton.setBackgroundColor(getResources().getColor(R.color.redBlockUserButton));
+                }
+                blockUserButton.setVisibility(View.VISIBLE);
+
         }
         userRef = MainActivity.getCurrentUserDatabaseRef();
         Glide.with(getContext()).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(profileProfilePicture);
@@ -210,6 +226,16 @@ public class ProfileFragment extends Fragment {
                 openChatConversation();
             }
         });
+
+        blockUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(userData.getAccountStatus().equals("Active"))
+                    changeUserStatus(userData.getUserId(),"Blocked");
+                else
+                    changeUserStatus(userData.getUserId(),"Active");
+            }
+        });
     }
 
     private void openChatConversation() {
@@ -256,18 +282,6 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-/*        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == Activity.RESULT_OK) {
-                Uri resultUri = result.getUri();
-                Toast.makeText(getActivity(), "Change profile successfuly", Toast.LENGTH_LONG).show();
-
-                profileProfilePicture.setImageURI(resultUri);
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
-            }
-        }*/
-
 
     @Override
     public void onDestroyView() {
@@ -286,40 +300,6 @@ public class ProfileFragment extends Fragment {
         mViewModel.setUser(loggedUser);
     }
 
-   /* void setNewChatListener(){
-        newChatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String sendFrom,sendTo,sendFromId,sendToId,chatId;
-                sendTo=profileFullName.getText().toString();
-                sendToId=userData.getUserId();
-                sendFrom=loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName();
-                sendFromId= loggedUser.getUserId();
-
-                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(sendFromId);
-                if(chatRef!=null) {
-
-                    chatRef = chatRef.push();
-                }
-                chatId=chatRef.getKey();
-                ChatConversation newChatConversation1=new ChatConversation
-                        (sendFrom,sendTo,chatId,userData.getProfileImage());
-                chatRef.setValue(newChatConversation1);
-
-                chatRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.CHATS).child(sendToId).child(chatId);
-                ChatConversation newChatConversation2=new ChatConversation
-                        (sendTo,sendFrom,chatId,loggedUser.getProfileImage());
-                chatRef.setValue(newChatConversation2).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            navController.navigate(R.id.action_nav_my_profile_to_nav_chat);
-                        }
-                    }
-                });
-            }
-        });
-    }*/
 
 
     public String generateRandomId() {
@@ -329,5 +309,21 @@ public class ProfileFragment extends Fragment {
         return generatedId;
 
     }
+
+    private void changeUserStatus(String userIdToChangeStatus,String newStatus){
+        userDataRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.USERS).child(userIdToChangeStatus).child("accountStatus");
+        if(newStatus.equals("Blocked")){
+            blockUserButton.setText("RETRIEVE USER");
+            blockUserButton.setBackgroundColor(getResources().getColor(R.color.greenRetrieveUserButton));
+        }
+        else if(newStatus.equals("Active")){
+            blockUserButton.setText("BLOCK USER");
+            blockUserButton.setBackgroundColor(getResources().getColor(R.color.redBlockUserButton));
+        }
+        userDataRef.setValue(newStatus);
+    }
+
+
+
 }
 

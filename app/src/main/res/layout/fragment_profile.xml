@@ -302,6 +302,19 @@
             android:text="SAVE DETAILS"
             android:visibility="invisible" />
 
+        <Button
+            android:id="@+id/profile_block_user_button"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="15dp"
+            android:background="#FFFFFF"
+            android:backgroundTint="#D683D34D"
+            android:shadowRadius="90"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
 
     </LinearLayout>
 
