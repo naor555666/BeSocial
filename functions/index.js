@@ -15,11 +15,28 @@ const strlvl4 = "Socialized Ninja Turtle"
 const strlvl5 = "Socialosaurus"
 
 const HELP_ME = "Help Me!"
+
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-exports.helloWorld = functions.https.onRequest((request, response) => {
-    response.send("Hello from Firebase!");
+
+
+// approve chat conversation+give points to users
+exports.approveChatConversation = functions.https.onCall((data, context) => {
+    // data of chat sender and receiver from client
+    const sender = data.sender
+    const receiver = context.auth.uid
+    var updates = {};
+
+
+    return setUserSocialPointsForChatApproval(updates, sender, 2).then(() => {
+        return setUserSocialPointsForChatApproval(updates, receiver, 1)
+    }, () => 0).then(() => {
+        updates[`/ChatConversations/${sender}/${receiver}/approved`] = true;
+        updates[`/ChatConversations/${receiver}/${sender}/approved`] = true;
+        console.log('before updates');
+        return admin.database().ref().update(updates)
+    }, () => 0
+    ).catch();
 });
 
 exports.giveCredits = functions.database.ref('/EventsWithAttending/{eventId}/{userId}/isCheckedIn')
@@ -29,7 +46,7 @@ exports.giveCredits = functions.database.ref('/EventsWithAttending/{eventId}/{us
         admin.database().ref('/EventsWithAttending/' + context.params.eventId + "/" + context.params.userId).once('value').then(snapshot => {
             eventCategory = snapshot.child('eventCategory').val()
             isManagamentEvent = snapshot.child('companyManagmentEvent').val()
-            return setUserSocialPoints(context, eventCategory, isManagamentEvent)
+            return setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent)
         }, () => {
             return 0
         }).catch();
@@ -58,25 +75,21 @@ function setCreditAmountToGive(eventCategory, isManagamentEvent) {
     if (eventCategory === HELP_ME) {
         if (isManagamentEvent === false) {
             socialCreditsAmount = 50
-            console.log('help me normal');
 
         } else {
             socialCreditsAmount = 100
-            console.log('help me managment');
 
         }
     } else if (isManagamentEvent === true) {
         socialCreditsAmount = 50
-        console.log('general managment');
 
     } else {
         socialCreditsAmount = 0
-        console.log('general non-managment');
     }
     console.log('social credits to give: ' + socialCreditsAmount);
     return socialCreditsAmount
 }
-function setUserSocialPoints(context, eventCategory, isManagamentEvent) {
+function setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent) {
     var socialStoreCredits
     var socialPoints
     var socialLevel
@@ -85,7 +98,6 @@ function setUserSocialPoints(context, eventCategory, isManagamentEvent) {
         socialStoreCredits = snapshot.child('socialStoreCredits').val()
         socialPoints = snapshot.child('socialPoints').val()
         socialLevel = snapshot.child('socialLevel').val()
-        console.log('current social level: ' + socialLevel);
 
         var creditAmountToGive = setCreditAmountToGive(eventCategory, isManagamentEvent)
         console.log('social credits to give: ' + creditAmountToGive);
@@ -111,7 +123,42 @@ function setUserSocialPoints(context, eventCategory, isManagamentEvent) {
     }).catch();
 }
 
+function setUserSocialPointsForChatApproval(updates, userId, creditAmountToGive) {
+    console.log('setUserSocialPointsForChatApproval invoked ');
 
+    var socialStoreCredits
+    var socialPoints
+    var socialLevel
+
+    return admin.database().ref('/users/' + userId).once('value').then(snapshot => {
+        socialStoreCredits = snapshot.child('socialStoreCredits').val()
+        socialPoints = snapshot.child('socialPoints').val()
+        socialLevel = snapshot.child('socialLevel').val()
+
+        socialStoreCredits += creditAmountToGive
+        socialPoints += creditAmountToGive
+        console.log('social points after update: ' + socialPoints);
+
+        var pendingSocialLevel = checkForNewLevel(socialPoints)
+        console.log('pending social level: ' + pendingSocialLevel);
+
+        // updates['/Notifications/' + context.params.userId + '/socialStoreCredits'] = socialStoreCredits;
+
+
+        if (socialLevel !== pendingSocialLevel) {
+            updates['/users/' + userId + '/socialLevel'] = pendingSocialLevel;
+        }
+        updates['/users/' + userId + '/socialStoreCredits'] = socialStoreCredits;
+        updates['/users/' + userId + '/socialPoints'] = socialPoints;
+        console.log('finished one part inserting to updates');
+
+        return 0
+    }
+        , reason => {
+            console.error(reason); // Error!
+            return 0
+        }).catch();
+}
 
 
 

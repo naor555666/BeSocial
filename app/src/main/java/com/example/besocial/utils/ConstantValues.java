@@ -57,4 +57,5 @@ public interface ConstantValues {
     String CHAT_ID = "chatId";
     String LIKES = "Likes";
     String IS_FINISHED = "finished";
+    String APPROVED = "approved";
 }
