@@ -135,7 +135,7 @@ public class ProfileFragment extends Fragment {
             if(MainActivity.getLoggedUser().getIsManager().booleanValue()==true )
                 name=userData.getUserFirstName();
                 status = userData.getAccountStatus();
-                if(name.equals("Or")&&userData.getAccountStatus().equals("Blocked")){
+                if(userData.getAccountStatus().equals("Blocked")){
                     blockUserButton.setText("RETRIEVE USER");
                     blockUserButton.setBackgroundColor(getResources().getColor(R.color.greenRetrieveUserButton));
                 }
@@ -230,6 +230,7 @@ public class ProfileFragment extends Fragment {
         blockUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                userData=mViewModel.getUser().getValue();
                 if(userData.getAccountStatus().equals("Active"))
                     changeUserStatus(userData.getUserId(),"Blocked");
                 else
@@ -321,6 +322,9 @@ public class ProfileFragment extends Fragment {
             blockUserButton.setBackgroundColor(getResources().getColor(R.color.redBlockUserButton));
         }
         userDataRef.setValue(newStatus);
+        User user=mViewModel.getUser().getValue();
+        user.setAccountStatus(newStatus);
+        mViewModel.setUser(user);
     }
 
 
