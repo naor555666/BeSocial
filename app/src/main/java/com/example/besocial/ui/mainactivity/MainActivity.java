@@ -155,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
                 Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into(activateLocation);
             }
         }
-
     }
 
 
@@ -174,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
             //currentUserDatabaseRef.setValue(true);
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
 
-//            currentUserDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
             userDetailsListener = currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -351,15 +349,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveRelevantEvents(DataSnapshot ds) {
-        Boolean isCheckedIn=false;
-        if(ds.hasChild(ConstantValues.IS_CHECKED_IN)) isCheckedIn = true;
-        
-        if (DateUtils.isEventCurrentlyOccurring(ds.child(ConstantValues.BEGIN_DATE).getValue().toString()
+        Boolean isCurrentUserCheckedIn = false;
+        if (ds.hasChild(ConstantValues.IS_CHECKED_IN)) isCurrentUserCheckedIn = true;
+
+        boolean isEventOccuring = DateUtils.isEventCurrentlyOccurring(ds.child(ConstantValues.BEGIN_DATE).getValue().toString()
                 , ds.child(ConstantValues.FINISH_DATE).getValue().toString()
                 , ds.child(ConstantValues.BEGIN_TIME).getValue().toString()
-                , ds.child(ConstantValues.FINISH_TIME).getValue().toString())
-                && !((Boolean) ds.child(ConstantValues.IS_FINISHED).getValue())
-        && !isCheckedIn) {
+                , ds.child(ConstantValues.FINISH_TIME).getValue().toString());
+
+        boolean isEventFinished = ((Boolean) ds.child(ConstantValues.IS_FINISHED).getValue());
+
+        boolean isNonManagementNormalEvent = ((Boolean) ds.child(ConstantValues.IS_COMPANY_EVENT).getValue()
+                || ((String) ds.child(ConstantValues.CATEGORY).getValue()).equals(ConstantValues.HELP_ME));
+
+        if (isEventOccuring && !isEventFinished && !isCurrentUserCheckedIn && isNonManagementNormalEvent) {
             Log.d(TAG, "this event is suitable for geofencing: " + ds.child(ConstantValues.EVENT_TITLE).getValue());
             currentOccuringEvents.add(ds.getValue(Event.class));
             handleGeofencingEvents(ds.getValue(Event.class));

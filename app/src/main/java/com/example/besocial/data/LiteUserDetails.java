@@ -1,5 +1,7 @@
 package com.example.besocial.data;
 
+import com.google.firebase.database.Exclude;
+
 public class LiteUserDetails {
     private String userProfileImage;
     private String userId;
@@ -8,6 +10,7 @@ public class LiteUserDetails {
     //for event check-in
     private String eventCategory;
     private Boolean companyManagmentEvent;
+    private Boolean isCheckedIn;
 
     public LiteUserDetails() {
     }
@@ -17,6 +20,14 @@ public class LiteUserDetails {
         this.userId = userId;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
+    }
+
+    public LiteUserDetails(String userProfileImage, String userId, String userFirstName, String userLastName, Boolean isCheckedIn) {
+        this.userProfileImage = userProfileImage;
+        this.userId = userId;
+        this.userFirstName = userFirstName;
+        this.userLastName = userLastName;
+        this.isCheckedIn = isCheckedIn;
     }
 
     public String getUserProfileImage() {
@@ -65,6 +76,14 @@ public class LiteUserDetails {
 
     public void setCompanyManagmentEvent(Boolean companyManagmentEvent) {
         this.companyManagmentEvent = companyManagmentEvent;
+    }
+
+    public Boolean getisCheckedIn() {
+        return isCheckedIn;
+    }
+
+    public void setisCheckedIn(Boolean isCheckedIn) {
+        this.isCheckedIn = isCheckedIn;
     }
 }
 

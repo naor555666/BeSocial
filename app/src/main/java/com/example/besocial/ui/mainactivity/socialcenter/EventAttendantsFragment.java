@@ -6,10 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,8 @@ import com.example.besocial.ui.mainactivity.MainActivity;
 import com.example.besocial.utils.ConstantValues;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,16 +38,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class EventAttendantsFragment extends Fragment {
+    private static final String TAG = "EventAttendantsFragment";
     private FragmentEventAttendantsBinding binding;
 
     static SocialCenterViewModel socialCenterViewModel;
     private Query attendantsRef;
     static FirebaseRecyclerAdapter<LiteUserDetails, LiteUserDetailsViewHolder> firebaseRecyclerAdapter;
     private Event chosenEvent;
+    private boolean isEventOccuring;
 
     public EventAttendantsFragment() {
         // Required empty public constructor
@@ -61,7 +70,8 @@ public class EventAttendantsFragment extends Fragment {
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         binding.userNodesRecyclerView.setLayoutManager(linearLayoutManager);
-
+        Bundle bundle = getArguments();
+        isEventOccuring = bundle.getBoolean("isEventOccuring");
         return view;
     }
 
@@ -115,7 +125,7 @@ public class EventAttendantsFragment extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull LiteUserDetailsViewHolder holder, int position, @NonNull final LiteUserDetails model) {
+            protected void onBindViewHolder(@NonNull final LiteUserDetailsViewHolder holder, int position, @NonNull final LiteUserDetails model) {
 
                 holder.userNode = model;
                 Glide.with(getActivity()).load(model.getUserProfileImage()).placeholder(R.drawable.empty_profile_image).into(holder.userPhoto);
@@ -124,16 +134,29 @@ public class EventAttendantsFragment extends Fragment {
                 } else {
                     holder.userName.setText(String.format("%s %s", model.getUserFirstName(), model.getUserLastName()));
                 }
-                if (MainActivity.getLoggedUser().getUserId().equals(chosenEvent.getEventCreatorUid())) {
+                //if the event is currently active, the current user is the host
+                // and check-in ability isn't disabled
+                boolean necessaryEventCheckInCondition = isEventOccuring
+                        && MainActivity.getLoggedUser().getUserId().equals(chosenEvent.getEventCreatorUid())
+                        && !chosenEvent.getFinished();
+                if (necessaryEventCheckInCondition
+                        && (chosenEvent.getCompanyManagmentEvent() || chosenEvent.getEventCategory().equals(ConstantValues.HELP_ME))) {
+
+                    Log.d(TAG, "onBindViewHolder: checkedIn= " + model.getisCheckedIn());
+                    if (model.getisCheckedIn() != null) {
+                        holder.giveCreditsbtn.setEnabled(false);
+                        holder.giveCreditsbtn.setText("credits sent!");
+                    }
                     holder.giveCreditsbtn.setVisibility(View.VISIBLE);
                     holder.giveCreditsbtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            giveUserCredits(model.getUserId());
+                            holder.giveCreditsbtn.setEnabled(false);
+                            holder.giveCreditsbtn.setText("credits sent!");
+                            giveUserCredits(model.getUserId(), model.getUserFirstName());
                         }
                     });
                 }
-
             }
 
         };
@@ -142,7 +165,61 @@ public class EventAttendantsFragment extends Fragment {
         firebaseRecyclerAdapter.startListening();
     }
 
-    private void giveUserCredits(String userId) {
+    private void giveUserCredits(String userId, final String userFirstName) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> childUpdates = new HashMap<>();
+
+        childUpdates.put(String.format("/%s/%s/%s/%s", ConstantValues.USERS_ATTENDING_TO_EVENTS,
+                userId,
+                chosenEvent.getEventId(),
+                ConstantValues.IS_CHECKED_IN), true);
+
+
+        childUpdates.put(String.format("/%s/%s/%s/%s", ConstantValues.EVENTS_WITH_ATTENDINGS,
+                chosenEvent.getEventId(),
+                userId,
+                ConstantValues.IS_CHECKED_IN), true);
+        //if user is not a manager, disable the abillity to check-in for this event after one user checked-in
+        if (!MainActivity.getLoggedUser().getIsManager()) {
+            String eventRootPath = chosenEvent.getEventCategory().equals(ConstantValues.HELP_ME) ? ConstantValues.HELP_ME : ConstantValues.EVENTS;
+            childUpdates.put(String.format("/%s/%s/%s", eventRootPath,
+                    chosenEvent.getEventId(),
+                    ConstantValues.IS_FINISHED), true);
+            childUpdates.put(String.format("/%s/%s/%s/%s", ConstantValues.USERS_ATTENDING_TO_EVENTS,
+                    userId,
+                    chosenEvent.getEventId(),
+                    ConstantValues.IS_FINISHED), true);
+            childUpdates.put(String.format("/%s/%s/%s/%s", ConstantValues.EVENTS_WITH_ATTENDINGS,
+                    chosenEvent.getEventId(),
+                    userId,
+                    ConstantValues.IS_FINISHED), true);
+            databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(getActivity(), String.format("credits sent to %s!", userFirstName), Toast.LENGTH_LONG).show();
+                    chosenEvent.setFinished(true);
+                    MainActivity.getNavController().popBackStack();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "onFailure: problem on checking user to event");
+                }
+            });
+        } else {
+
+            databaseReference.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(getActivity(), String.format("credits sent to %s!", userFirstName), Toast.LENGTH_LONG).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "onFailure: problem on checking user to event");
+                }
+            });
+        }
     }
 
     public static class LiteUserDetailsViewHolder extends RecyclerView.ViewHolder {
