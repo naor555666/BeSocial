@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ import com.example.besocial.databinding.FragmentChatConversationBinding;
 import com.example.besocial.ui.mainactivity.MainActivity;
 import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.utils.DateUtils;
+import com.example.besocial.utils.WordsFilter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.Continuation;
@@ -221,7 +223,13 @@ public class ChatConversationFragment extends Fragment {
         binding.chatConversationSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage();
+                if (WordsFilter.filterText(binding.chatUserInput.getText().toString())) {
+                    Toast.makeText(getContext()
+                            , "This message was blocked because a bad word was found. If you believe this word should not be blocked, please message support."
+                            , Toast.LENGTH_SHORT).show();
+                } else {
+                    sendMessage();
+                }
             }
         });
         binding.approveBtn.setOnClickListener(new View.OnClickListener() {
