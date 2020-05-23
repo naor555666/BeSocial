@@ -46,6 +46,7 @@ import com.example.besocial.utils.DateUtils;
 import com.example.besocial.utils.GeofenceBroadcastReceiver;
 import com.example.besocial.utils.LocationUpdatesService;
 import com.example.besocial.utils.MyBroadcastReceiver;
+import com.example.besocial.utils.WordsFilter;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -62,6 +63,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 
@@ -102,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     private ValueEventListener userDetailsListener;
     private ChildEventListener attendingEventsListener;
     private DatabaseReference attendingEventsRef;
+    private InputStream inputStream;
 
 
     @Override
@@ -109,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Main activity On create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        inputStream = getResources().openRawResource(R.raw.bad_word_filter);
+        WordsFilter.initBadWords(inputStream);
+
         mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
 
         searchButton = findViewById(R.id.search_button);
@@ -502,6 +510,13 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(myBroadcastReceiver);
         editor.putBoolean(IS_LOCATION_ACTIVATED, isLocationActive);
         editor.commit();
+        if(inputStream!=null){
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static NavController getNavController() {

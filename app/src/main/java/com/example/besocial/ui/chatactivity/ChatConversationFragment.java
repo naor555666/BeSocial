@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,15 +34,21 @@ import com.example.besocial.databinding.FragmentChatConversationBinding;
 import com.example.besocial.ui.mainactivity.MainActivity;
 import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.utils.DateUtils;
+import com.example.besocial.utils.WordsFilter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +69,9 @@ public class ChatConversationFragment extends Fragment {
     private ChatViewModel chatViewModel;
     private FirebaseRecyclerAdapter<ChatMessage, ChatMessageViewHolder> firebaseRecyclerAdapter;
     private boolean isConversationExists;
-    String conversationId;
+    private String conversationId;
+    private FirebaseFunctions mFunctions;
+
 
     public ChatConversationFragment() {
         // Required empty public constructor
@@ -91,6 +100,7 @@ public class ChatConversationFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         binding.chatConversationRecyclerview.setLayoutManager(linearLayoutManager);
 
+        mFunctions = FirebaseFunctions.getInstance();
         setListeners();
     }
 
@@ -108,7 +118,7 @@ public class ChatConversationFragment extends Fragment {
         dbRef = FirebaseDatabase.getInstance().getReference();
         //conversation was chosen from main activity
 //        if (bundle != null) {
-        if (bundle != null && chatViewModel.getChosenChatConversation().getValue()==null) {
+        if (bundle != null && chatViewModel.getChosenChatConversation().getValue() == null) {
             Log.d(TAG, "getConversationDetails: bundel is not null");
             chosenUid = bundle.getString("chosenUid", null);
 
@@ -134,13 +144,28 @@ public class ChatConversationFragment extends Fragment {
             //conversation was chosen from conversations list, the view model is initialized
         } else {
             Log.d(TAG, "getConversationDetails: bundel is null");
+            Boolean isConversationApproved;
+            String sender;
+
+
             chosenChatConversation = chatViewModel.getChosenChatConversation().getValue();
             chosenUid = chosenChatConversation.getChosenUid();
             conversationId = chosenChatConversation.getChatId();
             userName = chosenChatConversation.getUserName();
             photoUrl = chosenChatConversation.getReceiverProfilePicture();
+            isConversationApproved = chosenChatConversation.isApproved();
+            setConversationApproval(isConversationApproved, chosenUid);
             initToolBar();
             prepareDatabaseQuery();
+        }
+    }
+
+    private void setConversationApproval(Boolean isConversationApproved, String sender) {
+        if (!isConversationApproved && sender.equals(chosenUid)) {
+            binding.chatUserInput.setVisibility(View.GONE);
+            binding.approveMessageLayout.setVisibility(View.VISIBLE);
+        } else if (!isConversationApproved) {
+            // TODO: 21/05/2020
         }
     }
 
@@ -154,6 +179,9 @@ public class ChatConversationFragment extends Fragment {
                     isConversationExists = false;
                 } else {
                     isConversationExists = true;
+                    Boolean isConversationApproved = (Boolean) dataSnapshot.child(chosenUid).child(ConstantValues.APPROVED).getValue();
+                    String sender = (String) dataSnapshot.child(chosenUid).child("sender").getValue();
+                    setConversationApproval(isConversationApproved, sender);
                     conversationId = (String) dataSnapshot.child(chosenUid).child(ConstantValues.CHAT_ID).getValue();
                     prepareDatabaseQuery();
                 }
@@ -186,10 +214,8 @@ public class ChatConversationFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 String text = s.toString();
                 if (text.trim().equals("")) {
-                    Log.d(TAG, "onTextChanged: empty");
                     binding.chatConversationSendBtn.setVisibility(View.INVISIBLE);
                 } else {
-                    Log.d(TAG, "onTextChanged: something");
                     binding.chatConversationSendBtn.setVisibility(View.VISIBLE);
                 }
             }
@@ -197,9 +223,57 @@ public class ChatConversationFragment extends Fragment {
         binding.chatConversationSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage();
+                if (WordsFilter.filterText(binding.chatUserInput.getText().toString())) {
+                    Toast.makeText(getContext()
+                            , "This message was blocked because a bad word was found. If you believe this word should not be blocked, please message support."
+                            , Toast.LENGTH_SHORT).show();
+                } else {
+                    sendMessage();
+                }
             }
         });
+        binding.approveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.declineBtn.setEnabled(false);
+                binding.approveBtn.setEnabled(false);
+                approveChatConversation().addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (task.isSuccessful()) {
+                            binding.approveMessageLayout.setVisibility(View.GONE);
+                            binding.chatUserInput.setVisibility(View.VISIBLE);
+                            binding.chatConversationSendBtn.setVisibility(View.VISIBLE);
+                            Toast.makeText(getActivity(), "Conversation Approved! There's nothing like a fresh new conversation...", Toast.LENGTH_LONG).show();
+                        } else {
+                            String errorMessage = task.getException().getMessage();
+                            Toast.makeText(getActivity(), "error: " + errorMessage, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private Task<String> approveChatConversation() {
+
+        // Create the arguments to the callable function.
+        Map<String, Object> data = new HashMap<>();
+        data.put("sender", chosenUid);
+
+        return mFunctions
+                .getHttpsCallable("approveChatConversation")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        // This continuation runs on either success or failure, but if the task
+                        // has failed then getResult() will throw an Exception which will be
+                        // propagated down.
+                        String result = (String) task.getResult().getData();
+                        return result;
+                    }
+                });
     }
 
     private void sendMessage() {
@@ -246,7 +320,7 @@ public class ChatConversationFragment extends Fragment {
                 chosenUid,
                 MainActivity.getLoggedUser().getProfileImage(), false, userName, MainActivity.getCurrentUser().getUid());
         chatViewModel.setChosenChatConversation(chosenChatConversation);
-        
+
         childUpdates.put(String.format("/%s/%s/%s", ConstantValues.CHAT_MESSAGES, conversationId, newMessageId), chatMessage);
         childUpdates.put(String.format("/%s/%s/%s", ConstantValues.CHAT_CONVERSATIONS, chosenUid, MainActivity.getCurrentUser().getUid()), chosenChatConversation);
         DatabaseReference userPhotoRef = dbRef
