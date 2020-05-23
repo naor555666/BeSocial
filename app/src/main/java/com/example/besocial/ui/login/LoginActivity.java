@@ -7,18 +7,24 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.besocial.utils.MyBroadcastReceiver;
 import com.example.besocial.R;
+import com.google.android.material.navigation.NavigationView;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "life cycle";
+    private static NavController navController;
     private BroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        //navController = Navigation.findNavController(this, R.id.loginActivityContainer);
+
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(myBroadcastReceiver, intentFilter);
@@ -37,4 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         unregisterReceiver(myBroadcastReceiver);
     }
 
+    public static NavController getNavController() {
+        return navController;
+    }
 }
