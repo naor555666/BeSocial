@@ -4,16 +4,14 @@ public class Notification {
     private String type;
     private String socialPointsAmount;
     private String IdToNavigate;
-    private String date;
 
     public Notification() {
     }
 
-    public Notification(String type, String socialPointsAmount, String idToNavigate, String date) {
+    public Notification(String type, String socialPointsAmount, String idToNavigate) {
         this.type = type;
         this.socialPointsAmount = socialPointsAmount;
         IdToNavigate = idToNavigate;
-        this.date = date;
     }
 
     public Notification(String type, String idToNavigate) {
@@ -43,13 +41,5 @@ public class Notification {
 
     public void setIdToNavigate(String idToNavigate) {
         IdToNavigate = idToNavigate;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 }
