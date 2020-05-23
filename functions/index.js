@@ -16,6 +16,9 @@ const strlvl5 = "Socialosaurus"
 
 const HELP_ME = "Help Me!"
 
+const EVENT = 'Event'
+const NEW_CONVERSTION = 'New Conversation'
+
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 
@@ -23,16 +26,31 @@ const HELP_ME = "Help Me!"
 // approve chat conversation+give points to users
 exports.approveChatConversation = functions.https.onCall((data, context) => {
     // data of chat sender and receiver from client
-    const sender = data.sender
-    const receiver = context.auth.uid
+    const senderId = data.sender
+    const receiverId = context.auth.uid
     var updates = {};
 
 
-    return setUserSocialPointsForChatApproval(updates, sender, 2).then(() => {
-        return setUserSocialPointsForChatApproval(updates, receiver, 1)
+    return setUserSocialPointsForChatApproval(updates, senderId, 2).then(() => {
+        var newNotificationKey = firebase.database().ref().child('Notifications').child(senderId).push().key;
+        updates[`/Notifications/${senderId}/${newNotificationKey}`] = {
+            type: NEW_CONVERSTION,
+            socialPointsAmount: 2,
+            IdToNavigate: receiverId
+        }
+        return setUserSocialPointsForChatApproval(updates, receiverId, 1)
     }, () => 0).then(() => {
-        updates[`/ChatConversations/${sender}/${receiver}/approved`] = true;
-        updates[`/ChatConversations/${receiver}/${sender}/approved`] = true;
+        var newNotificationKey = firebase.database().ref().child('Notifications').child(receiverId).push().key;
+        updates[`/Notifications/${receiverId}/${newNotificationKey}`] = {
+            type: NEW_CONVERSTION,
+            socialPointsAmount: 1,
+            IdToNavigate: senderId
+        }
+        updates[`/ChatConversations/${senderId}/${receiverId}/approved`] = true;
+        updates[`/ChatConversations/${receiverId}/${senderId}/approved`] = true;
+
+
+
         console.log('before updates');
         return admin.database().ref().update(updates)
     }, () => 0
@@ -107,7 +125,12 @@ function setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent
         var pendingSocialLevel = checkForNewLevel(socialPoints)
         console.log('pending social level: ' + pendingSocialLevel);
 
-        // updates['/Notifications/' + context.params.userId + '/socialStoreCredits'] = socialStoreCredits;
+        var newNotificationKey = firebase.database().ref().child('Notifications').child(context.params.userId).push().key;
+        updates[`/Notifications/${receiverId}/${newNotificationKey}`] = {
+            type: EVENT,
+            socialPointsAmount: creditAmountToGive,
+            IdToNavigate: context.params.eventId
+        }
 
         var updates = {};
         if (socialLevel !== pendingSocialLevel) {
@@ -142,7 +165,6 @@ function setUserSocialPointsForChatApproval(updates, userId, creditAmountToGive)
         var pendingSocialLevel = checkForNewLevel(socialPoints)
         console.log('pending social level: ' + pendingSocialLevel);
 
-        // updates['/Notifications/' + context.params.userId + '/socialStoreCredits'] = socialStoreCredits;
 
 
         if (socialLevel !== pendingSocialLevel) {

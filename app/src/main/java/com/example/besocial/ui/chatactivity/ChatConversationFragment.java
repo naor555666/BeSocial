@@ -247,7 +247,10 @@ public class ChatConversationFragment extends Fragment {
                             Toast.makeText(getActivity(), "Conversation Approved! There's nothing like a fresh new conversation...", Toast.LENGTH_LONG).show();
                         } else {
                             String errorMessage = task.getException().getMessage();
-                            Toast.makeText(getActivity(), "error: " + errorMessage, Toast.LENGTH_LONG).show();
+                            Log.d(TAG, "onComplete: task not succeful approving conversation "+ errorMessage);
+                            Toast.makeText(getActivity(), "sorry something went bad...try again later", Toast.LENGTH_LONG).show();
+                            binding.approveBtn.setEnabled(true);
+                            binding.declineBtn.setEnabled(true);
                         }
                     }
                 });
