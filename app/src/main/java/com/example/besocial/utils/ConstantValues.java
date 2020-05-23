@@ -58,4 +58,9 @@ public interface ConstantValues {
     String LIKES = "Likes";
     String IS_FINISHED = "finished";
     String APPROVED = "approved";
+
+    //notifications
+    String NOTIFICATIONS= " Notifications";
+
+
 }
