@@ -27,6 +27,7 @@ import com.example.besocial.data.Post;
 import com.example.besocial.data.User;
 import com.example.besocial.utils.BitmapUtils;
 import com.example.besocial.utils.ConstantValues;
+import com.example.besocial.utils.WordsFilter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -112,11 +113,13 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
             progressDialog=new ProgressDialog(getActivity());
             progressDialog.setTitle("Loading... Please wait");
             progressDialog.show();
-            newPost=new Post(loggedUser.getUserId(),loggedUser.getProfileImage(),loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName(),
-                    currentTime+"  "+currentDate,postDescription.getText().toString(),postCategory,null,0);
-            //HomeFragment.addPost(newPost);
-            post();
-            //Toast.makeText(getActivity(), "post created successfuly", Toast.LENGTH_LONG).show();
+            if(WordsFilter.filterText(postDescription.getText().toString())==true){
+                Toast.makeText(getContext(), "The post has been blocked due to a bad word", Toast.LENGTH_LONG).show();
+            } else{
+                newPost=new Post(loggedUser.getUserId(),loggedUser.getProfileImage(),loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName(),
+                        currentTime+"  "+currentDate,postDescription.getText().toString(),postCategory,null,0);
+                post();
+            }
         }
         else if(v.getId()==uploadPhotoButton.getId()){
             Intent galleryIntent = new Intent();
