@@ -43,6 +43,11 @@ public interface ConstantValues {
     String USER_LEVEL_4 = "Socialized Ninja Turtle";
     String USER_LEVEL_5 = "Socialosaurus";
 
+    long USER_LEVEL_2_POINTS = 200 ;
+    long USER_LEVEL_3_POINTS =  800;
+    long USER_LEVEL_4_POINTS =  2600;
+    long USER_LEVEL_5_POINTS =  6000;
+
     //times in milliseconds
     int SECOND = 1000;
     int MINUTE = 60 * 1000;
@@ -60,10 +65,16 @@ public interface ConstantValues {
     String APPROVED = "approved";
 
     //notifications
-    String NOTIFICATIONS = " Notifications";
+    String NOTIFICATIONS = "Notifications";
 
     //tpyes of notifications
     String EVENT = "Event";
-    String NEW_CONVERSTION = "Conversation";
+    String NEW_CONVERSTION = "New Conversation";
+    // likes also a type
+
+    // notification bodies
+    String EVENT_NOTIFICATION_BODY = "You have arrived to the event.\n Have a good time!.\nReceived points: ";
+    String NEW_CONVERSATION_NOTIFICATION_BODY = "Congratulation on connecting with a new member!\nReceived points: ";
+    String LIKE_NOTIFICATION_BODY = "People have liked your post.";
 
 }

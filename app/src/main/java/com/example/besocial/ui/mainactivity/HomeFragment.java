@@ -52,6 +52,7 @@ public class HomeFragment extends Fragment {
     private ProgressDialog progressDialog;
     private Boolean wasLikeClicked;
     private User loggedUser;
+    private static DatabaseReference notificationsRef;
     private List<String> displayedPostsId;
     private Boolean arePostsShown;
     private static UsersViewModel mViewModel;
@@ -254,6 +255,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (wasLikeClicked.equals(true)) {
+                    //notificationsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.NOTIFICATIONS).child(selectedPost.getUserId());
                     DataSnapshot ds = dataSnapshot.child(selectedPost.getPostId());
                     String postId = selectedPost.getPostId();
                     if (ds.hasChild(MainActivity.getLoggedUser().getUserId())) {

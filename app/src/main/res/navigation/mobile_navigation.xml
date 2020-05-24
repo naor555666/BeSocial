@@ -166,6 +166,16 @@
         android:id="@+id/createNewPostFragment"
         android:name="com.example.besocial.ui.mainactivity.CreateNewPostFragment"
         android:label="CreateNewPostFragment" />
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.example.besocial.ui.login.ForgotPasswordFragment"
+        android:label="fragment_forgot_password"
+        tools:layout="@layout/fragment_forgot_password" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.example.besocial.ui.login.LoginActivity"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
 
 
 </navigation>

@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,11 +35,13 @@ public class LoginFragment extends Fragment {
     private EditText email, password;
     private Button register, login;
     private FirebaseAuth firebaseAuth;
+    private ImageView passwordVisibilityImageview;
     private CheckBox checkBox;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
     private ProgressDialog progressDialog;
     private static  LoginFragment loginFragment;
+    private TextView forgotPassword;
     public static LoginFragment getInstance(){return loginFragment;}
 
 
@@ -61,10 +65,10 @@ public class LoginFragment extends Fragment {
         register = view.findViewById(R.id.register);
         login = view.findViewById(R.id.login);
         login.setEnabled(true);
-
+        passwordVisibilityImageview=view.findViewById(R.id.visibility_imageview);
         progressDialog=new ProgressDialog(getActivity());
         progressDialog.setTitle("Loading... Please wait");
-
+        forgotPassword=view.findViewById(R.id.forgot_password);
         setListeners();
         checkBox = (CheckBox) view.findViewById(R.id.remember_emailPassword_checkBox);
         firebaseAuth= FirebaseAuth.getInstance();
@@ -86,6 +90,8 @@ public class LoginFragment extends Fragment {
     private void setListeners() {
         View.OnClickListener clickListener = new ClickListener();
         login.setOnClickListener(clickListener);
+        forgotPassword.setOnClickListener(clickListener);
+        passwordVisibilityImageview.setOnClickListener(clickListener);
         register.setOnClickListener(clickListener);
     }
 
@@ -126,6 +132,15 @@ public class LoginFragment extends Fragment {
                 case R.id.login:
                     login.setEnabled(false);
                     loginUser();
+                    break;
+
+                case R.id.forgot_password:
+                    //LoginActivity.getNavController().navigate(R.id.forgotPasswordFragment);
+                    getFragmentManager().beginTransaction().
+                            replace(R.id.loginContainer,  ForgotPasswordFragment.getInstance()).//add on top of the static fragment
+                            addToBackStack("B").//cause the back button scrolling through the loaded fragments
+                            commit();
+                    getFragmentManager().executePendingTransactions();
                     break;
             }
         }

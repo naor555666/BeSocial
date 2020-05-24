@@ -309,7 +309,6 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="15dp"
             android:background="#FFFFFF"
-            android:backgroundTint="#D683D34D"
             android:shadowRadius="90"
             android:textSize="18dp"
             android:textStyle="bold"

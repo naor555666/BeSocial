@@ -78,6 +78,7 @@ public class RegisterFragment extends Fragment {
         usersList=new ArrayList<String>();
         progressDialog=new ProgressDialog(getActivity());
         progressDialog.setTitle("Creating account... Please wait");
+
         setListeners();
     }
 
