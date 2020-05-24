@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: ");
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
@@ -97,9 +98,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //likesRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.LIKES);
-        //postsRef= FirebaseDatabase.getInstance().getReference().child(ConstantValues.POSTS);
-        //displayPosts();
     }
 
     public static ArrayList<Post> getPosts() {
@@ -151,28 +149,25 @@ public class HomeFragment extends Fragment {
 
             @Override
             protected void onBindViewHolder(@NonNull final HomeFragment.PostsViewHolder holder, int position, @NonNull final Post model) {
-                //holder.benefitNode = model;
-                //long numberOfLikes=model.getNumberOfLikes().longValue();
                 Glide.with(getContext()).load(model.getUserProfilePicture()).placeholder(R.drawable.empty_profile_image).into(holder.postProfilePicture);
-                if(model.getPostImage()==null){
+                if (model.getPostImage() == null) {
                     holder.postPhoto.setVisibility(View.GONE);
-                }
-                else{
+                } else {
                     Glide.with(getContext()).load(model.getPostImage()).placeholder(R.drawable.social_event0).into(holder.postPhoto);
                 }
 
                 holder.postUserName.setText(model.getPostUserName());
                 holder.postDescription.setText(model.getPostDescription());
                 holder.postDate.setText(model.getPostDate());
-                holder.numberOfLikes.setText("number of likes: "+model.getNumberOfLikes().longValue());
+                holder.numberOfLikes.setText("number of likes: " + model.getNumberOfLikes().longValue());
                 holder.postIdentityLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         usersRef.child(model.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                User user= dataSnapshot.getValue(User.class);
-                                Log.d(TAG, "onDataChange: User: "+user.getUserFirstName()+" , status: "+user.getAccountStatus());
+                                User user = dataSnapshot.getValue(User.class);
+                                Log.d(TAG, "onDataChange: User: " + user.getUserFirstName() + " , status: " + user.getAccountStatus());
                                 mViewModel.setUser(user);
                                 MainActivity.getNavController().navigate(R.id.action_nav_home_to_nav_my_profile);
                             }
@@ -185,24 +180,27 @@ public class HomeFragment extends Fragment {
                     }
                 });
                 postLikesRef = likesRef.child(model.getPostId());
-                postLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.hasChild(MainActivity.getLoggedUser().getUserId())){
-                            //Toast.makeText(getContext(),"liked the post",Toast.LENGTH_LONG).show();
-                            holder.likeButton.setImageResource(R.drawable.full_like_button);
+
+                try {
+                    postLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Log.d(TAG, "onDataChange: getting like button state");
+                            if (dataSnapshot.hasChild(MainActivity.getLoggedUser().getUserId())) {
+                                Glide.with(getActivity()).load(R.drawable.full_like_button).into(holder.likeButton);
+                            } else
+                                Glide.with(getActivity()).load(R.drawable.empty_like_button).into(holder.likeButton);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
                         }
-                        else
-                            holder.likeButton.setImageResource(R.drawable.empty_like_button);
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                }
 
                 holder.likeButton.setOnClickListener(new View.OnClickListener() {
                     @Override

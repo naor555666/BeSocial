@@ -46,13 +46,16 @@ import com.example.besocial.utils.DateUtils;
 import com.example.besocial.utils.GeofenceBroadcastReceiver;
 import com.example.besocial.utils.LocationUpdatesService;
 import com.example.besocial.utils.MyBroadcastReceiver;
+import com.example.besocial.utils.MyFirebaseMessagingService;
 import com.example.besocial.utils.WordsFilter;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -62,6 +65,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,15 +111,21 @@ public class MainActivity extends AppCompatActivity {
     private ChildEventListener attendingEventsListener;
     private DatabaseReference attendingEventsRef;
     private InputStream inputStream;
+    private Intent notificationsServiceIntent;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "Main activity On create");
+        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        
+        notificationsServiceIntent= new Intent(this,MyFirebaseMessagingService.class);
+        startService(notificationsServiceIntent);
+                
+                
         inputStream = getResources().openRawResource(R.raw.bad_word_filter);
+        retrieveCurrentRegistrationToken();
         WordsFilter.initBadWords(inputStream);
 
         mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
@@ -163,13 +174,30 @@ public class MainActivity extends AppCompatActivity {
                 Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into(activateLocation);
             }
         }
+        setLoggedUser();
     }
 
+    private void retrieveCurrentRegistrationToken() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "inside on Start");
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+                        String msg = "received token "+ token;
+                        Log.d(TAG, msg);
+                    }
+                });
+    }
+
+    private void setLoggedUser() {
         final ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
         activateLocation.setEnabled(false);
         if (currentUser == null) {    // if the user is not logged in
@@ -177,8 +205,49 @@ public class MainActivity extends AppCompatActivity {
         }
         //
         else {
-            //currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid()).child("manager");
-            //currentUserDatabaseRef.setValue(true);
+            currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
+            userDetailsListener = currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    MainActivity.loggedUser = dataSnapshot.getValue(User.class);
+                    mViewModel.setUser(loggedUser);
+                    String myProfileImage = loggedUser.getProfileImage();
+                    loggedUser = dataSnapshot.getValue(User.class);
+                    activateLocation.setEnabled(true);
+                    nav_header_user_email.setText(loggedUser.getUserEmail());
+                    nav_header_user_full_name.setText(new StringBuilder().append(loggedUser.getUserFirstName())
+                            .append(" ").append(loggedUser.getUserLastName()).toString());
+                    Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
+                    if( loggedUser!=null ){
+                        if(loggedUser.getAccountStatus().equals("Blocked")){
+                            sendUserToLogin();
+                            Toast.makeText(MainActivity.this,"Your account has been BLOCKED. Contact us for account retrieval", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Failed to read value
+                    Log.d(TAG, "Failed to read value.", databaseError.toException());
+                }
+            });
+        }
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "inside on Start");
+/*        final ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
+        activateLocation.setEnabled(false);
+        if (currentUser == null) {    // if the user is not logged in
+            sendUserToLogin();
+        }
+        //
+        else {
+
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
 
             userDetailsListener = currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
@@ -207,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "Failed to read value.", databaseError.toException());
                 }
             });
-        }
+        }*/
     }
 
     @Override
@@ -517,6 +586,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        stopService(notificationsServiceIntent);
     }
 
     public static NavController getNavController() {
