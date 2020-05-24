@@ -60,7 +60,10 @@ public interface ConstantValues {
     String APPROVED = "approved";
 
     //notifications
-    String NOTIFICATIONS= " Notifications";
+    String NOTIFICATIONS = " Notifications";
 
+    //tpyes of notifications
+    String EVENT = "Event";
+    String NEW_CONVERSTION = "Conversation";
 
 }
