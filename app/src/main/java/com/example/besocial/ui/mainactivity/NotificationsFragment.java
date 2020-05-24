@@ -39,6 +39,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * A simple {@link Fragment} subclass.
  */
 public class NotificationsFragment extends Fragment {
+    String TAG= "NotificationsFragment";
     private static DatabaseReference notificationsRef;
     private static RecyclerView notificationsRecyclerView;
     private FirebaseRecyclerAdapter<Notification, NotificationsFragment.NotificationsViewHolder> firebaseRecyclerAdapter;
@@ -59,6 +60,7 @@ public class NotificationsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        notificationsRecyclerView = view.findViewById(R.id.notifications_recycler);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
@@ -68,7 +70,7 @@ public class NotificationsFragment extends Fragment {
     }
 
     void displayNotifications(){
-        notificationsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.NOTIFICATIONS);
+        notificationsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.NOTIFICATIONS).child(MainActivity.getLoggedUser().getUserId());
         notificationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
@@ -102,64 +104,23 @@ public class NotificationsFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final NotificationsFragment.NotificationsViewHolder holder, int position, @NonNull final Notification model) {
                 String modelType=model.getType();
-                if(modelType.equals(ConstantValues.))
-                holder.postUserName.setText(model.getPostUserName());
-                holder.postDescription.setText(model.getPostDescription());
-                holder.postDate.setText(model.getPostDate());
-                holder.numberOfLikes.setText("number of likes: "+model.getNumberOfLikes().longValue());
-                holder.postIdentityLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        usersRef.child(model.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                User user= dataSnapshot.getValue(User.class);
-                                Log.d(TAG, "onDataChange: User: "+user.getUserFirstName()+" , status: "+user.getAccountStatus());
-                                mViewModel.setUser(user);
-                                MainActivity.getNavController().navigate(R.id.action_nav_home_to_nav_my_profile);
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-                });
-                postLikesRef = likesRef.child(model.getPostId());
-                postLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.hasChild(MainActivity.getLoggedUser().getUserId())){
-                            //Toast.makeText(getContext(),"liked the post",Toast.LENGTH_LONG).show();
-                            holder.likeButton.setImageResource(R.drawable.full_like_button);
-
-                        }
-                        else
-                            holder.likeButton.setImageResource(R.drawable.empty_like_button);
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-                holder.likeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        likeButton(holder.likeButton, model);
-                    }
-                });
-
-
-                displayedPostsId.add(model.getPostId());
-
+                if(modelType.equals(ConstantValues.EVENT)) {
+                    holder.notificationBody.setText(ConstantValues.EVENT_NOTIFICATION_BODY+model.getSocialPointsAmount());
+                    Glide.with(getContext()).load(R.drawable.social_event0).into(holder.notificationPicture);
+                }
+                else if(modelType.equals(ConstantValues.NEW_CONVERSTION)) {
+                    holder.notificationBody.setText(ConstantValues.NEW_CONVERSATION_NOTIFICATION_BODY+model.getSocialPointsAmount());
+                    Glide.with(getContext()).load(R.drawable.new_conversation_image).into(holder.notificationPicture);
+                }
+                else {
+                    holder.notificationBody.setText(ConstantValues.LIKE_NOTIFICATION_BODY);
+                    Glide.with(getContext()).load(R.drawable.full_like_button).into(holder.notificationPicture);
+                }
+                holder.notificationHeadline.setText(modelType);
             }
         };
-        RecyclerView newPostRecyclerView = HomeFragment.getPostsRecyclerView();
-        newPostRecyclerView.setAdapter(firebaseRecyclerAdapter);
+        RecyclerView newNotificationsRecyclerView = NotificationsFragment.notificationsRecyclerView;
+        newNotificationsRecyclerView.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
     }
 

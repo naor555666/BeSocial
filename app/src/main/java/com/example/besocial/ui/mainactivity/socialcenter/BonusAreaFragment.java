@@ -47,7 +47,7 @@ public class BonusAreaFragment extends Fragment {
     private FragmentBonusAreaBinding binding;
     private Spinner listOfCategories;
     private User loggedUser;
-    private TextView socialLevel,socialPoints,socialCredits;
+    private TextView socialLevel,socialPoints,socialCredits,pointsToNextLevel;
     private ImageButton addNewRedeemableBonus;
     private NavController navController;
     private DatabaseReference benefitsRef;
@@ -79,6 +79,7 @@ public class BonusAreaFragment extends Fragment {
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         listOfCategories.setAdapter(arrayAdapter);
         loggedUser= MainActivity.getLoggedUser();
+        pointsToNextLevel=view.findViewById(R.id.points_to_next_level);
         socialPoints.setText(Long.toString(loggedUser.getSocialPoints().longValue()));
         socialLevel.setText(loggedUser.getSocialLevel());
         socialCredits.setText(loggedUser.getSocialStoreCredits().toString());

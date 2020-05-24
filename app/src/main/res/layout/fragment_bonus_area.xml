@@ -44,7 +44,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="40dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="40dp"
@@ -52,17 +52,32 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginRight="10dp"
                 android:text="@string/social_points"
                 android:textSize="15sp" />
 
-            <TextView
-                android:id="@+id/bonus_area_social_points"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="social points"
-                android:textSize="15sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/bonus_area_social_points"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="social points"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/points_to_next_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="points to next level"
+                    android:textSize="10dp" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
