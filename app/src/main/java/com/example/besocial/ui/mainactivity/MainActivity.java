@@ -174,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
                 Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into(activateLocation);
             }
         }
-        setLoggedUser();
     }
 
     private void retrieveCurrentRegistrationToken() {
@@ -197,50 +196,14 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void setLoggedUser() {
-        final ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
-        activateLocation.setEnabled(false);
-        if (currentUser == null) {    // if the user is not logged in
-            sendUserToLogin();
-        }
-        //
-        else {
-            currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
-            userDetailsListener = currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    MainActivity.loggedUser = dataSnapshot.getValue(User.class);
-                    mViewModel.setUser(loggedUser);
-                    String myProfileImage = loggedUser.getProfileImage();
-                    loggedUser = dataSnapshot.getValue(User.class);
-                    activateLocation.setEnabled(true);
-                    nav_header_user_email.setText(loggedUser.getUserEmail());
-                    nav_header_user_full_name.setText(new StringBuilder().append(loggedUser.getUserFirstName())
-                            .append(" ").append(loggedUser.getUserLastName()).toString());
-                    Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
-                    if( loggedUser!=null ){
-                        if(loggedUser.getAccountStatus().equals("Blocked")){
-                            sendUserToLogin();
-                            Toast.makeText(MainActivity.this,"Your account has been BLOCKED. Contact us for account retrieval", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Failed to read value
-                    Log.d(TAG, "Failed to read value.", databaseError.toException());
-                }
-            });
-        }
-    }
 
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "inside on Start");
-/*        final ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
+        final ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
         activateLocation.setEnabled(false);
         if (currentUser == null) {    // if the user is not logged in
             sendUserToLogin();
@@ -276,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "Failed to read value.", databaseError.toException());
                 }
             });
-        }*/
+        }
     }
 
     @Override

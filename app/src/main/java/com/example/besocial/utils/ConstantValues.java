@@ -70,6 +70,8 @@ public interface ConstantValues {
     //tpyes of notifications
     String EVENT = "Event";
     String NEW_CONVERSTION = "New Conversation";
+    String NEW_RANK = "New rank";
+    String RELATED_NAME = "relatedName";
     // likes also a type
 
     // notification bodies

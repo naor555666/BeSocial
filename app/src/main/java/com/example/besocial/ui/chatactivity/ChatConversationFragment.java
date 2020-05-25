@@ -263,6 +263,8 @@ public class ChatConversationFragment extends Fragment {
         // Create the arguments to the callable function.
         Map<String, Object> data = new HashMap<>();
         data.put("sender", chosenUid);
+        data.put("senderName",userName);
+        data.put("receiverName",MainActivity.getLoggedUser().getUserFullName());
 
         return mFunctions
                 .getHttpsCallable("approveChatConversation")
