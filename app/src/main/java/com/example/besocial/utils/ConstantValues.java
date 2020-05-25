@@ -75,9 +75,11 @@ public interface ConstantValues {
     // likes also a type
 
     // notification bodies
-    String EVENT_NOTIFICATION_BODY = "You have arrived to the event.\n Have a good time!.\nReceived points: ";
-    String NEW_CONVERSATION_NOTIFICATION_BODY = "Congratulation on connecting with a new member!\nReceived points: ";
-    String LIKE_NOTIFICATION_BODY = "People have liked your post.";
+    String EVENT_NOTIFICATION_BODY1 = "You have arrived to: \"";
+    String EVENT_NOTIFICATION_BODY2 = "\".\n Have a good time!.\nReceived points: ";
+    String NEW_CONVERSATION_NOTIFICATION_BODY1 = "Congratulation on connecting with ";
+    String NEW_CONVERSATION_NOTIFICATION_BODY2 = "\nReceived points: ";
+    String LIKE_NOTIFICATION_BODY = "People have liked your post";
     String NEW_RANK_BODY = "Congratulations on reaching the new level:\n";
 
 }

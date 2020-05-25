@@ -135,12 +135,19 @@ public class LoginFragment extends Fragment {
                     break;
 
                 case R.id.forgot_password:
-                    //LoginActivity.getNavController().navigate(R.id.forgotPasswordFragment);
-                    getFragmentManager().beginTransaction().
-                            replace(R.id.loginContainer,  ForgotPasswordFragment.getInstance()).//add on top of the static fragment
-                            addToBackStack("B").//cause the back button scrolling through the loaded fragments
-                            commit();
-                    getFragmentManager().executePendingTransactions();
+                    firebaseAuth.sendPasswordResetEmail(email.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(getActivity(), "password reset email was sent successfuly to: "+email.getText().toString(), Toast.LENGTH_LONG).show();
+
+                            }
+                            else{
+                                Toast.makeText(getActivity(), "mail was not sent\ncheck your email above", Toast.LENGTH_LONG).show();
+
+                            }
+                        }
+                    });
                     break;
             }
         }

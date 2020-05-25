@@ -105,11 +105,13 @@ public class NotificationsFragment extends Fragment {
             protected void onBindViewHolder(@NonNull final NotificationsFragment.NotificationsViewHolder holder, int position, @NonNull final Notification model) {
                 String modelType=model.getType();
                 if(modelType.equals(ConstantValues.EVENT)) {
-                    holder.notificationBody.setText(ConstantValues.EVENT_NOTIFICATION_BODY+model.getSocialPointsAmount());
+                    holder.notificationBody.setText(ConstantValues.EVENT_NOTIFICATION_BODY1+model.getRelatedName()
+                            +ConstantValues.EVENT_NOTIFICATION_BODY2+model.getSocialPointsAmount());
                     Glide.with(getContext()).load(R.drawable.social_event0).into(holder.notificationPicture);
                 }
                 else if(modelType.equals(ConstantValues.NEW_CONVERSTION)) {
-                    holder.notificationBody.setText(ConstantValues.NEW_CONVERSATION_NOTIFICATION_BODY+model.getSocialPointsAmount());
+                    holder.notificationBody.setText(ConstantValues.NEW_CONVERSATION_NOTIFICATION_BODY1+model.getRelatedName()
+                            +ConstantValues.NEW_CONVERSATION_NOTIFICATION_BODY2+model.getSocialPointsAmount());
                     Glide.with(getContext()).load(R.drawable.new_conversation_image).into(holder.notificationPicture);
                 }
                 else if(modelType.equals(ConstantValues.LIKES)){
@@ -117,8 +119,8 @@ public class NotificationsFragment extends Fragment {
                     Glide.with(getContext()).load(R.drawable.full_like_button).into(holder.notificationPicture);
                 }
                 else if(modelType.equals(ConstantValues.NEW_RANK)){
-                    //holder.notificationBody.setText(ConstantValues.NEW_RANK_BODY+);
-                    //Glide.with(getContext()).load(R.drawable.).into(holder.notificationPicture);
+                    holder.notificationBody.setText(ConstantValues.NEW_RANK_BODY+"\""+model.getRelatedName()+"\"");
+                    Glide.with(getContext()).load(R.drawable.good_job).into(holder.notificationPicture);
                 }
                 holder.notificationHeadline.setText(modelType);
             }
