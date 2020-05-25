@@ -222,6 +222,7 @@ public class EventFragment extends Fragment {
 
         user.setEventCategory(chosenEvent.getEventCategory());
         user.setCompanyManagmentEvent(chosenEvent.getCompanyManagmentEvent());
+        user.setEventName(chosenEvent.getTitle());
 
         Map<String, Object> childUpdates = new HashMap<>();
 

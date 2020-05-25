@@ -11,6 +11,7 @@ public class LiteUserDetails {
     private String eventCategory;
     private Boolean companyManagmentEvent;
     private Boolean isCheckedIn;
+    private String eventName;
 
     public LiteUserDetails() {
     }
@@ -84,6 +85,14 @@ public class LiteUserDetails {
 
     public void setisCheckedIn(Boolean isCheckedIn) {
         this.isCheckedIn = isCheckedIn;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 }
 
