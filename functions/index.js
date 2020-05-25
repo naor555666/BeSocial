@@ -16,9 +16,10 @@ const strlvl5 = "Socialosaurus"
 
 const HELP_ME = "Help Me!"
 
+const NEW_RANK = "New rank"
 const EVENT = 'Event'
 const NEW_CONVERSTION = 'New Conversation'
-
+const RELATED_NAME = 'relatedName'
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 
@@ -28,6 +29,8 @@ exports.approveChatConversation = functions.https.onCall((data, context) => {
     // data of chat sender and receiver from client
     const senderId = data.sender
     const receiverId = context.auth.uid
+    const senderName = data.senderName
+    const receiverName = data.receiverName
     var updates = {};
 
 
@@ -36,7 +39,8 @@ exports.approveChatConversation = functions.https.onCall((data, context) => {
         updates[`/Notifications/${senderId}/${newNotificationKey}`] = {
             type: NEW_CONVERSTION,
             socialPointsAmount: '2',
-            IdToNavigate: receiverId
+            IdToNavigate: receiverId,
+            RELATED_NAME: receiverName
         }
         return setUserSocialPointsForChatApproval(updates, receiverId, 1)
     }, () => 0).then(() => {
@@ -44,7 +48,8 @@ exports.approveChatConversation = functions.https.onCall((data, context) => {
         updates[`/Notifications/${receiverId}/${newNotificationKey}`] = {
             type: NEW_CONVERSTION,
             socialPointsAmount: '1',
-            IdToNavigate: senderId
+            IdToNavigate: senderId,
+            RELATED_NAME: senderName
         }
         updates[`/ChatConversations/${senderId}/${receiverId}/approved`] = true;
         updates[`/ChatConversations/${receiverId}/${senderId}/approved`] = true;
@@ -62,7 +67,8 @@ exports.giveCredits = functions.database.ref('/EventsWithAttending/{eventId}/{us
         admin.database().ref('/EventsWithAttending/' + context.params.eventId + "/" + context.params.userId).once('value').then(snapshot => {
             eventCategory = snapshot.child('eventCategory').val()
             isManagamentEvent = snapshot.child('companyManagmentEvent').val()
-            return setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent)
+            eventName = snapshot.child('eventName')
+            return setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent, eventName)
         }, () => {
             return 0
         }).catch();
@@ -105,7 +111,8 @@ function setCreditAmountToGive(eventCategory, isManagamentEvent) {
     console.log('social credits to give: ' + socialCreditsAmount);
     return socialCreditsAmount
 }
-function setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent) {
+
+function setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent, eventName) {
     var socialStoreCredits
     var socialPoints
     var socialLevel
@@ -124,15 +131,22 @@ function setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent
         console.log('pending social level: ' + pendingSocialLevel);
 
         var newNotificationKey = admin.database().ref().child('Notifications').child(context.params.userId).push().key;
-        updates[`/Notifications/${receiverId}/${newNotificationKey}`] = {
+        var updates = {};
+
+        updates[`/Notifications/${context.params.userId}/${newNotificationKey}`] = {
             type: EVENT,
             socialPointsAmount: creditAmountToGive.toString(),
-            IdToNavigate: context.params.eventId
+            IdToNavigate: context.params.eventId,
+            RELATED_NAME: eventName
         }
 
-        var updates = {};
         if (socialLevel !== pendingSocialLevel) {
             updates['/users/' + context.params.userId + '/socialLevel'] = pendingSocialLevel;
+            newNotificationKey = admin.database().ref().child('Notifications').child(context.params.userId).push().key;
+            updates[`/Notifications/${context.params.userId}/${newNotificationKey}`] = {
+                type: NEW_RANK,
+                RELATED_NAME: pendingSocialLevel
+            }
         }
         updates['/users/' + context.params.userId + '/socialStoreCredits'] = socialStoreCredits;
         updates['/users/' + context.params.userId + '/socialPoints'] = socialPoints;
@@ -167,6 +181,12 @@ function setUserSocialPointsForChatApproval(updates, userId, creditAmountToGive)
 
         if (socialLevel !== pendingSocialLevel) {
             updates['/users/' + userId + '/socialLevel'] = pendingSocialLevel;
+
+            newNotificationKey = admin.database().ref().child('Notifications').child(context.params.userId).push().key;
+            updates[`/Notifications/${userId}/${newNotificationKey}`] = {
+                type: NEW_RANK,
+                RELATED_NAME: pendingSocialLevel
+            }
         }
         updates['/users/' + userId + '/socialStoreCredits'] = socialStoreCredits;
         updates['/users/' + userId + '/socialPoints'] = socialPoints;
