@@ -4,6 +4,7 @@ public class Notification {
     private String type;
     private String socialPointsAmount;
     private String IdToNavigate;
+    private  String relatedName;
 
     public Notification() {
     }
@@ -41,5 +42,13 @@ public class Notification {
 
     public void setIdToNavigate(String idToNavigate) {
         IdToNavigate = idToNavigate;
+    }
+
+    public String getRelatedName() {
+        return relatedName;
+    }
+
+    public void setRelatedName(String relatedName) {
+        this.relatedName = relatedName;
     }
 }
