@@ -46,13 +46,16 @@ import com.example.besocial.utils.DateUtils;
 import com.example.besocial.utils.GeofenceBroadcastReceiver;
 import com.example.besocial.utils.LocationUpdatesService;
 import com.example.besocial.utils.MyBroadcastReceiver;
+import com.example.besocial.utils.MyFirebaseMessagingService;
 import com.example.besocial.utils.WordsFilter;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -62,6 +65,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,15 +111,21 @@ public class MainActivity extends AppCompatActivity {
     private ChildEventListener attendingEventsListener;
     private DatabaseReference attendingEventsRef;
     private InputStream inputStream;
+    private Intent notificationsServiceIntent;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "Main activity On create");
+        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        
+        notificationsServiceIntent= new Intent(this,MyFirebaseMessagingService.class);
+        startService(notificationsServiceIntent);
+                
+                
         inputStream = getResources().openRawResource(R.raw.bad_word_filter);
+        retrieveCurrentRegistrationToken();
         WordsFilter.initBadWords(inputStream);
 
         mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
@@ -165,6 +176,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void retrieveCurrentRegistrationToken() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+                        String msg = "received token "+ token;
+                        Log.d(TAG, msg);
+                    }
+                });
+    }
+
+
+
 
     @Override
     protected void onStart() {
@@ -177,8 +210,7 @@ public class MainActivity extends AppCompatActivity {
         }
         //
         else {
-            //currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid()).child("manager");
-            //currentUserDatabaseRef.setValue(true);
+
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
 
             userDetailsListener = currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
@@ -517,6 +549,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        stopService(notificationsServiceIntent);
     }
 
     public static NavController getNavController() {

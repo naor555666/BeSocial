@@ -151,4 +151,8 @@ public class User {
     public void setAccountStatus(String accountStatus) {
         this.accountStatus = accountStatus;
     }
+
+    public String getUserFullName(){
+        return String.format("%s %s",userFirstName,userLastName);
+    }
 }

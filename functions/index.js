@@ -32,24 +32,22 @@ exports.approveChatConversation = functions.https.onCall((data, context) => {
 
 
     return setUserSocialPointsForChatApproval(updates, senderId, 2).then(() => {
-        var newNotificationKey = firebase.database().ref().child('Notifications').child(senderId).push().key;
+        var newNotificationKey = admin.database().ref().child('Notifications').child(senderId).push().key;
         updates[`/Notifications/${senderId}/${newNotificationKey}`] = {
             type: NEW_CONVERSTION,
-            socialPointsAmount: 2,
+            socialPointsAmount: '2',
             IdToNavigate: receiverId
         }
         return setUserSocialPointsForChatApproval(updates, receiverId, 1)
     }, () => 0).then(() => {
-        var newNotificationKey = firebase.database().ref().child('Notifications').child(receiverId).push().key;
+        var newNotificationKey = admin.database().ref().child('Notifications').child(receiverId).push().key;
         updates[`/Notifications/${receiverId}/${newNotificationKey}`] = {
             type: NEW_CONVERSTION,
-            socialPointsAmount: 1,
+            socialPointsAmount: '1',
             IdToNavigate: senderId
         }
         updates[`/ChatConversations/${senderId}/${receiverId}/approved`] = true;
         updates[`/ChatConversations/${receiverId}/${senderId}/approved`] = true;
-
-
 
         console.log('before updates');
         return admin.database().ref().update(updates)
@@ -125,10 +123,10 @@ function setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent
         var pendingSocialLevel = checkForNewLevel(socialPoints)
         console.log('pending social level: ' + pendingSocialLevel);
 
-        var newNotificationKey = firebase.database().ref().child('Notifications').child(context.params.userId).push().key;
+        var newNotificationKey = admin.database().ref().child('Notifications').child(context.params.userId).push().key;
         updates[`/Notifications/${receiverId}/${newNotificationKey}`] = {
             type: EVENT,
-            socialPointsAmount: creditAmountToGive,
+            socialPointsAmount: creditAmountToGive.toString(),
             IdToNavigate: context.params.eventId
         }
 
