@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "inside on Start");
         final ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
         activateLocation.setEnabled(false);
-        if (currentUser == null) {    // if the user is not logged in
+        if (currentUser == null || (!fireBaseAuth.getCurrentUser().isEmailVerified())) {    // if the user is not logged in
             sendUserToLogin();
         }
         //
