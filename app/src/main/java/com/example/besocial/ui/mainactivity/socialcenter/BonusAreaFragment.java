@@ -81,6 +81,7 @@ public class BonusAreaFragment extends Fragment {
         loggedUser= MainActivity.getLoggedUser();
         pointsToNextLevel=view.findViewById(R.id.points_to_next_level);
         socialPoints.setText(Long.toString(loggedUser.getSocialPoints().longValue()));
+        pointsToNextLevel.setText(calculatePointsToNextLevel(loggedUser.getSocialPoints().longValue()));
         socialLevel.setText(loggedUser.getSocialLevel());
         socialCredits.setText(loggedUser.getSocialStoreCredits().toString());
         addNewRedeemableBonus=view.findViewById(R.id.new_redeemable_bonus_button);
@@ -230,6 +231,24 @@ public class BonusAreaFragment extends Fragment {
             value=5;
 
         return value;
+    }
+    public String calculatePointsToNextLevel(long userCurrentPoints){
+        long pointsToNextLevel=-1;
+        if(userCurrentPoints>=6000){
+            return "( reached maximum level )";
+        }
+        else if(userCurrentPoints>=2600){
+            pointsToNextLevel=6000-userCurrentPoints;
+        }
+        else if(userCurrentPoints>=800){
+            pointsToNextLevel=2600-userCurrentPoints;
+        }
+        else if(userCurrentPoints>=200){
+            pointsToNextLevel=800-userCurrentPoints;
+        }
+        else pointsToNextLevel = 200-userCurrentPoints;
+
+        return ("( points to next level: "+String.valueOf(pointsToNextLevel)+" )");
     }
 
 }
