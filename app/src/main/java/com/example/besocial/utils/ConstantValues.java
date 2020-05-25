@@ -78,5 +78,6 @@ public interface ConstantValues {
     String EVENT_NOTIFICATION_BODY = "You have arrived to the event.\n Have a good time!.\nReceived points: ";
     String NEW_CONVERSATION_NOTIFICATION_BODY = "Congratulation on connecting with a new member!\nReceived points: ";
     String LIKE_NOTIFICATION_BODY = "People have liked your post.";
+    String NEW_RANK_BODY = "Congratulations on reaching the new level:\n";
 
 }

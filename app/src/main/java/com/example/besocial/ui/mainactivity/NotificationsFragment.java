@@ -112,9 +112,13 @@ public class NotificationsFragment extends Fragment {
                     holder.notificationBody.setText(ConstantValues.NEW_CONVERSATION_NOTIFICATION_BODY+model.getSocialPointsAmount());
                     Glide.with(getContext()).load(R.drawable.new_conversation_image).into(holder.notificationPicture);
                 }
-                else {
+                else if(modelType.equals(ConstantValues.LIKES)){
                     holder.notificationBody.setText(ConstantValues.LIKE_NOTIFICATION_BODY);
                     Glide.with(getContext()).load(R.drawable.full_like_button).into(holder.notificationPicture);
+                }
+                else if(modelType.equals(ConstantValues.NEW_RANK)){
+                    //holder.notificationBody.setText(ConstantValues.NEW_RANK_BODY+);
+                    //Glide.with(getContext()).load(R.drawable.).into(holder.notificationPicture);
                 }
                 holder.notificationHeadline.setText(modelType);
             }
