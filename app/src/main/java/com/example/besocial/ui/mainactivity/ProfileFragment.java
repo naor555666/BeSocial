@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +69,8 @@ public class ProfileFragment extends Fragment {
     private NavController navController;
     private static UsersViewModel mViewModel;
     private TextView myProfileTextView;
+    String TAG = "ProfileFragment";
+    private boolean wasMyPicturesClicked=false;
 
 
 
@@ -111,11 +114,14 @@ public class ProfileFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
         loggedUser = MainActivity.getLoggedUser();
+        Log.d(TAG, "onViewCreated:1 "+userData.getUserFirstName());
         userPicturesRef = FirebaseStorage.getInstance().getReference().child(MainActivity.getCurrentUser().getUid());
-
-        profilePageUsername.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
         profileEmail.setText(userData.getUserEmail());
+        Log.d(TAG, "onViewCreated:2 "+userData.getUserFirstName());
+        profilePageUsername.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
         profileFullName.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
+        Log.d(TAG, "onViewCreated:3 "+userData.getUserFirstName());
+
         profileAddress.setText(userData.getUserAddress());
         profileCity.setText(userData.getUserCity());
         profileSocialLevel.setText(userData.getSocialLevel());
@@ -132,18 +138,18 @@ public class ProfileFragment extends Fragment {
             profileFollowList.setText("FOLLOW LIST");
             newChatButton.setVisibility(View.VISIBLE);
             String status,name="";
-            if(MainActivity.getLoggedUser().getIsManager().booleanValue()==true )
-                name=userData.getUserFirstName();
+            if(MainActivity.getLoggedUser().getIsManager().booleanValue()==true ) {
+                name = userData.getUserFirstName();
                 status = userData.getAccountStatus();
-                if(userData.getAccountStatus().equals("Blocked")){
+                if (userData.getAccountStatus().equals("Blocked")) {
                     blockUserButton.setText("RETRIEVE USER");
                     blockUserButton.setBackgroundColor(getResources().getColor(R.color.greenRetrieveUserButton));
-                }
-                else if(userData.getAccountStatus().equals("Active")){
+                } else if (userData.getAccountStatus().equals("Active")) {
                     blockUserButton.setText("BLOCK USER");
                     blockUserButton.setBackgroundColor(getResources().getColor(R.color.redBlockUserButton));
                 }
                 blockUserButton.setVisibility(View.VISIBLE);
+            }
 
         }
         userRef = MainActivity.getCurrentUserDatabaseRef();
@@ -158,6 +164,7 @@ public class ProfileFragment extends Fragment {
         profileMyPictures.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                wasMyPicturesClicked=true;
                 navController.navigate(R.id.action_nav_my_profile_to_photosListFragment);
             }
         });
@@ -298,7 +305,12 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        mViewModel.setUser(loggedUser);
+        if(wasMyPicturesClicked==false){
+            mViewModel.setUser(loggedUser);
+        }
+        else{
+            wasMyPicturesClicked=false;
+        }
     }
 
 
