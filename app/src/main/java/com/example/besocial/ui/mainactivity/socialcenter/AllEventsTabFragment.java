@@ -39,7 +39,7 @@ import com.google.firebase.database.ValueEventListener;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AllEventsTabFragment extends Fragment implements  AdapterView.OnItemSelectedListener {
+public class AllEventsTabFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     private static final String TAG = "AllEventsTabFragment";
 
     private FragmentAllEventsTabBinding binding;
@@ -48,6 +48,7 @@ public class AllEventsTabFragment extends Fragment implements  AdapterView.OnIte
     static FirebaseRecyclerAdapter<Event, EventsViewHolder> firebaseRecyclerAdapter;
 
     private String strEventCategory;
+
     public AllEventsTabFragment() {
         // Required empty public constructor
     }
@@ -56,7 +57,7 @@ public class AllEventsTabFragment extends Fragment implements  AdapterView.OnIte
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG,"onCreateView");
+        Log.d(TAG, "onCreateView");
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_all_events_tab, container, false);
 
@@ -87,7 +88,7 @@ public class AllEventsTabFragment extends Fragment implements  AdapterView.OnIte
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG,"onViewCreated");
+        Log.d(TAG, "onViewCreated");
         strEventCategory = (String) binding.allEventsTabCategorySpinner.getSelectedItem();
         setListeners();
     }
@@ -189,7 +190,6 @@ public class AllEventsTabFragment extends Fragment implements  AdapterView.OnIte
     }
 
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -199,45 +199,47 @@ public class AllEventsTabFragment extends Fragment implements  AdapterView.OnIte
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume");
+        Log.d(TAG, "onResume");
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        Log.d(TAG,"onAttach");
+        Log.d(TAG, "onAttach");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.d(TAG,"onDetach");
+        Log.d(TAG, "onDetach");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG,"onStop");
+        Log.d(TAG, "onStop");
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"onCreate");
+        Log.d(TAG, "onCreate");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG,"onDestroyView");
+        Log.d(TAG, "onDestroyView");
         binding = null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"onDestroy");
-        firebaseRecyclerAdapter.stopListening();
+        Log.d(TAG, "onDestroy");
+        if (firebaseRecyclerAdapter != null) {
+            firebaseRecyclerAdapter.stopListening();
+        }
 
     }
 }

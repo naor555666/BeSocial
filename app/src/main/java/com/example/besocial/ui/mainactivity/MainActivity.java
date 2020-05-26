@@ -2,6 +2,7 @@ package com.example.besocial.ui.mainactivity;
 
 import android.Manifest;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
     private static DatabaseReference currentUserDatabaseRef;
     private static FirebaseUser currentUser;
-    private FirebaseAuth fireBaseAuth;
+    private static FirebaseAuth fireBaseAuth;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
     static UsersViewModel mViewModel;
@@ -119,11 +120,11 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        notificationsServiceIntent= new Intent(this,MyFirebaseMessagingService.class);
+
+        notificationsServiceIntent = new Intent(this, MyFirebaseMessagingService.class);
         startService(notificationsServiceIntent);
-                
-                
+
+
         inputStream = getResources().openRawResource(R.raw.bad_word_filter);
         retrieveCurrentRegistrationToken();
         WordsFilter.initBadWords(inputStream);
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
         //  get user token (if he is logged in)
-        loggedUser = new User();
+//        loggedUser = new User();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -174,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 Glide.with(this).load(R.drawable.ic_my_location_black_24dp).into(activateLocation);
             }
         }
+
     }
 
     private void retrieveCurrentRegistrationToken() {
@@ -190,13 +192,11 @@ public class MainActivity extends AppCompatActivity {
                         String token = task.getResult().getToken();
 
                         // Log and toast
-                        String msg = "received token "+ token;
+                        String msg = "received token " + token;
                         Log.d(TAG, msg);
                     }
                 });
     }
-
-
 
 
     @Override
@@ -210,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
         }
         //
         else {
-
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
 
             userDetailsListener = currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {
@@ -225,10 +224,10 @@ public class MainActivity extends AppCompatActivity {
                     nav_header_user_full_name.setText(new StringBuilder().append(loggedUser.getUserFirstName())
                             .append(" ").append(loggedUser.getUserLastName()).toString());
                     Glide.with(MainActivity.this).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(nav_header_user_profile_picture);
-                    if( loggedUser!=null ){
-                        if(loggedUser.getAccountStatus().equals("Blocked")){
-                        sendUserToLogin();
-                        Toast.makeText(MainActivity.this,"Your account has been BLOCKED. Contact us for account retrieval", Toast.LENGTH_LONG).show();
+                    if (loggedUser != null) {
+                        if (loggedUser.getAccountStatus().equals("Blocked")) {
+                            sendUserToLogin();
+                            Toast.makeText(MainActivity.this, "Your account has been BLOCKED. Contact us for account retrieval", Toast.LENGTH_LONG).show();
                         }
                     }
                 }
@@ -236,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     // Failed to read value
+                    Toast.makeText(MainActivity.this, "sorry, something wrong happened...", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Failed to read value.", databaseError.toException());
                 }
             });
@@ -317,11 +317,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickHandler(View view) {
-/*        if (view.getId() == R.id.send) {
-            String input = title.getText().toString();
-            Toast.makeText(getApplicationContext(), filterText(input, ""), Toast.LENGTH_LONG).show();
-        }*/
-
         if (view.getId() == R.id.app_bar_activate_location) {
             if (currentOccuringEvents == null) {
                 currentOccuringEvents = new ArrayList<>();
@@ -355,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
     private void getAttendingEventsList() {
         attendingEventsRef = FirebaseDatabase.getInstance().getReference()
                 .child(ConstantValues.USERS_ATTENDING_TO_EVENTS)
-                .child(loggedUser.getUserId());
+                .child(fireBaseAuth.getUid());
         attendingEventsListener = attendingEventsRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -474,7 +469,7 @@ public class MainActivity extends AppCompatActivity {
             return geofencePendingIntent;
         }
         Intent intent = new Intent(this, GeofenceBroadcastReceiver.class);
-        intent.putExtra("uid", loggedUser.getUserId());
+        intent.putExtra("uid", fireBaseAuth.getUid());
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
         geofencePendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.
@@ -542,7 +537,7 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(myBroadcastReceiver);
         editor.putBoolean(IS_LOCATION_ACTIVATED, isLocationActive);
         editor.commit();
-        if(inputStream!=null){
+        if (inputStream != null) {
             try {
                 inputStream.close();
             } catch (IOException e) {
@@ -588,5 +583,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static void setmViewModel(UsersViewModel mViewModel) {
         MainActivity.mViewModel = mViewModel;
+    }
+
+    public static FirebaseAuth getFireBaseAuth() {
+        return fireBaseAuth;
     }
 }

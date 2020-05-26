@@ -113,8 +113,7 @@ public class ChatListFragment extends Fragment {
     }
     private void prepareDatabaseQuery() {
         final Query conversationsRef = FirebaseDatabase.getInstance().getReference()
-                .child(ConstantValues.CHAT_CONVERSATIONS).child(MainActivity.getLoggedUser().getUserId());
-
+                .child(ConstantValues.CHAT_CONVERSATIONS).child(MainActivity.getFireBaseAuth().getUid());
         conversationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

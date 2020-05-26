@@ -1,7 +1,6 @@
 package com.example.besocial.ui.mainactivity.socialcenter;
 
 
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,7 +46,7 @@ public class BonusAreaFragment extends Fragment {
     private FragmentBonusAreaBinding binding;
     private Spinner listOfCategories;
     private User loggedUser;
-    private TextView socialLevel,socialPoints,socialCredits,pointsToNextLevel;
+    private TextView socialLevel, socialPoints, socialCredits, pointsToNextLevel;
     private ImageButton addNewRedeemableBonus;
     private NavController navController;
     private DatabaseReference benefitsRef;
@@ -71,26 +70,17 @@ public class BonusAreaFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        socialCredits=view.findViewById(R.id.bonus_area_social_credits);
-        socialLevel=view.findViewById(R.id.bonus_area_social_level);
-        socialPoints=view.findViewById(R.id.bonus_area_social_points);
-        listOfCategories=view.findViewById(R.id.bonus_area_categories_list);
-        ArrayAdapter<CharSequence> arrayAdapter= ArrayAdapter.createFromResource(getContext(),R.array.list_of_bonus_area_categories,R.layout.support_simple_spinner_dropdown_item);
+        socialCredits = view.findViewById(R.id.bonus_area_social_credits);
+        socialLevel = view.findViewById(R.id.bonus_area_social_level);
+        socialPoints = view.findViewById(R.id.bonus_area_social_points);
+        listOfCategories = view.findViewById(R.id.bonus_area_categories_list);
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.list_of_bonus_area_categories, R.layout.support_simple_spinner_dropdown_item);
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         listOfCategories.setAdapter(arrayAdapter);
-        loggedUser= MainActivity.getLoggedUser();
-        pointsToNextLevel=view.findViewById(R.id.points_to_next_level);
-        socialPoints.setText(Long.toString(loggedUser.getSocialPoints().longValue()));
-        pointsToNextLevel.setText(calculatePointsToNextLevel(loggedUser.getSocialPoints().longValue()));
-        socialLevel.setText(loggedUser.getSocialLevel());
-        socialCredits.setText(loggedUser.getSocialStoreCredits().toString());
-        addNewRedeemableBonus=view.findViewById(R.id.new_redeemable_bonus_button);
-        navController= MainActivity.getNavController();
-       // benefitsRef = FirebaseDatabase.getInstance().getReference();
-        if(MainActivity.getLoggedUser().getIsManager().booleanValue()==false){
-            addNewRedeemableBonus.setVisibility(View.INVISIBLE);
+        loggedUser = MainActivity.getLoggedUser();
+        if (loggedUser != null) {
+            setSocialDetails(view);
         }
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -98,13 +88,27 @@ public class BonusAreaFragment extends Fragment {
         setListeners();
     }
 
+    private void setSocialDetails(View view) {
+        pointsToNextLevel = view.findViewById(R.id.points_to_next_level);
+        socialPoints.setText(Long.toString(loggedUser.getSocialPoints().longValue()));
+        pointsToNextLevel.setText(calculatePointsToNextLevel(loggedUser.getSocialPoints().longValue()));
+        socialLevel.setText(loggedUser.getSocialLevel());
+        socialCredits.setText(loggedUser.getSocialStoreCredits().toString());
+        addNewRedeemableBonus = view.findViewById(R.id.new_redeemable_bonus_button);
+        navController = MainActivity.getNavController();
+        // benefitsRef = FirebaseDatabase.getInstance().getReference();
+        if (!MainActivity.getLoggedUser().getIsManager().booleanValue()||loggedUser==null) {
+            addNewRedeemableBonus.setVisibility(View.INVISIBLE);
+        }
+    }
 
-    void setListeners(){
+
+    void setListeners() {
         listOfCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position!=0){
-                    String selectedCategory=listOfCategories.getSelectedItem().toString();
+                if (position != 0) {
+                    String selectedCategory = listOfCategories.getSelectedItem().toString();
                     displayBenefitsList(selectedCategory);
                 }
             }
@@ -114,24 +118,25 @@ public class BonusAreaFragment extends Fragment {
 
             }
         });
-
-        addNewRedeemableBonus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navController.navigate(R.id.action_nav_bonus_area_to_addNewRedeemableBonusFragment);
-            }
-        });
+        if (loggedUser != null) {
+            addNewRedeemableBonus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    navController.navigate(R.id.action_nav_bonus_area_to_addNewRedeemableBonusFragment);
+                }
+            });
+        }
     }
 
 
     private void displayBenefitsList(String chosenCategory) {
-        benefitsRef=FirebaseDatabase.getInstance().getReference().child(ConstantValues.BENEFITS).child(chosenCategory);
+        benefitsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.BENEFITS).child(chosenCategory);
         benefitsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChildren()){
-                    Toast.makeText(getContext(),"No benefits to display in this category.",Toast.LENGTH_LONG).show();
-                }else{
+                if (!dataSnapshot.hasChildren()) {
+                    Toast.makeText(getContext(), "No benefits to display in this category.", Toast.LENGTH_LONG).show();
+                } else {
                     FirebaseRecyclerOptions<RedeemableBenefit> options = new FirebaseRecyclerOptions
                             .Builder<RedeemableBenefit>()
                             .setQuery(benefitsRef, RedeemableBenefit.class)
@@ -151,7 +156,7 @@ public class BonusAreaFragment extends Fragment {
                             //holder.benefitNode = model;
                             Glide.with(getContext()).load(model.getBenefitPhoto()).placeholder(R.drawable.social_event0).into(holder.benefitPhoto);
                             holder.benefitName.setText(model.getName());
-                            if(getSocialLevelValue(MainActivity.getLoggedUser().getSocialLevel())>=getSocialLevelValue(model.getMinimumSocialLevel())){
+                            if (getSocialLevelValue(MainActivity.getLoggedUser().getSocialLevel()) >= getSocialLevelValue(model.getMinimumSocialLevel())) {
                                 holder.benefitLock.setVisibility(View.GONE);
                             }
                             //holder.benefitDescription.setText(model.getDescription());
@@ -160,12 +165,11 @@ public class BonusAreaFragment extends Fragment {
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    if(getSocialLevelValue(MainActivity.getLoggedUser().getSocialLevel())>=getSocialLevelValue(model.getMinimumSocialLevel())) {
+                                    if (getSocialLevelValue(MainActivity.getLoggedUser().getSocialLevel()) >= getSocialLevelValue(model.getMinimumSocialLevel())) {
                                         socialCenterViewModel.setBenefit(model);
                                         MainActivity.getNavController().navigate(R.id.action_nav_bonus_area_to_benefitFragment);
-                                    }
-                                    else{
-                                        Toast.makeText(getContext(),"Need minimum level of: \""+model.getMinimumSocialLevel()+"\"",Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(getContext(), "Need minimum level of: \"" + model.getMinimumSocialLevel() + "\"", Toast.LENGTH_LONG).show();
                                     }
 
                                 }
@@ -195,14 +199,15 @@ public class BonusAreaFragment extends Fragment {
         RedeemableBenefit benefitNode;
         ImageView benefitPhoto;
         ImageView benefitLock;
-        TextView benefitCost, benefitName, benefitDescription,benefitCategory;
+        TextView benefitCost, benefitName, benefitDescription, benefitCategory;
+
         public BenefitsViewHolder(@NonNull View itemView) {
             super(itemView);
-            benefitLock=itemView.findViewById(R.id.benefit_lock);
-            benefitCost= itemView.findViewById(R.id.benefit_benefit_cost);
-            benefitDescription= itemView.findViewById(R.id.benefit_benefit_description);
-            benefitName= itemView.findViewById(R.id.recycler_benefit_name);
-            benefitPhoto= itemView.findViewById(R.id.recycler_benefit_photo);
+            benefitLock = itemView.findViewById(R.id.benefit_lock);
+            benefitCost = itemView.findViewById(R.id.benefit_benefit_cost);
+            benefitDescription = itemView.findViewById(R.id.benefit_benefit_description);
+            benefitName = itemView.findViewById(R.id.recycler_benefit_name);
+            benefitPhoto = itemView.findViewById(R.id.recycler_benefit_photo);
         }
     }
 
@@ -217,38 +222,35 @@ public class BonusAreaFragment extends Fragment {
 
     }
 
-    int getSocialLevelValue(String level){
-        int value=0;
-        if(level.equals(ConstantValues.USER_LEVEL_1))
-            value=1;
-        else if(level.equals(ConstantValues.USER_LEVEL_2))
-            value=2;
-        else if(level.equals(ConstantValues.USER_LEVEL_3))
-            value=3;
-        else if(level.equals(ConstantValues.USER_LEVEL_4))
-            value=4;
-        else if(level.equals(ConstantValues.USER_LEVEL_5))
-            value=5;
+    int getSocialLevelValue(String level) {
+        int value = 0;
+        if (level.equals(ConstantValues.USER_LEVEL_1))
+            value = 1;
+        else if (level.equals(ConstantValues.USER_LEVEL_2))
+            value = 2;
+        else if (level.equals(ConstantValues.USER_LEVEL_3))
+            value = 3;
+        else if (level.equals(ConstantValues.USER_LEVEL_4))
+            value = 4;
+        else if (level.equals(ConstantValues.USER_LEVEL_5))
+            value = 5;
 
         return value;
     }
-    public String calculatePointsToNextLevel(long userCurrentPoints){
-        long pointsToNextLevel=-1;
-        if(userCurrentPoints>=6000){
-            return "( reached maximum level )";
-        }
-        else if(userCurrentPoints>=2600){
-            pointsToNextLevel=6000-userCurrentPoints;
-        }
-        else if(userCurrentPoints>=800){
-            pointsToNextLevel=2600-userCurrentPoints;
-        }
-        else if(userCurrentPoints>=200){
-            pointsToNextLevel=800-userCurrentPoints;
-        }
-        else pointsToNextLevel = 200-userCurrentPoints;
 
-        return ("( points to next level: "+String.valueOf(pointsToNextLevel)+" )");
+    public String calculatePointsToNextLevel(long userCurrentPoints) {
+        long pointsToNextLevel = -1;
+        if (userCurrentPoints >= 6000) {
+            return "( reached maximum level )";
+        } else if (userCurrentPoints >= 2600) {
+            pointsToNextLevel = 6000 - userCurrentPoints;
+        } else if (userCurrentPoints >= 800) {
+            pointsToNextLevel = 2600 - userCurrentPoints;
+        } else if (userCurrentPoints >= 200) {
+            pointsToNextLevel = 800 - userCurrentPoints;
+        } else pointsToNextLevel = 200 - userCurrentPoints;
+
+        return ("( points to next level: " + String.valueOf(pointsToNextLevel) + " )");
     }
 
 }

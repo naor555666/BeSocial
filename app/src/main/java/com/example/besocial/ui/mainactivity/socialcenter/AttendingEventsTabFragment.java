@@ -62,7 +62,7 @@ public class AttendingEventsTabFragment extends Fragment {
 
         Query query = FirebaseDatabase.getInstance().getReference()
                 .child(ConstantValues.USERS_ATTENDING_TO_EVENTS)
-                .child(MainActivity.getLoggedUser().getUserId());
+                .child(MainActivity.getFireBaseAuth().getUid());
 
 
         displayEventsList(binding.attendingEventsRecyclerview, query);

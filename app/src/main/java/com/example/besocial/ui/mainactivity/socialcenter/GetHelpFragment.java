@@ -87,7 +87,7 @@ public class GetHelpFragment extends Fragment {
         final Query eventsRef = FirebaseDatabase.getInstance().getReference()
                 .child(ConstantValues.HELP_ME)
                 .orderByChild(ConstantValues.EVENT_HOST_UID)
-                .equalTo(MainActivity.getLoggedUser().getUserId());
+                .equalTo(MainActivity.getFireBaseAuth().getUid());
 
         eventsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

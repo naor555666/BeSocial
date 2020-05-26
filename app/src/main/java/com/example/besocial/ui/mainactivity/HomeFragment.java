@@ -187,7 +187,7 @@ public class HomeFragment extends Fragment {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             Log.d(TAG, "onDataChange: getting like button state");
-                            if (dataSnapshot.hasChild(MainActivity.getLoggedUser().getUserId())) {
+                            if (dataSnapshot.hasChild(MainActivity.getFireBaseAuth().getUid())) {
                                 Glide.with(getActivity()).load(R.drawable.full_like_button).into(holder.likeButton);
                             } else
                                 Glide.with(getActivity()).load(R.drawable.empty_like_button).into(holder.likeButton);

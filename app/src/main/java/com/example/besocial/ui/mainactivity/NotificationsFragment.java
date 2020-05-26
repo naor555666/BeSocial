@@ -70,7 +70,7 @@ public class NotificationsFragment extends Fragment {
     }
 
     void displayNotifications(){
-        notificationsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.NOTIFICATIONS).child(MainActivity.getLoggedUser().getUserId());
+        notificationsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.NOTIFICATIONS).child(MainActivity.getFireBaseAuth().getUid());
         notificationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {

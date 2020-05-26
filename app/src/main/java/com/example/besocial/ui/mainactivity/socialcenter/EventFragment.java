@@ -122,7 +122,7 @@ public class EventFragment extends Fragment {
 
     private void setAttendingButton() {
         //if current user is not the host
-        if (!chosenEvent.getEventCreatorUid().equals(MainActivity.getLoggedUser().getUserId())) {
+        if (binding != null && !chosenEvent.getEventCreatorUid().equals(MainActivity.getFireBaseAuth().getUid())) {
             Log.d(TAG, "user is not the host");
             //check if user is attending
             if (isUserAttending) {
@@ -186,7 +186,7 @@ public class EventFragment extends Fragment {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                        Toast.makeText(getActivity(), "Sorry,something went wrong", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
