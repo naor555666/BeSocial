@@ -113,22 +113,12 @@ public class ProfileFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
         loggedUser = MainActivity.getLoggedUser();
-        Log.d(TAG, "onViewCreated:1 "+userData.getUserFirstName());
         userPicturesRef = FirebaseStorage.getInstance().getReference().child(MainActivity.getCurrentUser().getUid());
-        profileEmail.setText(userData.getUserEmail());
-        Log.d(TAG, "onViewCreated:2 "+userData.getUserFirstName());
-        profilePageUsername.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
-        profileFullName.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
-        Log.d(TAG, "onViewCreated:3 "+userData.getUserFirstName());
+        if(userData!=null){
+            setProfileDetails();
+        }
 
-        profileAddress.setText(userData.getUserAddress());
-        profileCity.setText(userData.getUserCity());
-        profileSocialLevel.setText(userData.getSocialLevel());
-        profileSocialPoints.setText(userData.getSocialPoints().toString());
-        profileBirthday.setText(userData.getBirthday());
-        String myProfileImage = userData.getProfileImage();
-
-        if (!MainActivity.getFireBaseAuth().getUid().equals(userData.getUserId())) {
+        if (  ( userData!=null) && !MainActivity.getFireBaseAuth().getUid().equals(userData.getUserId())) {
             myProfileTextView.setVisibility(View.INVISIBLE);
             profileChangeProfilePicture.setVisibility(View.INVISIBLE);
             profileEditProfileDetails.setVisibility(View.INVISIBLE);
@@ -152,9 +142,21 @@ public class ProfileFragment extends Fragment {
 
         }
         userRef = MainActivity.getCurrentUserDatabaseRef();
-        Glide.with(getContext()).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(profileProfilePicture);
         setListeners();
 
+    }
+
+    void setProfileDetails(){
+        profileEmail.setText(userData.getUserEmail());
+        profilePageUsername.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
+        profileFullName.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
+        profileAddress.setText(userData.getUserAddress());
+        profileCity.setText(userData.getUserCity());
+        profileSocialLevel.setText(userData.getSocialLevel());
+        profileSocialPoints.setText(userData.getSocialPoints().toString());
+        profileBirthday.setText(userData.getBirthday());
+        String myProfileImage = userData.getProfileImage();
+        Glide.with(getContext()).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(profileProfilePicture);
     }
 
     private void setListeners() {
@@ -169,11 +171,16 @@ public class ProfileFragment extends Fragment {
         profileEditProfileDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                profileAddress.setEnabled(true);
-                profileCity.setEnabled(true);
-                profileBirthday.setEnabled(true);
-                profileSaveDetails.setVisibility(View.VISIBLE);
-                profileEditProfileDetails.setVisibility(View.INVISIBLE);
+                if(loggedUser!=null){
+                    profileAddress.setEnabled(true);
+                    profileCity.setEnabled(true);
+                    profileBirthday.setEnabled(true);
+                    profileSaveDetails.setVisibility(View.VISIBLE);
+                    profileEditProfileDetails.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    Toast.makeText(getActivity(), "There was a problem, please check your connection to the internet", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

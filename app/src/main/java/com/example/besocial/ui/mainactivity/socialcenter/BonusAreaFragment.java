@@ -77,6 +77,8 @@ public class BonusAreaFragment extends Fragment {
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.list_of_bonus_area_categories, R.layout.support_simple_spinner_dropdown_item);
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         listOfCategories.setAdapter(arrayAdapter);
+        addNewRedeemableBonus = view.findViewById(R.id.new_redeemable_bonus_button);
+        addNewRedeemableBonus.setVisibility(View.INVISIBLE);
         loggedUser = MainActivity.getLoggedUser();
         if (loggedUser != null) {
             setSocialDetails(view);
@@ -94,11 +96,11 @@ public class BonusAreaFragment extends Fragment {
         pointsToNextLevel.setText(calculatePointsToNextLevel(loggedUser.getSocialPoints().longValue()));
         socialLevel.setText(loggedUser.getSocialLevel());
         socialCredits.setText(loggedUser.getSocialStoreCredits().toString());
-        addNewRedeemableBonus = view.findViewById(R.id.new_redeemable_bonus_button);
         navController = MainActivity.getNavController();
         // benefitsRef = FirebaseDatabase.getInstance().getReference();
-        if (!MainActivity.getLoggedUser().getIsManager().booleanValue()||loggedUser==null) {
-            addNewRedeemableBonus.setVisibility(View.INVISIBLE);
+        //if (!MainActivity.getLoggedUser().getIsManager().booleanValue()||loggedUser==null) {
+        if (MainActivity.getLoggedUser().getIsManager().booleanValue()) {
+            addNewRedeemableBonus.setVisibility(View.VISIBLE);
         }
     }
 
