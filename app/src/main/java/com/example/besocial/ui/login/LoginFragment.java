@@ -139,8 +139,8 @@ public class LoginFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(getActivity(), "password reset email was sent successfuly to: "+email.getText().toString(), Toast.LENGTH_LONG).show();
 
+                                Toast.makeText(getActivity(), "password reset email was sent successfuly to: "+email.getText().toString(), Toast.LENGTH_LONG).show();
                             }
                             else{
                                 Toast.makeText(getActivity(), "mail was not sent\ncheck your email above", Toast.LENGTH_LONG).show();
@@ -167,8 +167,15 @@ public class LoginFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                sendUserToMainActivity();
-                                Toast.makeText(getActivity(), "Logged in successfuly", Toast.LENGTH_SHORT).show();
+                                if(firebaseAuth.getCurrentUser().isEmailVerified()){
+                                    sendUserToMainActivity();
+                                    Toast.makeText(getActivity(), "Logged in successfuly", Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    Toast.makeText(getActivity(), "Please verify your email before login", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                }
+
                             } else {
                                 progressDialog.dismiss();
                                 login.setEnabled(true);
