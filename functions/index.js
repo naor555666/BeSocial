@@ -19,7 +19,6 @@ const HELP_ME = "Help Me!"
 const NEW_RANK = "New rank"
 const EVENT = 'Event'
 const NEW_CONVERSTION = 'New Conversation'
-const RELATED_NAME = 'relatedName'
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 
@@ -40,7 +39,7 @@ exports.approveChatConversation = functions.https.onCall((data, context) => {
             type: NEW_CONVERSTION,
             socialPointsAmount: '2',
             IdToNavigate: receiverId,
-            RELATED_NAME: receiverName
+            relatedName: receiverName
         }
         return setUserSocialPointsForChatApproval(updates, receiverId, 1)
     }, () => 0).then(() => {
@@ -49,7 +48,7 @@ exports.approveChatConversation = functions.https.onCall((data, context) => {
             type: NEW_CONVERSTION,
             socialPointsAmount: '1',
             IdToNavigate: senderId,
-            RELATED_NAME: senderName
+            relatedName: senderName
         }
         updates[`/ChatConversations/${senderId}/${receiverId}/approved`] = true;
         updates[`/ChatConversations/${receiverId}/${senderId}/approved`] = true;
@@ -67,7 +66,7 @@ exports.giveCredits = functions.database.ref('/EventsWithAttending/{eventId}/{us
         admin.database().ref('/EventsWithAttending/' + context.params.eventId + "/" + context.params.userId).once('value').then(snapshot => {
             eventCategory = snapshot.child('eventCategory').val()
             isManagamentEvent = snapshot.child('companyManagmentEvent').val()
-            eventName = snapshot.child('eventName')
+            eventName = snapshot.child('eventName').val()
             return setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent, eventName)
         }, () => {
             return 0
@@ -108,7 +107,6 @@ function setCreditAmountToGive(eventCategory, isManagamentEvent) {
     } else {
         socialCreditsAmount = 0
     }
-    console.log('social credits to give: ' + socialCreditsAmount);
     return socialCreditsAmount
 }
 
@@ -123,12 +121,10 @@ function setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent
         socialLevel = snapshot.child('socialLevel').val()
 
         var creditAmountToGive = setCreditAmountToGive(eventCategory, isManagamentEvent)
-        console.log('social credits to give: ' + creditAmountToGive);
         socialStoreCredits += creditAmountToGive
         socialPoints += creditAmountToGive
 
         var pendingSocialLevel = checkForNewLevel(socialPoints)
-        console.log('pending social level: ' + pendingSocialLevel);
 
         var newNotificationKey = admin.database().ref().child('Notifications').child(context.params.userId).push().key;
         var updates = {};
@@ -137,7 +133,7 @@ function setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent
             type: EVENT,
             socialPointsAmount: creditAmountToGive.toString(),
             IdToNavigate: context.params.eventId,
-            RELATED_NAME: eventName
+            relatedName: eventName
         }
 
         if (socialLevel !== pendingSocialLevel) {
@@ -145,7 +141,7 @@ function setUserSocialPointsForCheckIn(context, eventCategory, isManagamentEvent
             newNotificationKey = admin.database().ref().child('Notifications').child(context.params.userId).push().key;
             updates[`/Notifications/${context.params.userId}/${newNotificationKey}`] = {
                 type: NEW_RANK,
-                RELATED_NAME: pendingSocialLevel
+                relatedName: pendingSocialLevel
             }
         }
         updates['/users/' + context.params.userId + '/socialStoreCredits'] = socialStoreCredits;
@@ -185,7 +181,7 @@ function setUserSocialPointsForChatApproval(updates, userId, creditAmountToGive)
             newNotificationKey = admin.database().ref().child('Notifications').child(context.params.userId).push().key;
             updates[`/Notifications/${userId}/${newNotificationKey}`] = {
                 type: NEW_RANK,
-                RELATED_NAME: pendingSocialLevel
+                relatedName: pendingSocialLevel
             }
         }
         updates['/users/' + userId + '/socialStoreCredits'] = socialStoreCredits;
