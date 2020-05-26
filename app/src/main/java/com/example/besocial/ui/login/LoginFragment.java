@@ -167,14 +167,15 @@ public class LoginFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                if(firebaseAuth.getCurrentUser().isEmailVerified()){
+                                //if(firebaseAuth.getCurrentUser().isEmailVerified()){
                                     sendUserToMainActivity();
+
                                     Toast.makeText(getActivity(), "Logged in successfuly", Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    Toast.makeText(getActivity(), "Please verify your email before login", Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();
-                                }
+                                //}
+                                //else{
+                                 //   Toast.makeText(getActivity(), "Please verify your email before login", Toast.LENGTH_SHORT).show();
+                                 //   progressDialog.dismiss();
+                                //}
 
                             } else {
                                 progressDialog.dismiss();

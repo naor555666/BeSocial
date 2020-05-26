@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "inside on Start");
         final ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
         activateLocation.setEnabled(false);
-        if (currentUser == null || (!fireBaseAuth.getCurrentUser().isEmailVerified())) {    // if the user is not logged in
+        if (currentUser == null) {    // if the user is not logged in
             sendUserToLogin();
         }
         //
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     // Failed to read value
-                    Toast.makeText(MainActivity.this, "sorry, something wrong happened...", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "sorry, something wrong happened...", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Failed to read value.", databaseError.toException());
                 }
             });

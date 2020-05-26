@@ -130,19 +130,20 @@ public class RegisterFragment extends Fragment {
         @Override
             public void onComplete(@NonNull Task task) {
                 if (task.isSuccessful()) {
-                    firebaseAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    Toast.makeText(getActivity(), "Registered successfully\nPlease check your email to verify the account", Toast.LENGTH_LONG).show();
+                    getFragmentManager().popBackStack();
+/*                    //firebaseAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             progressDialog.dismiss();
                             if(task.isSuccessful()){
-                                Toast.makeText(getActivity(), "Registered successfully\nPlease check your email to verify the account", Toast.LENGTH_LONG).show();
-                                getFragmentManager().popBackStack();
+
                             }
                             else{
                                 Toast.makeText(getActivity(), "There was a problem with the registration", Toast.LENGTH_LONG).show();
                             }
                         }
-                    });
+                    });*/
 
                 } else {
                     String errorMessage = task.getException().getMessage();
