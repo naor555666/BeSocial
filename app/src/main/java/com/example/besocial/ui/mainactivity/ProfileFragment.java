@@ -59,7 +59,7 @@ public class ProfileFragment extends Fragment {
     private TextView profilePageUsername;
     private EditText profileFullName, profileEmail, profileCity, profileAddress, profileBirthday, profileSocialLevel, profileSocialPoints;
     private User loggedUser, userData;
-    private Button profileSaveDetails, profileFollowList, profileMyPictures, blockUserButton;
+    private Button profileSaveDetails, profileMyPictures, blockUserButton;
     private final static int galleryPick = 1;
     private ImageButton profileChangeProfilePicture, profileEditProfileDetails;
     private ImageButton newChatButton;
@@ -123,7 +123,6 @@ public class ProfileFragment extends Fragment {
             profileEditProfileDetails.setVisibility(View.INVISIBLE);
             profileMyPictures.setText("UPLOADED PHOTOS");
             myProfileTextView.setVisibility(View.INVISIBLE);
-            profileFollowList.setText("FOLLOW LIST");
             newChatButton.setVisibility(View.VISIBLE);
             String status,name="";
             if(MainActivity.getLoggedUser().getIsManager().booleanValue()==true ) {

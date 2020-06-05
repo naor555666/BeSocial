@@ -2,7 +2,6 @@ package com.example.besocial.ui.mainactivity;
 
 import android.Manifest;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -38,7 +37,6 @@ import androidx.preference.PreferenceManager;
 import com.bumptech.glide.Glide;
 import com.example.besocial.R;
 import com.example.besocial.data.Event;
-import com.example.besocial.data.Post;
 import com.example.besocial.data.User;
 import com.example.besocial.ui.login.LoginActivity;
 import com.example.besocial.ui.mainactivity.mainmenu.LogoutDialog;
@@ -47,16 +45,13 @@ import com.example.besocial.utils.DateUtils;
 import com.example.besocial.utils.GeofenceBroadcastReceiver;
 import com.example.besocial.utils.LocationUpdatesService;
 import com.example.besocial.utils.MyBroadcastReceiver;
-import com.example.besocial.utils.MyFirebaseMessagingService;
 import com.example.besocial.utils.WordsFilter;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -66,18 +61,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-//public class MainActivity extends AppCompatActivity implements TextWatcher {
+
 public class MainActivity extends AppCompatActivity {
     private static final long EXPIRATION_DURATION = 15 * ConstantValues.MINUTE;
     private final String IS_LOCATION_ACTIVATED = "isLocationActivated";
@@ -112,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
     private ChildEventListener attendingEventsListener;
     private DatabaseReference attendingEventsRef;
     private InputStream inputStream;
-    private Intent notificationsServiceIntent;
 
 
     @Override
@@ -121,34 +112,34 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        notificationsServiceIntent = new Intent(this, MyFirebaseMessagingService.class);
-        startService(notificationsServiceIntent);
-
-
+        //initialize the words to filter hashmap
         inputStream = getResources().openRawResource(R.raw.bad_word_filter);
-        retrieveCurrentRegistrationToken();
         WordsFilter.initBadWords(inputStream);
 
         mViewModel = ViewModelProviders.of(this).get(UsersViewModel.class);
 
         searchButton = findViewById(R.id.search_button);
         setSearchListener();
+
+        //  get user token (if he is logged in)
         fireBaseAuth = FirebaseAuth.getInstance();
         currentUser = fireBaseAuth.getCurrentUser();
-        //  get user token (if he is logged in)
-//        loggedUser = new User();
 
+        //define the tool bar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //define the application's main drawer menu
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_my_profile, R.id.nav_notifications, R.id.chatActivity, R.id.nav_social_center, R.id.nav_bonus_area, R.id.nav_settings)
+                R.id.nav_home, R.id.nav_my_profile, R.id.nav_notifications, R.id.chatActivity, R.id.nav_social_center, R.id.nav_bonus_area)
                 .setDrawerLayout(drawer)
                 .build();
+        //define the navigation controller of this activity
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -159,16 +150,18 @@ public class MainActivity extends AppCompatActivity {
         nav_header_user_full_name = header.findViewById(R.id.nav_header_user_full_name);
         nav_header_user_profile_picture = header.findViewById(R.id.nav_header_user_profile_picture);
 
+        //register connectivity broadcast receiver to this activity
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(myBroadcastReceiver, intentFilter);
 
+        //retrieve essential parameters from the shared preference XML file
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sharedPref.edit();
         isLocationActive = sharedPref.getBoolean(IS_LOCATION_ACTIVATED, false);
         ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
 
+        //set the location icon
         if (LocationUpdatesService.getInstance() != null) {
-
             if (isLocationActive) {
                 Glide.with(this).load(R.drawable.ic_my_location_blue_24dp).into(activateLocation);
             } else {
@@ -177,27 +170,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-    private void retrieveCurrentRegistrationToken() {
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "getInstanceId failed", task.getException());
-                            return;
-                        }
-
-                        // Get new Instance ID token
-                        String token = task.getResult().getToken();
-
-                        // Log and toast
-                        String msg = "received token " + token;
-                        Log.d(TAG, msg);
-                    }
-                });
-    }
-
 
     @Override
     protected void onStart() {
@@ -208,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser == null) {    // if the user is not logged in
             sendUserToLogin();
         }
-        //
+        //the user is logged in, the firebase token exists
         else {
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
 
@@ -321,7 +293,6 @@ public class MainActivity extends AppCompatActivity {
             if (currentOccuringEvents == null) {
                 currentOccuringEvents = new ArrayList<>();
             }
-
 
             if (checkLocationPermission()) {
                 Log.d(TAG, "permission was granted");
@@ -544,7 +515,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        stopService(notificationsServiceIntent);
+//        stopService(notificationsServiceIntent);
     }
 
     public static NavController getNavController() {

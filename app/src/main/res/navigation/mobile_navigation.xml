@@ -63,11 +63,6 @@
             app:destination="@id/benefitFragment" />
     </fragment>
     <fragment
-        android:id="@+id/nav_settings"
-        android:name="com.example.besocial.ui.mainactivity.SettingsFragment"
-        android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
-    <fragment
         android:id="@+id/nav_about"
         android:name="com.example.besocial.ui.mainactivity.mainmenu.AboutFragment"
         android:label="AboutFragment"

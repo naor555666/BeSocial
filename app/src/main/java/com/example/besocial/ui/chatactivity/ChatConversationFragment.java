@@ -256,6 +256,27 @@ public class ChatConversationFragment extends Fragment {
                 });
             }
         });
+        binding.declineBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap childrenUpdates = new HashMap();
+
+                childrenUpdates.put(String.format("/%s/%s/%s",
+                        ConstantValues.CHAT_CONVERSATIONS
+                        , MainActivity.getCurrentUser().getUid()
+                        , chosenUid)
+                        , null);
+                childrenUpdates.put(String.format("/%s/%s/%s",
+                        ConstantValues.CHAT_CONVERSATIONS
+                        ,chosenUid
+                        ,MainActivity.getCurrentUser().getUid() )
+                        , null);
+                childrenUpdates.put(String.format("/%s/%s",
+                        ConstantValues.CHAT_MESSAGES,
+                        conversationId), null);
+                dbRef.updateChildren(childrenUpdates);
+            }
+        });
     }
 
     private Task<String> approveChatConversation() {
