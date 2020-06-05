@@ -108,7 +108,6 @@ public class ProfileFragment extends Fragment {
         profileSaveDetails = view.findViewById(R.id.profile_save_new_details);
         profileEditProfileDetails = view.findViewById(R.id.profile_edit_profile_details);
         profileMyPictures = view.findViewById(R.id.profile_my_pictures);
-        profileFollowList = view.findViewById(R.id.profile_follow_list);
         userData = mViewModel.getUser().getValue();
         firebaseDatabase = FirebaseDatabase.getInstance();
         navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);

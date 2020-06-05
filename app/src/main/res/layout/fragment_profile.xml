@@ -77,24 +77,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="clip_horizontal"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="20dp"
+            android:gravity="center_horizontal"
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/profile_follow_list"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Follow List" />
-
-            <Button
                 android:id="@+id/profile_my_pictures"
-                android:layout_width="50dp"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="My Pictures" />
+                android:text="MY PIICTURES">
+
+            </Button>
+
+
         </LinearLayout>
 
         <TextView

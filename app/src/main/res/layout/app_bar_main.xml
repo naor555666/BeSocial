@@ -65,7 +65,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
-                    android:background="#8CCFD3CF"
+                    android:backgroundTint="?attr/colorPrimary"
                     android:src="@drawable/ic_menu_search">
 
                 </ImageButton>

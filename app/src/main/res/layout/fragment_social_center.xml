@@ -2,59 +2,75 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.mainactivity.MainActivity">
 
-    <TextView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/menu_social_center"
+            android:textAlignment="center"
+            android:textColor="#E20F0F0F"
+            android:textSize="30sp" />
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="60dp"
+            android:columnCount="2"
+            android:rowCount="2"
+            android:transitionGroup="false">
+
+
+            <Button
+                android:id="@+id/volunteerButton"
+                android:layout_width="135dp"
+                android:layout_height="135dp"
+                android:layout_margin="10dp"
+                android:backgroundTint="#2196F3"
+                android:text="Volunteer" />
+
+            <Button
+                android:id="@+id/getHelpButton"
+                android:layout_width="135dp"
+                android:layout_height="135dp"
+                android:layout_margin="10dp"
+                android:backgroundTint="#2196F3"
+                android:text="get help" />
+
+            <Button
+                android:id="@+id/bonusAreaButton"
+                android:layout_width="135dp"
+                android:layout_height="135dp"
+                android:layout_margin="10dp"
+                android:backgroundTint="#2196F3"
+                android:text="bonus area" />
+
+            <Button
+                android:id="@+id/socialEventButton"
+                android:layout_width="135dp"
+                android:layout_height="135dp"
+                android:layout_margin="10dp"
+                android:backgroundTint="#2196F3"
+                android:text="social events" />
+        </GridLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/menu_social_center"
-        android:textAlignment="center"
-        android:textColor="#E20F0F0F"
-        android:textSize="30sp" />
-
-    <GridLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="60dp"
-        android:columnCount="2"
-        android:rowCount="2"
-        android:transitionGroup="false">
-
-
-        <Button
-            android:id="@+id/volunteerButton"
-            android:layout_width="135dp"
-            android:layout_height="135dp"
-            android:layout_margin="10dp"
-            android:backgroundTint="#2196F3"
-            android:text="Volunteer" />
-
-        <Button
-            android:id="@+id/getHelpButton"
-            android:layout_width="135dp"
-            android:layout_height="135dp"
-            android:layout_margin="10dp"
-            android:backgroundTint="#2196F3"
-            android:text="get help" />
-
-        <Button
-            android:id="@+id/bonusAreaButton"
-            android:layout_width="135dp"
-            android:layout_height="135dp"
-            android:layout_margin="10dp"
-            android:backgroundTint="#2196F3"
-            android:text="bonus area" />
-
-        <Button
-            android:id="@+id/socialEventButton"
-            android:layout_width="135dp"
-            android:layout_height="135dp"
-            android:layout_margin="10dp"
-            android:backgroundTint="#2196F3"
-            android:text="social events" />
-    </GridLayout>
+        android:layout_marginTop="20dp"
+        android:background="@drawable/social_center_background"
+        android:backgroundTint="#33FFFFFF"
+        android:backgroundTintMode="src_over"
+        android:orientation="vertical"></LinearLayout>
 
 </LinearLayout>

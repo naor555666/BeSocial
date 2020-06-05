@@ -18,27 +18,20 @@
         android:textColor="#E20F0F0F"
         android:textSize="30sp" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
         android:background="#ECEBEB"
-        android:orientation="horizontal">
+        android:gravity="center_horizontal">
 
         <ImageButton
             android:id="@+id/create_new_post_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_create_new_post_24dp" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_create_new_post_24dp" />
 
-        <ImageButton
-            android:id="@+id/imageButton4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_refresh_24dp" />
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/posts_list_recycler_view"
