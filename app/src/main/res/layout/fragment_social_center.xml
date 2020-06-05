@@ -34,6 +34,7 @@
                 android:layout_width="135dp"
                 android:layout_height="135dp"
                 android:layout_margin="10dp"
+                android:background="@drawable/button"
                 android:backgroundTint="#2196F3"
                 android:text="Volunteer" />
 
@@ -42,6 +43,7 @@
                 android:layout_width="135dp"
                 android:layout_height="135dp"
                 android:layout_margin="10dp"
+                android:background="@drawable/button"
                 android:backgroundTint="#2196F3"
                 android:text="get help" />
 
@@ -50,6 +52,7 @@
                 android:layout_width="135dp"
                 android:layout_height="135dp"
                 android:layout_margin="10dp"
+                android:background="@drawable/button"
                 android:backgroundTint="#2196F3"
                 android:text="bonus area" />
 
@@ -58,6 +61,7 @@
                 android:layout_width="135dp"
                 android:layout_height="135dp"
                 android:layout_margin="10dp"
+                android:background="@drawable/button"
                 android:backgroundTint="#2196F3"
                 android:text="social events" />
         </GridLayout>

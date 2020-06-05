@@ -171,6 +171,15 @@
         android:name="com.example.besocial.ui.login.LoginActivity"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" />
+    <fragment
+        android:id="@+id/appUseFragment"
+        android:name="com.example.besocial.ui.mainactivity.mainmenu.AppUseFragment"
+        android:label="fragment_app_use"
+        tools:layout="@layout/fragment_app_use" >
+        <action
+            android:id="@+id/action_appUseFragment_to_nav_about"
+            app:destination="@id/nav_about" />
+    </fragment>
 
 
 </navigation>
