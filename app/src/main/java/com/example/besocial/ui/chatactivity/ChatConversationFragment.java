@@ -154,7 +154,7 @@ public class ChatConversationFragment extends Fragment {
             userName = chosenChatConversation.getUserName();
             photoUrl = chosenChatConversation.getReceiverProfilePicture();
             isConversationApproved = chosenChatConversation.isApproved();
-            setConversationApproval(isConversationApproved, chosenUid);
+            setConversationApproval(isConversationApproved, chosenChatConversation.getSender());
             initToolBar();
             prepareDatabaseQuery();
         }

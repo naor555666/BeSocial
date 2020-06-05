@@ -1,9 +1,5 @@
 package com.example.besocial.data;
 
-import android.graphics.drawable.Drawable;
-
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class ChatConversation {
     private String chatId;
     private String userName;
