@@ -76,4 +76,22 @@
     <string name="social_level">Social Level:</string>
     <string name="social_points">Social Points:</string>
     <string name="my_photos">my photos</string>
+    <string name="app_use_homepage">Home page- home contains users posts. You may create your own posts using the plus button at the top of the page.
+        \nRemember that posts that will contain offensive words will NOT be published.</string>
+    <string name="app_use_notifications">Notifications- notifications will notify you whenever you level up in your social rank, checked in at an event and when you
+        connect with a new user. Do not forget the check your activities once in a while.</string>
+    <string name="app_use_chat">Chat- in order to create a new chat, search for the desired user, enter his profile and click on the button next to the profile picture.
+        \nConnect with new people to get social points.\nYou can see all your active chats in the Chat page.</string>
+    <string name="app_use_socialcenter">Social Center- in the center, you are able to create your own events, take part in social meetings and help people.
+        When you arrive to an event, remember to have the location and CheckIn button on, to claim the points. We encourage you to help others and socialize
+        more.</string>
+    <string name="app_use_bonuarea">Bonus Area- after claiming enough points, diversed benefits can be redeemed using social credits.\nSocial
+        levels are as follows:\n\tShay Socializer: 0-199 points\n\tOut Of The Shell Socializer: 200-799 points\n\tAcademic Socializer: 800-2599 points
+        \n\tSocialized Ninja Turtle: 2600-5999 points\n\tSocialosaurus: 6000+ points</string>
+    <string name="app_use_7"></string>
+    <string name="app_use_8"></string>
+    <string name="app_use_9"></string>
+
+
+
 </resources>

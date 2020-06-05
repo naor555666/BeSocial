@@ -303,8 +303,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.about:
                 Context context;
                 try {
-                    if (!navController.getCurrentDestination().getLabel().equals("AboutFragment"))
-                        navController.navigate(R.id.nav_about);
+                    if (!navController.getCurrentDestination().getLabel().equals("AppUseFragment"))
+                        navController.navigate(R.id.appUseFragment);
                 } catch (NullPointerException e) {
                     Log.d("NullPointerException", "label was not found");
                 }

@@ -115,6 +115,7 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
             progressDialog.show();
             if(WordsFilter.filterText(postDescription.getText().toString())==true){
                 Toast.makeText(getContext(), "The post has been blocked due to a bad word", Toast.LENGTH_LONG).show();
+                progressDialog.dismiss();
             } else{
                 newPost=new Post(loggedUser.getUserId(),loggedUser.getProfileImage(),loggedUser.getUserFirstName()+" "+loggedUser.getUserLastName(),
                         currentTime+"  "+currentDate,postDescription.getText().toString(),postCategory,null,0);
