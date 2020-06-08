@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.example.besocial.R;
 import com.example.besocial.data.Post;
 import com.example.besocial.data.User;
+import com.example.besocial.data.UserPhoto;
 import com.example.besocial.utils.BitmapUtils;
 import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.utils.WordsFilter;
@@ -186,12 +187,12 @@ public class CreateNewPostFragment extends Fragment implements View.OnClickListe
     void savePostDetails(){
         DatabaseReference postsRef;
 
-        HashMap<String,String> userImage= new HashMap<>();
-        userImage.put("userId",loggedUser.getUserId());
-        userImage.put("uploadedImage",uploadedImageUri);
+        UserPhoto userPhoto = new UserPhoto();
+        userPhoto.setUserId(loggedUser.getUserId());
+        userPhoto.setUserPhoto(uploadedImageUri);
         newPost.setPostImage(uploadedImageUri);
-        postsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USER_PHOTOS).push();
-        postsRef.setValue(userImage);
+        postsRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USER_PHOTOS).child(loggedUser.getUserId()).push();
+        postsRef.setValue(userPhoto);
 
         postsRef = FirebaseDatabase.getInstance().getReference().child("Posts").push();
         String postKey=postsRef.getKey();
