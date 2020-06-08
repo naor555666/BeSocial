@@ -94,7 +94,7 @@ public class PhotosListFragment extends Fragment {
             @NonNull
             @Override
             public PhotosListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.notification_in_recycler, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.photo_in_recycler, parent, false);
                 PhotosListViewHolder viewHolder = new PhotosListViewHolder(view);
                 return viewHolder;
             }
