@@ -40,6 +40,7 @@ public class PhotosListFragment extends Fragment {
     private static DatabaseReference userPhotosRef;
     private static RecyclerView photosRecyclerView;
     private FirebaseRecyclerAdapter<UserPhoto, PhotosListFragment.PhotosListViewHolder> firebaseRecyclerAdapter;
+    private static final String TAG = "PhotosListViewHolder";
 
 
     public PhotosListFragment() {
@@ -101,6 +102,8 @@ public class PhotosListFragment extends Fragment {
             protected void onBindViewHolder(@NonNull final PhotosListViewHolder holder, int position, @NonNull final UserPhoto model) {
 
                 Glide.with(getContext()).load(model.getUserPhoto()).into(holder.photo);
+                Log.d(TAG, "onBindViewHolder: Uid= "+model.getUserId());
+                Log.d(TAG, "onBindViewHolder: User photo= "+model.getUserPhoto());
             }
         };
 
@@ -109,7 +112,6 @@ public class PhotosListFragment extends Fragment {
     }
 
     public static class PhotosListViewHolder extends RecyclerView.ViewHolder {
-        private static final String TAG = "PhotosListViewHolder";
         ImageView photo;
 
         public PhotosListViewHolder(@NonNull View itemView) {
