@@ -2,6 +2,7 @@ package com.example.besocial.ui.mainactivity;
 
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -28,6 +30,8 @@ import com.example.besocial.databinding.FragmentProfileBinding;
 import com.example.besocial.ui.chatactivity.ChatActivity;
 import com.example.besocial.utils.BitmapUtils;
 import com.example.besocial.utils.ConstantValues;
+import com.example.besocial.utils.DatePickerFragment;
+import com.example.besocial.utils.EventDatePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -54,7 +58,7 @@ public class ProfileFragment extends Fragment {
 
     private CircleImageView profileProfilePicture;
     private TextView profilePageUsername;
-    private EditText profileFullName, profileEmail, profileCity, profileAddress, profileBirthday, profileSocialLevel, profileSocialPoints;
+    private EditText profileFullName, profileEmail, profileCity, profileAddress, profileSocialLevel, profileSocialPoints;
     private User loggedUser, userData;
     private Button profileSaveDetails, profileMyPictures, blockUserButton;
     private final static int galleryPick = 1;
@@ -67,8 +71,8 @@ public class ProfileFragment extends Fragment {
     private static UsersViewModel mViewModel;
     private TextView myProfileTextView;
     String TAG = "ProfileFragment";
-    private boolean wasMyPicturesClicked=false;
-
+    private boolean wasMyPicturesClicked = false;
+    private String chosenBirthdayDate;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -101,7 +105,6 @@ public class ProfileFragment extends Fragment {
         profileCity = view.findViewById(R.id.profile_city);
         profileEmail = view.findViewById(R.id.profile_email);
         blockUserButton = view.findViewById(R.id.profile_block_user_button);
-        profileBirthday = view.findViewById(R.id.profile_birthday);
         profileSaveDetails = view.findViewById(R.id.profile_save_new_details);
         profileEditProfileDetails = view.findViewById(R.id.profile_edit_profile_details);
         profileMyPictures = view.findViewById(R.id.profile_my_pictures);
@@ -110,19 +113,19 @@ public class ProfileFragment extends Fragment {
         navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
         loggedUser = MainActivity.getLoggedUser();
         userPicturesRef = FirebaseStorage.getInstance().getReference().child(MainActivity.getCurrentUser().getUid());
-        if(userData!=null){
+        if (userData != null) {
             setProfileDetails();
         }
 
-        if (  ( userData!=null) && !MainActivity.getFireBaseAuth().getUid().equals(userData.getUserId())) {
+        if ((userData != null) && !MainActivity.getFireBaseAuth().getUid().equals(userData.getUserId())) {
             myProfileTextView.setVisibility(View.INVISIBLE);
             profileChangeProfilePicture.setVisibility(View.INVISIBLE);
             profileEditProfileDetails.setVisibility(View.INVISIBLE);
             profileMyPictures.setText("UPLOADED PHOTOS");
             myProfileTextView.setVisibility(View.INVISIBLE);
             newChatButton.setVisibility(View.VISIBLE);
-            String status,name="";
-            if(MainActivity.getLoggedUser().getIsManager().booleanValue()==true ) {
+            String status, name = "";
+            if (MainActivity.getLoggedUser().getIsManager().booleanValue() == true) {
                 name = userData.getUserFirstName();
                 status = userData.getAccountStatus();
                 if (userData.getAccountStatus().equals("Blocked")) {
@@ -141,7 +144,7 @@ public class ProfileFragment extends Fragment {
 
     }
 
-    void setProfileDetails(){
+    void setProfileDetails() {
         profileEmail.setText(userData.getUserEmail());
         profilePageUsername.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
         profileFullName.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
@@ -149,7 +152,7 @@ public class ProfileFragment extends Fragment {
         profileCity.setText(userData.getUserCity());
         profileSocialLevel.setText(userData.getSocialLevel());
         profileSocialPoints.setText(userData.getSocialPoints().toString());
-        profileBirthday.setText(userData.getBirthday());
+        binding.profileBirthday.setText(userData.getBirthday());
         String myProfileImage = userData.getProfileImage();
         Glide.with(getContext()).load(myProfileImage).placeholder(R.drawable.empty_profile_image).into(profileProfilePicture);
     }
@@ -158,7 +161,7 @@ public class ProfileFragment extends Fragment {
         profileMyPictures.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wasMyPicturesClicked=true;
+                wasMyPicturesClicked = true;
                 navController.navigate(R.id.action_nav_my_profile_to_photosListFragment);
             }
         });
@@ -166,14 +169,13 @@ public class ProfileFragment extends Fragment {
         profileEditProfileDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(loggedUser!=null){
+                if (loggedUser != null) {
                     profileAddress.setEnabled(true);
                     profileCity.setEnabled(true);
-                    profileBirthday.setEnabled(true);
+                    binding.profileBirthday.setEnabled(true);
                     profileSaveDetails.setVisibility(View.VISIBLE);
                     profileEditProfileDetails.setVisibility(View.INVISIBLE);
-                }
-                else{
+                } else {
                     Toast.makeText(getActivity(), "There was a problem, please check your connection to the internet", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -192,6 +194,7 @@ public class ProfileFragment extends Fragment {
                     HashMap userMap = new HashMap();
                     userMap.put("userAddress", profileAddress.getText().toString());
                     userMap.put("userCity", profileCity.getText().toString());
+                    userMap.put("birthday", binding.profileBirthday.getText().toString());
                     userRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                         @Override
                         public void onComplete(@NonNull Task task) {
@@ -205,7 +208,7 @@ public class ProfileFragment extends Fragment {
                             profileEditProfileDetails.setVisibility(View.VISIBLE);
                             profileAddress.setEnabled(false);
                             profileCity.setEnabled(false);
-                            profileBirthday.setEnabled(false);
+                            binding.profileBirthday.setEnabled(false);
                         }
                     });
 
@@ -215,7 +218,12 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-
+        binding.profileBirthday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
         profileChangeProfilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -245,6 +253,32 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    private void showDatePickerDialog() {
+        DatePickerFragment datePickerFragment = new BirthdayPicker(binding.profileBirthday);
+        datePickerFragment.show(getFragmentManager(), null);
+    }
+
+    public static class BirthdayPicker extends DatePickerFragment {
+        private TextView profileBirthday;
+        public BirthdayPicker(TextView profileBirthday) {
+            super();
+            this.profileBirthday=profileBirthday;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return super.onCreateDialog(savedInstanceState);
+        }
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            super.onDateSet(view, year, month, day);
+            this.profileBirthday.setText(strChosenDate);
+
+        }
+    }
+
+
     private void openChatConversation() {
         Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
         chatIntent.putExtra(ConstantValues.LOGGED_USER_ID, MainActivity.getLoggedUser().getUserId());
@@ -264,6 +298,7 @@ public class ProfileFragment extends Fragment {
 
     private void uploadImageToStorage(Intent data) {
         Uri imageUri = data.getData();
+        Glide.with(getContext()).load(imageUri).into(binding.profileUserProfilePicture);
         final StorageReference profileImagesRef = userPicturesRef.child("profileImages/" + imageUri.getLastPathSegment());
         BitmapUtils rotateNcompress = new BitmapUtils();
         byte[] compressedPhoto = new byte[0];
@@ -304,11 +339,10 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if(wasMyPicturesClicked==false){
+        if (wasMyPicturesClicked == false) {
             mViewModel.setUser(loggedUser);
-        }
-        else{
-            wasMyPicturesClicked=false;
+        } else {
+            wasMyPicturesClicked = false;
         }
     }
 
@@ -335,7 +369,5 @@ public class ProfileFragment extends Fragment {
         user.setAccountStatus(newStatus);
         mViewModel.setUser(user);
     }
-
-
 }
 

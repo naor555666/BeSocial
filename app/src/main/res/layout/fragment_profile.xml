@@ -107,6 +107,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <EditText
@@ -115,6 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/input_field"
                 android:editable="false"
                 android:ems="10"
                 android:enabled="false"
@@ -132,31 +134,38 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
-            <EditText
+            <TextView
                 android:id="@+id/profile_birthday"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/input_field"
+                android:editable="false"
                 android:ems="10"
                 android:enabled="false"
-                android:inputType="date" />
+                android:foregroundGravity="center_vertical"
+                android:textDirection="ltr"
+                android:inputType="date"
+                android:textStyle="bold"
+                android:textSize="17sp" />
 
             <TextView
                 android:layout_width="50dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
                 android:text="Birthday:" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <EditText
@@ -165,6 +174,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/input_field"
                 android:editable="false"
                 android:ems="10"
                 android:enabled="false"
@@ -182,6 +192,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <EditText
@@ -190,6 +201,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/input_field"
                 android:editable="false"
                 android:ems="10"
                 android:enabled="false"
@@ -207,6 +219,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <EditText
@@ -215,6 +228,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/input_field"
                 android:editable="false"
                 android:ems="10"
                 android:enabled="false"
@@ -232,6 +246,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <EditText
@@ -240,6 +255,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/input_field"
                 android:editable="false"
                 android:ems="10"
                 android:enabled="false"
@@ -257,6 +273,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <EditText
@@ -265,6 +282,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/input_field"
                 android:editable="false"
                 android:ems="10"
                 android:enabled="false"
