@@ -31,8 +31,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
-import static androidx.constraintlayout.widget.Constraints.TAG;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,13 +58,13 @@ public class PhotosListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         photosRecyclerView = view.findViewById(R.id.my_photos_recycler_view);
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         layoutManager.setReverseLayout(true);
         photosRecyclerView.setLayoutManager(layoutManager);
         displayPhotos();
     }
 
-    private void displayPhotos(){
+    private void displayPhotos() {
         userPhotosRef = FirebaseDatabase.getInstance().getReference().child(ConstantValues.USER_PHOTOS).child(MainActivity.getFireBaseAuth().getUid());
         userPhotosRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -85,7 +83,7 @@ public class PhotosListFragment extends Fragment {
         });
     }
 
-    private void showphotos(){
+    private void showphotos() {
         FirebaseRecyclerOptions<UserPhoto> options = new FirebaseRecyclerOptions
                 .Builder<UserPhoto>()
                 .setQuery(userPhotosRef, UserPhoto.class)
@@ -94,7 +92,7 @@ public class PhotosListFragment extends Fragment {
             @NonNull
             @Override
             public PhotosListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.notification_in_recycler, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.photo_in_recycler, parent, false);
                 PhotosListViewHolder viewHolder = new PhotosListViewHolder(view);
                 return viewHolder;
             }
@@ -105,13 +103,15 @@ public class PhotosListFragment extends Fragment {
                 Glide.with(getContext()).load(model.getUserPhoto()).into(holder.photo);
             }
         };
-        RecyclerView newNotificationsRecyclerView = PhotosListFragment.photosRecyclerView;
-        newNotificationsRecyclerView.setAdapter(firebaseRecyclerAdapter);
+
+        photosRecyclerView.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
     }
 
     public static class PhotosListViewHolder extends RecyclerView.ViewHolder {
+        private static final String TAG = "PhotosListViewHolder";
         ImageView photo;
+
         public PhotosListViewHolder(@NonNull View itemView) {
             super(itemView);
             photo = itemView.findViewById(R.id.photo_in_recycler_imageview);
