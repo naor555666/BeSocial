@@ -69,7 +69,6 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-
 public class MainActivity extends AppCompatActivity {
     private static final long EXPIRATION_DURATION = 15 * ConstantValues.MINUTE;
     private final String IS_LOCATION_ACTIVATED = "isLocationActivated";
@@ -177,11 +176,13 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "inside on Start");
         final ImageButton activateLocation = findViewById(R.id.app_bar_activate_location);
         activateLocation.setEnabled(false);
-        if (currentUser == null) {    // if the user is not logged in
+
+        if (FirebaseAuth.getInstance().getCurrentUser() == null || fireBaseAuth.getUid() == null) {    // if the user is not logged in
             sendUserToLogin();
         }
         //the user is logged in, the firebase token exists
         else {
+            currentUser.reload();
             currentUserDatabaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUid());
 
             userDetailsListener = currentUserDatabaseRef.addValueEventListener(new ValueEventListener() {

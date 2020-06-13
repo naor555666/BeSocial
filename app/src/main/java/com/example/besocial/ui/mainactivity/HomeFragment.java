@@ -170,7 +170,8 @@ public class HomeFragment extends Fragment {
                                 User user = dataSnapshot.getValue(User.class);
                                 Log.d(TAG, "onDataChange: User: " + user.getUserFirstName() + " , status: " + user.getAccountStatus());
                                 mViewModel.setUser(user);
-                                MainActivity.getNavController().navigate(R.id.action_nav_home_to_nav_my_profile);
+//                                MainActivity.getNavController().navigate(R.id.action_nav_home_to_nav_my_profile);
+                                MainActivity.getNavController().navigate(R.id.nav_my_profile);
                             }
 
                             @Override

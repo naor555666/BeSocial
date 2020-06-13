@@ -104,13 +104,14 @@ public class RegisterFragment extends Fragment {
                                             saveUserDetails(userID);
                                         } else {
                                             String errorMessage = task.getException().getMessage();
+                                            if (view != null) {
+                                                progressDialog.dismiss();
+                                                createAccount.setEnabled(true);
+                                            }
                                             Toast.makeText(getActivity(), "Could not register: " + errorMessage, Toast.LENGTH_LONG).show();
 
                                         }
-                                        if (view != null) {
-                                            progressDialog.dismiss();
-                                            createAccount.setEnabled(true);
-                                        }
+
                                     }
 
 
@@ -137,28 +138,24 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(getActivity(), "Registered successfully\nPlease check your email to verify the account", Toast.LENGTH_LONG).show();
                     if (view != null) {
+                        progressDialog.dismiss();
                         getFragmentManager().popBackStack();
                     }
-
-/*                    //firebaseAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            progressDialog.dismiss();
-                            if(task.isSuccessful()){
-
-                            }
-                            else{
-                                Toast.makeText(getActivity(), "There was a problem with the registration", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });*/
-
+                    if (getActivity() != null) {
+                        Toast.makeText(getActivity(), "Registered successfully\nWelcome!", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     String errorMessage = task.getException().getMessage();
-                    Toast.makeText(getActivity(), "Could not fill details: " + errorMessage, Toast.LENGTH_LONG).show();
+                    if(view!=null){
+                        progressDialog.dismiss();
+                    }
+                    if (getActivity() != null) {
+                        Toast.makeText(getActivity(), "Could not fill details: " + errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                    createAccount.setEnabled(true);
                 }
+
             }
         });
     }
