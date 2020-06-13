@@ -73,6 +73,7 @@ public class ProfileFragment extends Fragment {
     String TAG = "ProfileFragment";
     private boolean wasMyPicturesClicked = false;
     private String chosenBirthdayDate;
+    private static String tempId;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -145,6 +146,11 @@ public class ProfileFragment extends Fragment {
     }
 
     void setProfileDetails() {
+        if(userData.getUserId().equals(MainActivity.getLoggedUser().getUserId())){
+            tempId="";
+        } else{
+            tempId=userData.getUserId();
+        }
         profileEmail.setText(userData.getUserEmail());
         profilePageUsername.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
         profileFullName.setText(userData.getUserFirstName() + " " + userData.getUserLastName());
@@ -369,5 +375,10 @@ public class ProfileFragment extends Fragment {
         user.setAccountStatus(newStatus);
         mViewModel.setUser(user);
     }
+
+    public static String getTempId() {
+        return tempId;
+    }
+
 }
 
