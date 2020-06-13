@@ -303,7 +303,8 @@ public class ChatConversationFragment extends Fragment {
     }
 
     private void sendMessage() {
-        final String textMessage = binding.chatUserInput.getText().toString();
+        final String textMessage = binding.chatUserInput.getText().toString().trim();
+
         binding.chatUserInput.setText("");
 
         final Map<String, Object> childUpdates = new HashMap<>();

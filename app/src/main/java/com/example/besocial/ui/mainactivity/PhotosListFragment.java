@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -76,11 +77,19 @@ public class PhotosListFragment extends Fragment {
                 }
             }
 
+
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        layoutManager.setReverseLayout(true);
+        photosRecyclerView.setLayoutManager(layoutManager);
+/*        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        photosRecyclerView.setLayoutManager(linearLayoutManager);
+        photosRecyclerView.setLayoutManager(linearLayoutManager);*/
     }
 
     private void showphotos() {

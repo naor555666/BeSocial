@@ -70,7 +70,10 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_alignParentEnd="true"
+            android:layout_gravity="clip_horizontal"
+            android:layout_marginLeft="45dp"
             android:background="#FFFFFF"
+            android:backgroundTintMode="src_in"
             android:layoutDirection="rtl"
             android:scaleType="centerCrop"
             android:src="@drawable/empty_like_button">

@@ -30,6 +30,7 @@ import java.util.List;
 
 public class RegisterFragment extends Fragment {
     private static final RegisterFragment registerFragment = new RegisterFragment();
+    private View view;
 
     public static RegisterFragment getInstance() {
         return registerFragment;
@@ -51,7 +52,7 @@ public class RegisterFragment extends Fragment {
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference userRef,usersListRef;
+    private DatabaseReference userRef, usersListRef;
     private List<String> usersList;
 
 
@@ -59,7 +60,8 @@ public class RegisterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register, container, false);
+        view = inflater.inflate(R.layout.fragment_register, container, false);
+        return view;
     }
 
     @Override
@@ -75,8 +77,8 @@ public class RegisterFragment extends Fragment {
         createAccount = view.findViewById(R.id.createAccount);
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        usersList=new ArrayList<String>();
-        progressDialog=new ProgressDialog(getActivity());
+        usersList = new ArrayList<String>();
+        progressDialog = new ProgressDialog(getActivity());
         progressDialog.setTitle("Creating account... Please wait");
 
         setListeners();
@@ -84,25 +86,30 @@ public class RegisterFragment extends Fragment {
 
 
     private class ClickListener implements View.OnClickListener {
-        public void onClick(View view) {
-            switch (view.getId()) {
+        public void onClick(final View v) {
+            switch (v.getId()) {
                 case R.id.clearFieldsRegister:
                     clearFields();
                     break;
                 case R.id.createAccount:
+                    progressDialog.show();
+                    createAccount.setEnabled(false);
                     if (checkFields()) {
                         firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).
                                 addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
-                                            progressDialog.show();
                                             String userID = task.getResult().getUser().getUid();
                                             saveUserDetails(userID);
                                         } else {
                                             String errorMessage = task.getException().getMessage();
                                             Toast.makeText(getActivity(), "Could not register: " + errorMessage, Toast.LENGTH_LONG).show();
 
+                                        }
+                                        if (view != null) {
+                                            progressDialog.dismiss();
+                                            createAccount.setEnabled(true);
                                         }
                                     }
 
@@ -118,20 +125,23 @@ public class RegisterFragment extends Fragment {
 
     private void saveUserDetails(String userID) {
         userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userID);
-        firstNameString=firstName.getText().toString();
-        lastNameString=lastName.getText().toString();
-        emailString=email.getText().toString();
+        firstNameString = firstName.getText().toString();
+        lastNameString = lastName.getText().toString();
+        emailString = email.getText().toString();
 
-        User newUser=new User(userID,firstNameString,lastNameString,emailString,"","","",Long.valueOf(0),
-                ConstantValues.USER_LEVEL_1,Long.valueOf(0),Boolean.valueOf(false),"","Active");
+        User newUser = new User(userID, firstNameString, lastNameString, emailString, "", "", "", Long.valueOf(0),
+                ConstantValues.USER_LEVEL_1, Long.valueOf(0), Boolean.valueOf(false), "", "Active");
 
         userRef.setValue(newUser).addOnCompleteListener(new OnCompleteListener() {
 
-        @Override
+            @Override
             public void onComplete(@NonNull Task task) {
                 if (task.isSuccessful()) {
                     Toast.makeText(getActivity(), "Registered successfully\nPlease check your email to verify the account", Toast.LENGTH_LONG).show();
-                    getFragmentManager().popBackStack();
+                    if (view != null) {
+                        getFragmentManager().popBackStack();
+                    }
+
 /*                    //firebaseAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -164,40 +174,40 @@ public class RegisterFragment extends Fragment {
         String passwordString = password.getText().toString();
         String confirmPasswordString = confirmPassword.getText().toString();
 
-        isFieldsValid=true;
+        isFieldsValid = true;
         if (firstNameString.equals("")) {
             firstName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-            isFieldsValid=false;
+            isFieldsValid = false;
         }
         if (lastNameString.equals("")) {
             lastName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-            isFieldsValid=false;
+            isFieldsValid = false;
         }
         if (emailString.equals("")) {
             email.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-            isFieldsValid=false;
+            isFieldsValid = false;
         }
         if (confirmEmailString.equals("")) {
             confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-            isFieldsValid=false;
+            isFieldsValid = false;
         }
-        if (passwordString.length()<8) {
+        if (passwordString.length() < 8) {
             password.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-            isFieldsValid=false;
+            isFieldsValid = false;
         }
-        if (confirmPasswordString.length()<8) {
+        if (confirmPasswordString.length() < 8) {
             confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-            isFieldsValid=false;
+            isFieldsValid = false;
         }
         if (!emailString.equals(confirmEmailString)) {
             confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-            isFieldsValid=false;
+            isFieldsValid = false;
         }
         if (!passwordString.equals(confirmPasswordString)) {
             confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-            isFieldsValid=false;
+            isFieldsValid = false;
         }
-        if(isFieldsValid==false)
+        if (isFieldsValid == false)
             Toast.makeText(getActivity(), "There are incorrect fields", Toast.LENGTH_SHORT).show();
 
 
@@ -212,12 +222,15 @@ public class RegisterFragment extends Fragment {
         password.setText("");
         confirmPassword.setText("");
     }
-    public class RegisterTextWatcher implements android.text.TextWatcher{
+
+    public class RegisterTextWatcher implements android.text.TextWatcher {
         private int chosenEditText;
-        public RegisterTextWatcher(int chosenEditText){
+
+        public RegisterTextWatcher(int chosenEditText) {
             super();
-            this.chosenEditText=chosenEditText;
+            this.chosenEditText = chosenEditText;
         }
+
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -226,32 +239,32 @@ public class RegisterFragment extends Fragment {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (chosenEditText == firstName.getId()) {
-                if(firstName.getText().length()>0){
+                if (firstName.getText().length() > 0) {
                     firstName.setBackground(getResources().getDrawable(R.drawable.input_field));
                 }
 
             } else if (chosenEditText == lastName.getId()) {
-                if(lastName.getText().length()>0){
+                if (lastName.getText().length() > 0) {
                     lastName.setBackground(getResources().getDrawable(R.drawable.input_field));
                 }
 
             } else if (chosenEditText == email.getId()) {
-                if(email.getText().length()>0){
+                if (email.getText().length() > 0) {
                     email.setBackground(getResources().getDrawable(R.drawable.input_field));
                 }
 
             } else if (chosenEditText == confirmEmail.getId()) {
-                if((confirmEmail.getText().toString().equals(email.getText().toString()))&&(confirmEmail.getText().length()>0) ) {
+                if ((confirmEmail.getText().toString().equals(email.getText().toString())) && (confirmEmail.getText().length() > 0)) {
                     confirmEmail.setBackground(getResources().getDrawable(R.drawable.input_field));
                 }
             } else if (chosenEditText == password.getId()) {
 
                 //if (password.getBackground().equals(getResources().getDrawable(R.drawable.incorrect_input_register))) {
-                if(password.getText().length()>7){
+                if (password.getText().length() > 7) {
                     password.setBackground(getResources().getDrawable(R.drawable.input_field));
                 }
             } else if (chosenEditText == confirmPassword.getId()) {
-                if((confirmPassword.getText().length()>7 )&&(confirmPassword.getText().toString().equals(password.getText().toString())) ){
+                if ((confirmPassword.getText().length() > 7) && (confirmPassword.getText().toString().equals(password.getText().toString()))) {
                     confirmPassword.setBackground(getResources().getDrawable(R.drawable.input_field));
                 }
             }
@@ -282,6 +295,7 @@ public class RegisterFragment extends Fragment {
         super.onDestroy();
         LoginFragment loginFragment = LoginFragment.getInstance();
         loginFragment.setRegisterValue(true);
+        view = null;
     }
 
 }

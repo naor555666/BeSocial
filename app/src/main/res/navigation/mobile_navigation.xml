@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_nav_home_to_nav_my_profile"
             app:destination="@id/nav_my_profile" />
+        <action
+            android:id="@+id/action_nav_home_to_appUseFragment"
+            app:destination="@id/appUseFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_my_profile"
@@ -37,9 +40,6 @@
         android:label="fragment_social_center"
         tools:layout="@layout/fragment_social_center" >
         <action
-            android:id="@+id/action_nav_social_center_to_createEventFragment"
-            app:destination="@id/createEventFragment" />
-        <action
             android:id="@+id/action_nav_social_center_to_eventsListFragment"
             app:destination="@id/eventsListFragment" />
         <argument
@@ -49,6 +49,12 @@
         <action
             android:id="@+id/action_nav_social_center_to_nav_bonus_area"
             app:destination="@id/nav_bonus_area" />
+        <action
+            android:id="@+id/action_nav_social_center_to_volunteerFragment"
+            app:destination="@id/volunteerFragment" />
+        <action
+            android:id="@+id/action_nav_social_center_to_getHelpFragment"
+            app:destination="@id/getHelpFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_bonus_area"
@@ -76,7 +82,11 @@
         android:id="@+id/eventFragment"
         android:name="com.example.besocial.ui.mainactivity.socialcenter.EventFragment"
         android:label="fragment_event"
-        tools:layout="@layout/fragment_event" />
+        tools:layout="@layout/fragment_event" >
+        <action
+            android:id="@+id/action_eventFragment_to_eventAttendantsFragment"
+            app:destination="@id/eventAttendantsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/eventsListFragment"
         android:name="com.example.besocial.ui.mainactivity.socialcenter.EventsListFragment"
@@ -88,6 +98,15 @@
         <action
             android:id="@+id/action_eventsListFragment_to_eventFragment"
             app:destination="@id/eventFragment" />
+        <action
+            android:id="@+id/action_eventsListFragment_to_allEventsTabFragment"
+            app:destination="@id/allEventsTabFragment" />
+        <action
+            android:id="@+id/action_eventsListFragment_to_hostingEventsTabFragment"
+            app:destination="@id/hostingEventsTabFragment" />
+        <action
+            android:id="@+id/action_eventsListFragment_to_attendingEventsTabFragment"
+            app:destination="@id/attendingEventsTabFragment" />
     </fragment>
     <fragment
         android:id="@+id/photosListFragment"
@@ -129,7 +148,11 @@
         android:id="@+id/getHelpFragment"
         android:name="com.example.besocial.ui.mainactivity.socialcenter.GetHelpFragment"
         android:label="fragment_get_help"
-        tools:layout="@layout/fragment_get_help" />
+        tools:layout="@layout/fragment_get_help" >
+        <action
+            android:id="@+id/action_getHelpFragment_to_eventFragment"
+            app:destination="@id/eventFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchUsersFragment"
         android:name="com.example.besocial.ui.mainactivity.SearchUsersFragment"
@@ -146,7 +169,11 @@
         android:id="@+id/volunteerFragment"
         android:name="com.example.besocial.ui.mainactivity.socialcenter.VolunteerFragment"
         android:label="fragment_volunteer"
-        tools:layout="@layout/fragment_volunteer" />
+        tools:layout="@layout/fragment_volunteer" >
+        <action
+            android:id="@+id/action_volunteerFragment_to_eventFragment"
+            app:destination="@id/eventFragment" />
+    </fragment>
     <fragment
         android:id="@+id/eventAttendantsFragment"
         android:name="com.example.besocial.ui.mainactivity.socialcenter.EventAttendantsFragment"
