@@ -22,24 +22,41 @@
 
     <EditText
         android:id="@+id/username"
-        android:layout_width="match_parent"
+        android:layout_width="345dp"
         android:layout_height="wrap_content"
 
+        android:layout_gravity="fill_horizontal"
         android:autofillHints="@string/prompt_email"
         android:hint="@string/prompt_email"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="true" />
 
-    <EditText
-        android:id="@+id/password"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:autofillHints="@string/prompt_password"
-        android:hint="@string/prompt_password"
-        android:imeActionLabel="@string/action_sign_in_short"
-        android:imeOptions="actionDone"
-        android:inputType="textPassword"
-        android:selectAllOnFocus="true" />
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/visibility_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/ic_visibility_off_black_24dp" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="345dp"
+            android:layout_height="wrap_content"
+            android:autofillHints="@string/prompt_password"
+            android:hint="@string/prompt_password"
+            android:imeActionLabel="@string/action_sign_in_short"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:selectAllOnFocus="true" />
+
+    </LinearLayout>
 
     <CheckBox
         android:id="@+id/remember_emailPassword_checkBox"
@@ -47,6 +64,15 @@
         android:layout_height="wrap_content"
         android:checked="false"
         android:text="@string/remember_my_email_and_password" />
+
+    <TextView
+        android:id="@+id/forgot_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:layout_marginTop="10dp"
+        android:text="Forgot password ?"
+        android:textColor="#0E08D3" />
 
     <LinearLayout
         android:layout_width="match_parent"

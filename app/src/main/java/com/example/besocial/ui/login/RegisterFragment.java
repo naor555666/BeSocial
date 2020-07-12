@@ -1,42 +1,32 @@
 package com.example.besocial.ui.login;
 
 
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.example.besocial.MainActivity;
+import com.example.besocial.utils.ConstantValues;
 import com.example.besocial.R;
+import com.example.besocial.data.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-
-import static android.graphics.Color.red;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegisterFragment extends Fragment {
     private static final RegisterFragment registerFragment = new RegisterFragment();
@@ -58,11 +48,11 @@ public class RegisterFragment extends Fragment {
     private String confirmEmailString;
     private String passwordString;
     private String confirmPasswordString;
-
-
+    private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference userRef;
+    private DatabaseReference userRef,usersListRef;
+    private List<String> usersList;
 
 
     @Override
@@ -83,13 +73,13 @@ public class RegisterFragment extends Fragment {
         confirmPassword = (EditText) view.findViewById(R.id.confirmPassword);
         clearFields = view.findViewById(R.id.clearFieldsRegister);
         createAccount = view.findViewById(R.id.createAccount);
-
-
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
+        usersList=new ArrayList<String>();
+        progressDialog=new ProgressDialog(getActivity());
+        progressDialog.setTitle("Creating account... Please wait");
 
         setListeners();
-
     }
 
 
@@ -106,9 +96,9 @@ public class RegisterFragment extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
-                                            //String userID = task.getResult().getUser().getUid();
-                                            String userEmail=task.getResult().getUser().getEmail();
-                                            saveUserDetails(userEmail);
+                                            progressDialog.show();
+                                            String userID = task.getResult().getUser().getUid();
+                                            saveUserDetails(userID);
                                         } else {
                                             String errorMessage = task.getException().getMessage();
                                             Toast.makeText(getActivity(), "Could not register: " + errorMessage, Toast.LENGTH_LONG).show();
@@ -126,17 +116,35 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-    private void saveUserDetails(String userEmail) {
-        userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userEmail);
-        HashMap userMap = new HashMap();
-        userMap.put("userFirstName", firstName.getText().toString());
-        userMap.put("userLastName", lastName.getText().toString());
-        userRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
-            @Override
+    private void saveUserDetails(String userID) {
+        userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userID);
+        firstNameString=firstName.getText().toString();
+        lastNameString=lastName.getText().toString();
+        emailString=email.getText().toString();
+
+        User newUser=new User(userID,firstNameString,lastNameString,emailString,"","","",Long.valueOf(0),
+                ConstantValues.USER_LEVEL_1,Long.valueOf(0),Boolean.valueOf(false),"","Active");
+
+        userRef.setValue(newUser).addOnCompleteListener(new OnCompleteListener() {
+
+        @Override
             public void onComplete(@NonNull Task task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Registered successfully\nPlease check your email to verify the account", Toast.LENGTH_LONG).show();
                     getFragmentManager().popBackStack();
+/*                    //firebaseAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            progressDialog.dismiss();
+                            if(task.isSuccessful()){
+
+                            }
+                            else{
+                                Toast.makeText(getActivity(), "There was a problem with the registration", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });*/
+
                 } else {
                     String errorMessage = task.getException().getMessage();
                     Toast.makeText(getActivity(), "Could not fill details: " + errorMessage, Toast.LENGTH_LONG).show();
@@ -146,7 +154,7 @@ public class RegisterFragment extends Fragment {
     }
 
     private boolean checkFields() {
-        Toast.makeText(getActivity(), "chekc fielda", Toast.LENGTH_SHORT);
+        Toast.makeText(getActivity(), "chekc fields", Toast.LENGTH_SHORT);
 
         Boolean isFieldsValid = false;
         String firstNameString = firstName.getText().toString();
@@ -155,36 +163,7 @@ public class RegisterFragment extends Fragment {
         String confirmEmailString = confirmEmail.getText().toString();
         String passwordString = password.getText().toString();
         String confirmPasswordString = confirmPassword.getText().toString();
-/*
-        if (firstNameString.equals("")) {
-            Toast.makeText(getActivity(), "First name is empty", Toast.LENGTH_SHORT).show();
-            firstName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (lastNameString.equals("")) {
-            Toast.makeText(getActivity(), "Last name is empty", Toast.LENGTH_SHORT).show();
-            lastName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (emailString.equals("")) {
-            Toast.makeText(getActivity(), "Email is empty", Toast.LENGTH_SHORT).show();
-            email.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (confirmEmailString.equals("")) {
-            Toast.makeText(getActivity(), "Email confirmation is empty", Toast.LENGTH_SHORT).show();
-            confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (passwordString.equals("")) {
-            Toast.makeText(getActivity(), "Password is empty", Toast.LENGTH_SHORT).show();
-            password.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (confirmPasswordString.equals("")) {
-            Toast.makeText(getActivity(), "Password confirmation is empty", Toast.LENGTH_SHORT).show();
-            confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (!emailString.equals(confirmEmailString)) {
-            Toast.makeText(getActivity(), "Email confirmation is incompatible", Toast.LENGTH_SHORT).show();
-            confirmEmail.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else if (!passwordString.equals(confirmPasswordString)) {
-            Toast.makeText(getActivity(), "Password confirmation is incompatible", Toast.LENGTH_SHORT).show();
-            confirmPassword.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
-        } else
-            isFieldsValid = true;
 
-
- */
         isFieldsValid=true;
         if (firstNameString.equals("")) {
             firstName.setBackground(getResources().getDrawable(R.drawable.incorrect_input_register));
@@ -304,4 +283,5 @@ public class RegisterFragment extends Fragment {
         LoginFragment loginFragment = LoginFragment.getInstance();
         loginFragment.setRegisterValue(true);
     }
+
 }

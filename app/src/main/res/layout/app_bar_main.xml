@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ui.mainactivity.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -16,30 +16,68 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
             android:focusable="true"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:textDirection="ltr"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <ImageButton
-                android:id="@+id/imageButton"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_menu_search"
-                android:background="@drawable/round_button_shape" />
+                android:gravity="center"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/fragment_event_dateTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Check in!:"
+                    android:textColor="#030303"
+                    android:textSize="12sp"
+                    android:textStyle="bold|italic" />
 
-            <EditText
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layoutDirection="ltr"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/app_bar_activate_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/round_button_shape"
+                        android:onClick="clickHandler"
+                        app:srcCompat="@drawable/ic_my_location_black_24dp"></ImageButton>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/search_person_here"
-                android:inputType="text" />
+                android:layout_height="match_parent">
 
+                <ImageButton
+                    android:id="@+id/search_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:backgroundTint="?attr/colorPrimary"
+                    android:src="@drawable/ic_menu_search">
+
+                </ImageButton>
+            </LinearLayout>
 
 
         </androidx.appcompat.widget.Toolbar>
 
 
     </com.google.android.material.appbar.AppBarLayout>
+
+
 
     <include layout="@layout/content_main" />
 

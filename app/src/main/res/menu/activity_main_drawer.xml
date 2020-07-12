@@ -17,7 +17,7 @@
             android:icon="@drawable/ic_menu_notifications"
             android:title="@string/Notifications" />
         <item
-            android:id="@+id/nav_chat"
+            android:id="@+id/chatActivity"
             android:icon="@drawable/ic_menu_chat"
             android:title="@string/menu_chat" />
         <item
@@ -30,16 +30,4 @@
             android:title="@string/menu_bonus_area" />
 
     </group>
-    <!--  On "Communicate" when an item is selected it only does an action and is not shown marked-->
-    <item android:title="@string/system">
-        <menu>
-
-            <item
-                android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_menu_settings"
-                android:title="@string/menu_settings" />
-
-        </menu>
-
-    </item>
 </menu>

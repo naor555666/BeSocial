@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="social_center_button">
+        <item name="cornerRadius">20dp</item>
+        <item name="backgroundTint">#2196F3</item>
+    </style>
+</resources>

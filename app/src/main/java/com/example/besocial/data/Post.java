@@ -1,25 +1,34 @@
 package com.example.besocial.data;
 
-import android.graphics.drawable.Drawable;
 
 public class Post {
-    private Drawable userProfilePicture;
-    private String postUserName, postDate, postDescription;
-    private Drawable postImage;
+    private String userProfilePicture;
+    private String postUserName, postDate, postDescription,category,userId;
+    private String postImage;
+    private String postId;
+    private Long numberOfLikes;
 
-    public Post(Drawable userProfilePicture, String postUserName, String postDate, String postDescription, Drawable postImage) {
+
+    public Post(){
+
+    }
+    public Post(String userId, String userProfilePicture, String postUserName, String postDate,
+                String postDescription, String category, String postImage, long numberOfLikes) {
+        this.userId=userId;
         this.userProfilePicture = userProfilePicture;
         this.postUserName = postUserName;
         this.postDate = postDate;
         this.postDescription = postDescription;
+        this.category = category;
         this.postImage = postImage;
+        this.numberOfLikes = Long.valueOf(numberOfLikes);
     }
 
-    public Drawable getUserProfilePicture() {
+    public String getUserProfilePicture() {
         return userProfilePicture;
     }
 
-    public void setUserProfilePicture(Drawable userProfilePicture) {
+    public void setUserProfilePicture(String userProfilePicture) {
         this.userProfilePicture = userProfilePicture;
     }
 
@@ -47,11 +56,46 @@ public class Post {
         this.postDescription = postDescription;
     }
 
-    public Drawable getPostImage() {
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public Long getNumberOfLikes() {
+        return numberOfLikes;
+    }
+
+    public void setNumberOfLikes(Long numberOfLikes) {
+        this.numberOfLikes = numberOfLikes;
+    }
+
+    public String getPostImage() {
         return postImage;
     }
 
-    public void setPostImage(Drawable postImage) {
+    public void setPostImage(String postImage) {
         this.postImage = postImage;
     }
+
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
+    }
+
+
 }
